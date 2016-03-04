@@ -153,12 +153,10 @@
             // radHeavyIntensity
             // 
             this.radHeavyIntensity.AutoSize = true;
-            this.radHeavyIntensity.Checked = true;
             this.radHeavyIntensity.Location = new System.Drawing.Point(205, 219);
             this.radHeavyIntensity.Name = "radHeavyIntensity";
             this.radHeavyIntensity.Size = new System.Drawing.Size(56, 17);
             this.radHeavyIntensity.TabIndex = 13;
-            this.radHeavyIntensity.TabStop = true;
             this.radHeavyIntensity.Text = "Heavy";
             this.radHeavyIntensity.UseVisualStyleBackColor = true;
             this.radHeavyIntensity.CheckedChanged += new System.EventHandler(this.radHeavyIntensity_CheckedChanged);
@@ -166,10 +164,12 @@
             // radInsaneIntensity
             // 
             this.radInsaneIntensity.AutoSize = true;
+            this.radInsaneIntensity.Checked = true;
             this.radInsaneIntensity.Location = new System.Drawing.Point(268, 219);
             this.radInsaneIntensity.Name = "radInsaneIntensity";
             this.radInsaneIntensity.Size = new System.Drawing.Size(68, 17);
             this.radInsaneIntensity.TabIndex = 14;
+            this.radInsaneIntensity.TabStop = true;
             this.radInsaneIntensity.Text = "INSANE!";
             this.radInsaneIntensity.UseVisualStyleBackColor = true;
             this.radInsaneIntensity.CheckedChanged += new System.EventHandler(this.radInsaneIntensity_CheckedChanged);

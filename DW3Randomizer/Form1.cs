@@ -148,27 +148,22 @@ namespace DW3Randomizer
                 //    superRandomize();
             }
 
-            //// Screw up the hero's spells to see if it works...
-            //romData[0x22e7] = 0x2e;
-            //romData[0x29d6 + 0x00] = 0x3f;
-            //romData[0x29d6 + 0x2e] = 0x02;
-
             // ALL ROM Hacks will have greatly increased battle speeds.
-            //romData[0x13a65] = 0x01;
-            //romData[0x13a66] = 0x04;
-            //romData[0x13a67] = 0x08;
-            //romData[0x13a68] = 0x0c;
-            //romData[0x13a69] = 0x10;
-            //romData[0x13a6a] = 0x18;
-            //romData[0x13a6b] = 0x20;
-            //romData[0x852] = 2; // instead of 16 - animation of transition into battle removed, saving 14 frames / start of battle.
-            //romData[0x8ce] = 1; // instead of 12 - flashes to start a battle, saving 11 frames / start of battle.
-            //romData[0x980d] = 1; // instead of 8 - Magic spell flashing, saving 7 or 14 frames / spell casted
-            //romData[0x9827] = 0xea; // NEXT 3 LINES:  1 flash -> 0 flashes
-            //romData[0x9828] = 0xea;
-            //romData[0x9829] = 0xea;
-            //romData[0x9882] = 2; // instead of 12 - Frames of shaking when YOU are hit... saving 10 frames / hit
-            //romData[0x9957] = 1; // Instead of 4 enemy flashes, saving at least 6 frames / hit... probably 12 or even 24 frames / hit.
+            romData[0x13a65] = 0x01;
+            romData[0x13a66] = 0x04;
+            romData[0x13a67] = 0x08;
+            romData[0x13a68] = 0x0c;
+            romData[0x13a69] = 0x10;
+            romData[0x13a6a] = 0x18;
+            romData[0x13a6b] = 0x20;
+            romData[0x852] = 2; // instead of 16 - animation of transition into battle removed, saving 14 frames / start of battle.
+            romData[0x8ce] = 1; // instead of 12 - flashes to start a battle, saving 11 frames / start of battle.
+            romData[0x980d] = 1; // instead of 8 - Magic spell flashing, saving 7 or 14 frames / spell casted
+            romData[0x9827] = 0xea; // NEXT 3 LINES:  1 flash -> 0 flashes
+            romData[0x9828] = 0xea;
+            romData[0x9829] = 0xea;
+            romData[0x9882] = 2; // instead of 12 - Frames of shaking when YOU are hit... saving 10 frames / hit
+            romData[0x9957] = 1; // Instead of 4 enemy flashes, saving at least 6 frames / hit... probably 12 or even 24 frames / hit.
 
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
@@ -194,23 +189,30 @@ namespace DW3Randomizer
                 0x99, 0x2d, 0x07,
                 0x60 }; // end JSR
 
-            //for (int lnI = 0; lnI < codData1.Length; lnI++)
-            //    romData[0x22b3 + lnI] = codData1[lnI];
-            //for (int lnI = 0; lnI < codData2.Length; lnI++)
-            //    romData[0x3fc2 + lnI] = codData2[lnI];
+            for (int lnI = 0; lnI < codData1.Length; lnI++)
+                romData[0x22b3 + lnI] = codData1[lnI];
+            for (int lnI = 0; lnI < codData2.Length; lnI++)
+                romData[0x3fc2 + lnI] = codData2[lnI];
 
             // Fix the "parry/fight" bug(as determined via gamefaqs board), via Zombero's DW3 Hardtype IPS patch.
-            //byte[] parryFightFix1 = { 0xbd, 0x9b, 0x6a, 0x29, 0xdf, 0x9d, 0x9b, 0x6a, 0x60 };
-            //byte[] parryFightFix2 = { 0x20, 0x70, 0xbb };
-            //for (int lnI = 0; lnI < parryFightFix1.Length; lnI++)
-            //    romData[0xbb80 + lnI] = parryFightFix1[lnI];
-            //for (int lnI = 0; lnI < parryFightFix2.Length; lnI++)
-            //    romData[0xa402 + lnI] = parryFightFix2[lnI];
+            byte[] parryFightFix1 = { 0xbd, 0x9b, 0x6a, 0x29, 0xdf, 0x9d, 0x9b, 0x6a, 0x60 };
+            byte[] parryFightFix2 = { 0x20, 0x70, 0xbb };
+            for (int lnI = 0; lnI < parryFightFix1.Length; lnI++)
+                romData[0xbb80 + lnI] = parryFightFix1[lnI];
+            for (int lnI = 0; lnI < parryFightFix2.Length; lnI++)
+                romData[0xa402 + lnI] = parryFightFix2[lnI];
 
             // Fix eight person hero spell glitch as well as the baseline overflow stat glitch, via Eggers' Bug Fix IPS patch
             //byte[] otherFixes1 = { 0x4c, 0xb2, 0xbf };
             //byte[] otherFixes2 = { 0xa5, 0x05, 0xf0, 0x08, 0xa9, 0x20, 0x85, 0x05, 0xa9, 0xff, 0xd0, 0x02, 0xa5, 0x04, 0x18, 0x69, 0x0a, 0x90, 0x02, 0xa9, 0xff, 0x85, 0x42, 0x68, 0x4a, 0x18, 0x65, 0x42, 0x90, 0x02, 0xa9, 0xff, 0xa4, 0x51, 0x4c, 0x70, 0xa4 };
             //byte[] otherFixes3 = { 0x07 };
+
+            //for (int lnI = 0; lnI < otherFixes1.Length; lnI++)
+            //    romData[0x2472 + lnI] = otherFixes1[lnI];
+            //for (int lnI = 0; lnI < otherFixes2.Length; lnI++)
+            //    romData[0x3fc2 + lnI] = otherFixes2[lnI];
+            //for (int lnI = 0; lnI < otherFixes3.Length; lnI++)
+            //    romData[0x1ef72 + lnI] = otherFixes3[lnI];
 
             saveRom();
         }
@@ -364,6 +366,7 @@ namespace DW3Randomizer
             // Wizard's Ring:  10000G
             // Black Pepper:  5000G
             // Shoes of Happiness:  5000G
+
             int[] forcedItemSell = { 0x16, 0x1c, 0x28, 0x32, 0x34, 0x36, 0x3b, 0x3f, 0x42, 0x48, 0x4b, 0x4c, 0x50, 0x52, 0x53, 0x58, 0x59, 0x6f, 0x70, 0x71 };
             for (int lnI = 0; lnI < forcedItemSell.Length; lnI++)
                 if (romData[0x11be + forcedItemSell[lnI]] % 32 >= 16) // Not allowed to be sold
@@ -379,23 +382,25 @@ namespace DW3Randomizer
             {
                 // Remove any price adjustment first.
                 romData[0x11be + itemstoAdjust[lnI]] -= (byte)(romData[0x11be + itemstoAdjust[lnI]] % 4);
+                int priceToUse = (romData[0x123b + itemstoAdjust[lnI]] >= 128 ? romData[0x123b + itemstoAdjust[lnI]] - 128 : romData[0x123b + itemstoAdjust[lnI]]);
                 if (itemPriceAdjust[lnI] >= 10000)
                 {
                     romData[0x11be + itemstoAdjust[lnI]] += 3; // Now multiply by 1000
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(itemPriceAdjust[lnI] / 1000);
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 1000) + 128 : itemPriceAdjust[lnI] / 1000);
                 }
                 else if (itemPriceAdjust[lnI] >= 1000)
                 {
                     romData[0x11be + itemstoAdjust[lnI]] += 2; // Now multiply by 100
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(itemPriceAdjust[lnI] / 100);
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 100) + 128 : itemPriceAdjust[lnI] / 100);
                 }
                 else if (itemPriceAdjust[lnI] >= 100)
                 {
                     romData[0x11be + itemstoAdjust[lnI]] += 1; // Now multiply by 10
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(itemPriceAdjust[lnI] / 10);
-                } else
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 10) + 128 : itemPriceAdjust[lnI] / 10);
+                }
+                else
                 {
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(itemPriceAdjust[lnI]);
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? itemPriceAdjust[lnI] + 128 : itemPriceAdjust[lnI]);
                 }
             }
 
@@ -497,13 +502,13 @@ namespace DW3Randomizer
                 //20 - Bits 0-1 - Defx256, 2-3 - Defense resist, 4-5 - Stopspell resist, 6-7 - Sleep resist
                 //21 - Bits 0-1 - HPx256, 2-3 - Chaos resist, 4-5 - RobMagic resist, 6-7 - Surround resist
                 //22 - Bits 0-3 - Drop chance (1/1, 8, 16, 32, 64, 128, 256, and 2048), 4-5 - Expel resist, 6-7 - Limbo/Slow resist
-                byte[] enemyStats = { romData[0x32e3 + (lnI * 22) + 0], romData[0x32e3 + (lnI * 22) + 1], romData[0x32e3 + (lnI * 22) + 2], romData[0x32e3 + (lnI * 22) + 3], romData[0x32e3 + (lnI * 22) + 4],
-                    romData[0x32e3 + (lnI * 22) + 5], romData[0x32e3 + (lnI * 22) + 6], romData[0x32e3 + (lnI * 22) + 7], romData[0x32e3 + (lnI * 22) + 8], romData[0x32e3 + (lnI * 22) + 9],
-                    romData[0x32e3 + (lnI * 22) + 10], romData[0x32e3 + (lnI * 22) + 11], romData[0x32e3 + (lnI * 22) + 12], romData[0x32e3 + (lnI * 22) + 13], romData[0x32e3 + (lnI * 22) + 14],
-                    romData[0x32e3 + (lnI * 22) + 15], romData[0x32e3 + (lnI * 22) + 16], romData[0x32e3 + (lnI * 22) + 17], romData[0x32e3 + (lnI * 22) + 18], romData[0x32e3 + (lnI * 22) + 19],
-                    romData[0x32e3 + (lnI * 22) + 20], romData[0x32e3 + (lnI * 22) + 21], romData[0x32e3 + (lnI * 22) + 22] };
+                byte[] enemyStats = { romData[0x32e3 + (lnI * 23) + 0], romData[0x32e3 + (lnI * 23) + 1], romData[0x32e3 + (lnI * 23) + 2], romData[0x32e3 + (lnI * 23) + 3], romData[0x32e3 + (lnI * 23) + 4],
+                    romData[0x32e3 + (lnI * 23) + 5], romData[0x32e3 + (lnI * 23) + 6], romData[0x32e3 + (lnI * 23) + 7], romData[0x32e3 + (lnI * 23) + 8], romData[0x32e3 + (lnI * 23) + 9],
+                    romData[0x32e3 + (lnI * 23) + 10], romData[0x32e3 + (lnI * 23) + 11], romData[0x32e3 + (lnI * 23) + 12], romData[0x32e3 + (lnI * 23) + 13], romData[0x32e3 + (lnI * 23) + 14],
+                    romData[0x32e3 + (lnI * 23) + 15], romData[0x32e3 + (lnI * 23) + 16], romData[0x32e3 + (lnI * 23) + 17], romData[0x32e3 + (lnI * 23) + 18], romData[0x32e3 + (lnI * 23) + 19],
+                    romData[0x32e3 + (lnI * 23) + 20], romData[0x32e3 + (lnI * 23) + 21], romData[0x32e3 + (lnI * 23) + 22] };
 
-                int byteValStart = 0x32e3 + (22 * lnI);
+                int byteValStart = 0x32e3 + (23 * lnI);
 
                 enemyStats[3] = (byte)(r1.Next() % 256);
                 for (int lnJ = 0; lnJ < 4; lnJ++)
@@ -523,29 +528,29 @@ namespace DW3Randomizer
                 enemyStats[8] = 255; // Always make sure the monster has MP
                 enemyStats[9] = (byte)(r1.Next() % 125);
 
-                byte[] res1 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3 };
-                byte[] res2 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3 };
-                byte[] res3 = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
-                byte[] res4 = { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3 };
-                byte[] res5 = { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3 };
-                byte[] res6 = { 0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
-                byte[] res7 = { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
+                byte[] res1 = { 0, 0, 0, 0, 0, 1, 2, 3 };
+                byte[] res2 = { 0, 0, 0, 0, 1, 1, 2, 3 };
+                byte[] res3 = { 0, 0, 0, 1, 1, 2, 2, 3 };
+                byte[] res4 = { 0, 0, 1, 1, 2, 2, 3, 3 };
+                byte[] res5 = { 0, 1, 1, 2, 2, 3, 3, 3 };
+                byte[] res6 = { 0, 1, 2, 2, 3, 3, 3, 3 };
+                byte[] res7 = { 0, 1, 2, 3, 3, 3, 3, 3 };
                 byte[] finalRes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 for (int lnJ = 0; lnJ < finalRes.Length; lnJ++) {
                     if (lnI < 25)
-                        finalRes[lnJ] = (res1[r1.Next() % 16]);
+                        finalRes[lnJ] = (res1[r1.Next() % 8]);
                     else if (lnI < 50)
-                        finalRes[lnJ] = (res2[r1.Next() % 16]);
+                        finalRes[lnJ] = (res2[r1.Next() % 8]);
                     else if (lnI < 70)
-                        finalRes[lnJ] = (res3[r1.Next() % 16]);
+                        finalRes[lnJ] = (res3[r1.Next() % 8]);
                     else if (lnI < 90)
-                        finalRes[lnJ] = (res4[r1.Next() % 16]);
+                        finalRes[lnJ] = (res4[r1.Next() % 8]);
                     else if (lnI < 105)
-                        finalRes[lnJ] = (res5[r1.Next() % 16]);
+                        finalRes[lnJ] = (res5[r1.Next() % 8]);
                     else if (lnI < 115)
-                        finalRes[lnJ] = (res6[r1.Next() % 16]);
+                        finalRes[lnJ] = (res6[r1.Next() % 8]);
                     else
-                        finalRes[lnJ] = (res7[r1.Next() % 16]);
+                        finalRes[lnJ] = (res7[r1.Next() % 8]);
                 }
 
                 enemyStats[18] = (byte)(enemyStats[18] % 4 + (finalRes[0] * 4) + (finalRes[1] * 16) + (finalRes[2] * 64));
@@ -557,36 +562,36 @@ namespace DW3Randomizer
                 byte[] enemyPatterns = { 2, 2, 2, 2, 2, 2, 2, 2 };
 
                 // Types of patterns... 0:  Attack only, 1:  "Goofy attack", 2:  Totally random, 3:  Annoying, 4:  Quite annyoing, 5:  Hell monster
-                byte[] pattern1 = { 30, 50, 90, 100, 100, 100 };
-                byte[] pattern2 = { 25, 45, 85, 95, 100, 100 };
-                byte[] pattern3 = { 20, 40, 80, 90, 100, 100 };
-                byte[] pattern4 = { 15, 35, 75, 85, 95, 100 };
-                byte[] pattern5 = { 10, 30, 70, 80, 90, 100 };
-                byte[] pattern6 = { 5, 25, 70, 75, 90, 100 };
-                byte[] pattern7 = { 0, 20, 65, 70, 85, 100 };
-                byte[] pattern8 = { 0, 10, 50, 50, 70, 100 };
-                byte[] pattern9 = { 0, 0, 30, 30, 30, 100 };
+                byte[] pattern1 = { 45, 65, 100, 100, 100 };
+                byte[] pattern2 = { 35, 60, 90, 100, 100 };
+                byte[] pattern3 = { 25, 50, 80, 90, 100 };
+                byte[] pattern4 = { 15, 45, 75, 85, 100 };
+                byte[] pattern5 = { 10, 40, 70, 85, 100 };
+                byte[] pattern6 = { 5, 30, 70, 80, 100 };
+                byte[] pattern7 = { 0, 20, 60, 80, 100 };
+                byte[] pattern8 = { 0, 10, 50, 60, 100 };
+                byte[] pattern9 = { 0, 0, 30, 30, 100 };
 
                 int enemyPattern = r1.Next() % 100;
 
-                if (lnI < 15 || lnI == 0x87)
-                    enemyPattern = (enemyPattern < pattern1[0] ? 0 : enemyPattern < pattern1[1] ? 1 : enemyPattern < pattern1[2] ? 2 : enemyPattern < pattern1[3] ? 3 : enemyPattern < pattern1[4] ? 4 : 5);
+                if (lnI < 15 || lnI == 0x87 || lnI == 0x68)
+                    enemyPattern = (enemyPattern < pattern1[0] ? 0 : enemyPattern < pattern1[1] ? 1 : enemyPattern < pattern1[2] ? 2 : enemyPattern < pattern1[3] ? 3 : 4);
                 else if (lnI < 30)
-                    enemyPattern = (enemyPattern < pattern2[0] ? 0 : enemyPattern < pattern2[1] ? 1 : enemyPattern < pattern2[2] ? 2 : enemyPattern < pattern2[3] ? 3 : enemyPattern < pattern2[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern2[0] ? 0 : enemyPattern < pattern2[1] ? 1 : enemyPattern < pattern2[2] ? 2 : enemyPattern < pattern2[3] ? 3 : 4);
                 else if (lnI < 45 || lnI == 0x88 || lnI == 0x8a)
-                    enemyPattern = (enemyPattern < pattern3[0] ? 0 : enemyPattern < pattern3[1] ? 1 : enemyPattern < pattern3[2] ? 2 : enemyPattern < pattern3[3] ? 3 : enemyPattern < pattern3[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern3[0] ? 0 : enemyPattern < pattern3[1] ? 1 : enemyPattern < pattern3[2] ? 2 : enemyPattern < pattern3[3] ? 3 : 4);
                 else if (lnI < 60)
-                    enemyPattern = (enemyPattern < pattern4[0] ? 0 : enemyPattern < pattern4[1] ? 1 : enemyPattern < pattern4[2] ? 2 : enemyPattern < pattern4[3] ? 3 : enemyPattern < pattern4[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern4[0] ? 0 : enemyPattern < pattern4[1] ? 1 : enemyPattern < pattern4[2] ? 2 : enemyPattern < pattern4[3] ? 3 : 4);
                 else if (lnI < 75 || lnI == 0x89)
-                    enemyPattern = (enemyPattern < pattern5[0] ? 0 : enemyPattern < pattern5[1] ? 1 : enemyPattern < pattern5[2] ? 2 : enemyPattern < pattern5[3] ? 3 : enemyPattern < pattern5[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern5[0] ? 0 : enemyPattern < pattern5[1] ? 1 : enemyPattern < pattern5[2] ? 2 : enemyPattern < pattern5[3] ? 3 : 4);
                 else if (lnI < 90)
-                    enemyPattern = (enemyPattern < pattern6[0] ? 0 : enemyPattern < pattern6[1] ? 1 : enemyPattern < pattern6[2] ? 2 : enemyPattern < pattern6[3] ? 3 : enemyPattern < pattern6[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern6[0] ? 0 : enemyPattern < pattern6[1] ? 1 : enemyPattern < pattern6[2] ? 2 : enemyPattern < pattern6[3] ? 3 : 4);
                 else if (lnI < 105)
-                    enemyPattern = (enemyPattern < pattern7[0] ? 0 : enemyPattern < pattern7[1] ? 1 : enemyPattern < pattern7[2] ? 2 : enemyPattern < pattern7[3] ? 3 : enemyPattern < pattern7[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern7[0] ? 0 : enemyPattern < pattern7[1] ? 1 : enemyPattern < pattern7[2] ? 2 : enemyPattern < pattern7[3] ? 3 : 4);
                 else if (lnI < 120)
-                    enemyPattern = (enemyPattern < pattern8[0] ? 0 : enemyPattern < pattern8[1] ? 1 : enemyPattern < pattern8[2] ? 2 : enemyPattern < pattern8[3] ? 3 : enemyPattern < pattern8[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern8[0] ? 0 : enemyPattern < pattern8[1] ? 1 : enemyPattern < pattern8[2] ? 2 : enemyPattern < pattern8[3] ? 3 : 4);
                 else
-                    enemyPattern = (enemyPattern < pattern9[0] ? 0 : enemyPattern < pattern9[1] ? 1 : enemyPattern < pattern9[2] ? 2 : enemyPattern < pattern9[3] ? 3 : enemyPattern < pattern9[4] ? 4 : 5);
+                    enemyPattern = (enemyPattern < pattern9[0] ? 0 : enemyPattern < pattern9[1] ? 1 : enemyPattern < pattern9[2] ? 2 : enemyPattern < pattern9[3] ? 3 : 4);
 
                 switch (enemyPattern)
                 {
@@ -625,18 +630,7 @@ namespace DW3Randomizer
                     case 4:
                         for (int lnJ = 0; lnJ < 8; lnJ++)
                         {
-
-                            byte[] attackPattern = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 6, 6, 8, 9, 11, 14, 16, 17, 18, 20, 24, 26, 29, 31, 33, 34, 36, 37, 38, 39, 40, 42, 44, 45, 46, 47, 50, 52, 55, 57, 61, 62, 63 };
-                            byte random = (attackPattern[r1.Next() % attackPattern.Length]);
-                            if (random >= 1 && random <= 31) // 0 would be fine, but it's already set.
-                                enemyPatterns[lnJ] = random;
-                        }
-                        break;
-                    case 5:
-                        for (int lnJ = 0; lnJ < 8; lnJ++)
-                        {
-
-                            byte[] attackPattern = { 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 6, 6, 8, 12, 15, 18, 21, 25, 27, 30, 32, 33, 34, 40, 40, 42, 43, 44, 48, 51, 53, 56, 58, 60 };
+                            byte[] attackPattern = { 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 6, 6, 8, 11, 12, 14, 15, 18, 20, 21, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 40, 40, 42, 43, 44, 47, 48, 51, 53, 56, 58, 60 };
                             byte random = (attackPattern[r1.Next() % attackPattern.Length]);
                             if (random >= 1 && random <= 31) // 0 would be fine, but it's already set.
                                 enemyPatterns[lnJ] = random;
@@ -701,7 +695,7 @@ namespace DW3Randomizer
                 for (int lnJ = 0; lnJ < 8; lnJ++)
                     enemyStats[10 + lnJ] = (enemyPatterns[lnJ]);
 
-                for (int lnJ = 0; lnJ < 22; lnJ++)
+                for (int lnJ = 0; lnJ < 23; lnJ++)
                     romData[byteValStart + lnJ] = enemyStats[lnJ];
             }
 
@@ -718,7 +712,7 @@ namespace DW3Randomizer
                 for (int lnJ = 1; lnJ < 13; lnJ++)
                 {
                     if (gentleZones.IndexOf(lnI) != -1)
-                        romData[byteToUse + lnJ] = monsterOrder[r1.Next() % (gentleZones.IndexOf(lnI) + 15)];
+                        romData[byteToUse + lnJ] = monsterOrder[r1.Next() % ((gentleZones.IndexOf(lnI) * 3) + 10)];
                     else if (violentZone1.Contains(lnI))
                         romData[byteToUse + lnJ] = monsterOrder[(r1.Next() % 89) + 40];
                     else if (violentZone2.Contains(lnI))
@@ -780,8 +774,9 @@ namespace DW3Randomizer
             for (int lnI = 0; lnI <= 70; lnI++)
             {
                 byte power = 0;
-                if (lnI == 0 || lnI == 16)
-                    power = (byte)(r1.Next() % 10);
+
+                if (lnI == 0 || lnI == 1 || lnI == 2 || lnI == 32 || lnI == 34 || lnI == 48)
+                    power = (byte)(r1.Next() % 12);
                 else if (lnI < 31)
                     power = (byte)(Math.Pow(r1.Next() % 500, 2) / 1785); // max 140
                 else if (lnI < 55)
@@ -791,7 +786,7 @@ namespace DW3Randomizer
                 else
                     power = (byte)(Math.Pow(r1.Next() % 500, 2) / 6250); // max 40
                 power += (byte)((lnI < 31 ? lnI : lnI < 55 ? lnI - 31 : lnI < 62 ? lnI - 55 : lnI - 62) + 1); // To avoid 0 power... and a non-selling item...
-                romData[0x27990 + lnI] = power;
+                romData[0x279a0 + lnI] = power;
 
                 // You want a max price of about 25000
                 double price = Math.Round((lnI < 31 ? Math.Pow(power, 2.01) : lnI < 55 ? Math.Pow(power, 2.25) : lnI < 62 ? Math.Pow(power, 2.42) : Math.Pow(power, 2.66)), 0);
@@ -821,7 +816,7 @@ namespace DW3Randomizer
                 }
 
                 // Must keep special effects if romData is >= 128
-                if (romData[0x123b + lnI] > 128)
+                if (romData[0x123b + lnI] >= 128)
                     romData[0x123b + lnI] = (byte)(128 + price);
                 else
                     romData[0x123b + lnI] = (byte)(price);
@@ -830,6 +825,13 @@ namespace DW3Randomizer
             // Totally randomize who can equip (1a3ce-1a3f0).  At least one person can equip something...
             for (int lnI = 0; lnI <= 70; lnI++)
                 romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
+            // Everybody should be able to equip the starting equipment.
+            romData[0x1147 + 0x00] = 255;
+            romData[0x1147 + 0x01] = 255;
+            romData[0x1147 + 0x02] = 255;
+            romData[0x1147 + 0x20] = 255;
+            romData[0x1147 + 0x22] = 255;
+            romData[0x1147 + 0x30] = 255;
             //for (int lnI = 70; lnI < 125; lnI++)
             //    romData[0x1147 + lnI] = 255; // everybody can use everything else?
 
@@ -871,11 +873,11 @@ namespace DW3Randomizer
 
             for (int lnI = 0; lnI < 8; lnI++)
             {
-                romData[0x29d6 + heroCommand[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a15 + pilgrimCommand[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a54 + wizardCommand[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a93 + pilgrimCommand[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a93 + wizardCommand[lnI]] = (byte)(r1.Next() % 40);
+                romData[0x29d6 + heroCommand[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a15 + pilgrimCommand[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a54 + wizardCommand[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a93 + pilgrimCommand[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a93 + wizardCommand[lnI]] = (byte)(r1.Next() % 40 + 1);
                 romData[0x22e7 + 24 + lnI] = (byte)heroCommand[lnI];
                 romData[0x22e7 + 32 + 24 + lnI] = (byte)pilgrimCommand[lnI];
                 romData[0x22e7 + 64 + 24 + lnI] = (byte)wizardCommand[lnI];
@@ -884,17 +886,22 @@ namespace DW3Randomizer
             for (int lnI = 0; lnI < 24; lnI++)
             {
                 if (lnI < 16)
-                    romData[0x29d6 + heroFight[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a15 + pilgrimFight[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a54 + wizardFight[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a93 + pilgrimFight[lnI]] = (byte)(r1.Next() % 40);
-                romData[0x2a93 + wizardFight[lnI]] = (byte)(r1.Next() % 40);
+                    romData[0x29d6 + heroFight[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a15 + pilgrimFight[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a54 + wizardFight[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a93 + pilgrimFight[lnI]] = (byte)(r1.Next() % 40 + 1);
+                romData[0x2a93 + wizardFight[lnI]] = (byte)(r1.Next() % 40 + 1);
                 if (lnI < 16)
                     romData[0x22e7 + lnI] = (byte)heroFight[lnI];
                 romData[0x22e7 + 32 + lnI] = (byte)pilgrimFight[lnI];
                 romData[0x22e7 + 64 + lnI] = (byte)wizardFight[lnI];
             }
-            
+
+            romData[0x29d6 + 62] = 0xff;
+            romData[0x29d6 + 125] = 0xff;
+            romData[0x29d6 + 188] = 0xff;
+            romData[0x29d6 + 251] = 0xff;
+
             // Totally randomize treasures... but make sure key items exist before they are needed!
             // Keep the Rainbow drop where it is
             int[] treasureAddrZ0 = { 0x29237, 0x29238, 0x29239, 0x2927b, 0x292C4, 0x292C5, 0x292c6, 0x37df1 }; // Up Thief's Key - 8
@@ -998,17 +1005,34 @@ namespace DW3Randomizer
                 }
             }
 
-            // Totally randomize stores (18 weapon stores, 24 item stores, 124 items total)  No store can have more than 12 items.
-            // I would just create random values for 124 items, then determine weapon and item stores out of that!
+            // Totally randomize stores (19 weapon stores, 24 item stores, 248 items total)  No store can have more than 12 items.
+            // I would just create random values for 248 items, then determine weapon and item stores out of that!
             int[] legalStoreItems = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
                                       0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4e,
+                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46,
+                                      0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4e,
                                       0x50, 0x52, 0x53, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5f,
                                       0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
-                                      0x70, 0x71, 0x73, 0x74 };
+                                      0x70, 0x71, 0x73, 0x74,
+                                      0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4e,
+                                      0x50, 0x52, 0x53, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5f,
+                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
+                                      0x70, 0x71, 0x73, 0x74,
+                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
+                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
+                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74
+            };
             int[] storeItems = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1018,7 +1042,7 @@ namespace DW3Randomizer
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             List<int> itemStore = new List<int>();
             List<int> weaponStore = new List<int>();
-            for (int lnI = 0; lnI < 124; lnI++)
+            for (int lnI = 0; lnI < 248; lnI++)
             {
                 storeItems[lnI] = legalStoreItems[(r1.Next() % legalStoreItems.Length)];
                 if (storeItems[lnI] <= 70)
@@ -1043,77 +1067,42 @@ namespace DW3Randomizer
             int[] weaponStoreArray = weaponStore.ToArray();
             int[] itemStoreArray = itemStore.ToArray();
 
-            int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, weaponStoreArray.Length };
-            int[] itemStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, itemStoreArray.Length };
-            for (int lnI = 0; lnI < weaponStoreLocations.Length - 1; lnI++)
-                weaponStoreLocations[lnI] = (r1.Next() % (weaponStoreArray.Length - 1));
-            for (int lnI = 0; lnI < itemStoreLocations.Length - 1; lnI++)
-                itemStoreLocations[lnI] = (r1.Next() % (itemStoreLocations.Length - 1) + weaponStoreArray.Length);
+            int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, weaponStoreArray.Length };
+            int[] itemStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247 };
 
+            int lnMarker = -1;
+            // Need to make sure this doesn't exceed 11
+            int average = weaponStoreArray.Length / weaponStoreLocations.Length;
             for (int lnI = 0; lnI < weaponStoreLocations.Length - 1; lnI++)
             {
-                for (int lnJ = lnI; lnJ < weaponStoreLocations.Length; lnJ++)
-                {
-                    if (weaponStoreLocations[lnI] > weaponStoreLocations[lnJ])
-                    {
-                        int reserve = weaponStoreLocations[lnJ];
-                        weaponStoreLocations[lnJ] = weaponStoreLocations[lnI];
-                        weaponStoreLocations[lnI] = reserve;
-                    }
-                }
+                int storeSize = average;
+                storeSize += (-3 + (r1.Next() % 7));
+                if (storeSize > 12)
+                    storeSize = 12;
+                lnMarker += storeSize;
+                weaponStoreLocations[lnI] = lnMarker;
+                int avgPart1 = weaponStoreArray.Length - lnMarker + 1;
+                int avgPart2 = weaponStoreLocations.Length - lnI - 1;
+                average = ((weaponStoreArray.Length - lnMarker + 1) / (weaponStoreLocations.Length - lnI - 1));
             }
+            average = (248 - weaponStoreArray.Length) / itemStoreLocations.Length;
             for (int lnI = 0; lnI < itemStoreLocations.Length - 1; lnI++)
             {
-                for (int lnJ = lnI; lnJ < itemStoreLocations.Length; lnJ++)
-                {
-                    if (itemStoreLocations[lnI] > itemStoreLocations[lnJ])
-                    {
-                        int reserve = itemStoreLocations[lnJ];
-                        itemStoreLocations[lnJ] = itemStoreLocations[lnI];
-                        itemStoreLocations[lnI] = reserve;
-                    }
-                }
-            }
-
-            // Go through each weapon store.  If the two numbers are exactly equal, make the second one one more and start the sequence over.
-            // If the two numbers are separated by 13 or higher, then change the first number to make it 12 or higher and start the sequence over.
-            if (weaponStoreLocations[0] >= 12)
-                weaponStoreLocations[1] = 11;
-            for (int lnI = 0; lnI < weaponStoreLocations.Length; lnI++)
-            {
-                for (int lnJ = lnI; lnJ < weaponStoreLocations.Length; lnJ++)
-                {
-                    if (weaponStoreLocations[lnI] == weaponStoreLocations[lnJ])
-                    {
-                        weaponStoreLocations[lnJ]++;
-                    }
-                    if (weaponStoreLocations[lnJ] > weaponStoreLocations[lnI] + 12)
-                    {
-                        weaponStoreLocations[lnJ] = weaponStoreLocations[lnI] + 12;
-                    }
-                }
-            }
-            if (itemStoreLocations[0] >= 12 + weaponStoreArray.Length)
-                itemStoreLocations[1] = 11 + weaponStoreArray.Length;
-            for (int lnI = 0; lnI < itemStoreLocations.Length; lnI++)
-            {
-                for (int lnJ = lnI; lnJ < itemStoreLocations.Length; lnJ++)
-                {
-                    if (itemStoreLocations[lnI] == itemStoreLocations[lnJ])
-                    {
-                        itemStoreLocations[lnJ]++;
-                    }
-                    if (itemStoreLocations[lnJ] > itemStoreLocations[lnI] + 12)
-                    {
-                        itemStoreLocations[lnJ] = itemStoreLocations[lnI] + 12;
-                    }
-                }
+                int storeSize = average;
+                storeSize += (-3 + (r1.Next() % 7));
+                if (storeSize < 1)
+                    storeSize = 1;
+                if (storeSize > 12)
+                    storeSize = 12;
+                lnMarker += storeSize;
+                itemStoreLocations[lnI] = lnMarker;
+                average = ((248 - lnMarker + 1) / (itemStoreLocations.Length - lnI));
             }
 
             // Now we can plug in the numbers...
             for (int lnI = 0; lnI < weaponStoreLocations.Length; lnI++)
             {
-                romData[0x36838 + weaponStoreArray[lnI]] += 128;
+                romData[0x36838 + weaponStoreLocations[lnI]] += 128;
             }
             for (int lnI = 0; lnI < itemStoreLocations.Length; lnI++)
             {
@@ -1770,12 +1759,13 @@ namespace DW3Randomizer
             using (StreamWriter writer = File.CreateText(Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Compare.txt")))
             {
                 for (int lnI = 0; lnI < 125; lnI++)
-                    compareComposeString("monsters" + (lnI + 1).ToString("X2"), writer, (0x13805 + (15 * lnI)), 15);
+                    compareComposeString("monsters" + (lnI + 1).ToString("X2"), writer, (0x32e3 + (23 * lnI)), 23);
 
-                compareComposeString("goldReq", writer, 0x1a00e, 126);
+                compareComposeString("itemPrice1", writer, 0x11be, 125);
+                compareComposeString("itemPrice2", writer, 0x123b, 125);
 
-                compareComposeString("treasures", writer, 0x29228, 0xc0);
-                compareComposeString("stores", writer, 0x36838, 124);
+                compareComposeString("treasures-0x29228", writer, 0x29228, 0xc0);
+                compareComposeString("stores", writer, 0x36838, 248, 1, "g128");
 
                 for (int lnI = 0; lnI < 95; lnI++)
                     compareComposeString("monsterZones" + lnI.ToString("X2"), writer, (0xaeb + (15 * lnI)), 15);
@@ -1790,48 +1780,94 @@ namespace DW3Randomizer
                 //    compareComposeString("statUps" + (lnI + 35).ToString(), writer, 0x13ddd + 210 + (4 * lnI), 4);
                 //for (int lnI = 0; lnI < 5; lnI++)
                 //    compareComposeString("statUps" + (lnI + 45).ToString(), writer, 0x13ddd + 250 + (2 * lnI), 2);
-                compareComposeString("spellLearning", writer, 0x13edb, 32);
-                compareComposeString("spellLearning", writer, 0x13edb, 32);
-                compareComposeString("spellLearning", writer, 0x13edb, 32);
-                compareComposeString("spellsLearned", writer, 0x1ae76, 32);
-                compareComposeString("spellsLearned", writer, 0x1ae76, 32);
-                compareComposeString("spellsLearned", writer, 0x1ae76, 32);
-                compareComposeString("spellsLearned", writer, 0x1ae76, 32);
-                for (int lnI = 0; lnI < 28; lnI++)
-                    compareComposeString("spellStats" + (lnI).ToString(), writer, 0x127d5 + (5 * lnI), 5);
-                compareComposeString("spellCmd", writer, 0x13528, 28);
-                compareComposeString("spellFieldHeal", writer, 0x18be0, 16, 8);
-                compareComposeString("spellFieldMedical", writer, 0x19602, 1);
+                compareComposeString("spellLearningHero", writer, 0x29d6, 63);
+                compareComposeString("spellsLearnedHero", writer, 0x22E7, 32);
+                compareComposeString("spellLearningPilgrim", writer, 0x2A15, 63);
+                compareComposeString("spellsLearnedPilgrim", writer, 0x2307, 32);
+                compareComposeString("spellLearningWizard", writer, 0x2A54, 63);
+                compareComposeString("spellsLearnedWizard", writer, 0x2327, 32);
+                compareComposeString("spellLearningSage", writer, 0x2A93, 63);
+                //for (int lnI = 0; lnI < 28; lnI++)
+                //    compareComposeString("spellStats" + (lnI).ToString(), writer, 0x127d5 + (5 * lnI), 5);
+                //compareComposeString("spellCmd", writer, 0x13528, 28);
+                //compareComposeString("spellFieldHeal", writer, 0x18be0, 16, 8);
+                //compareComposeString("spellFieldMedical", writer, 0x19602, 1);
 
-                compareComposeString("start1", writer, 0x3c79f, 8);
-                compareComposeString("start2", writer, 0x3c79f + 8, 8);
-                compareComposeString("start3", writer, 0x3c79f + 16, 8);
-                compareComposeString("weapons", writer, 0x13efb, 16);
-                compareComposeString("weaponcost (2.3)", writer, 0x1a00e, 32);
-                compareComposeString("armor", writer, 0x13efb + 16, 11);
-                compareComposeString("armorcost (2.4)", writer, 0x1a00e + 32, 22);
-                compareComposeString("shields", writer, 0x13efb + 27, 5);
-                compareComposeString("shieldcost (2.8)", writer, 0x1a00e + 54, 10);
-                compareComposeString("helmets", writer, 0x13efb + 32, 3);
-                compareComposeString("helmetcost (3.0)", writer, 0x1a00e + 64, 6);
+                //compareComposeString("start1", writer, 0x3c79f, 8);
+                //compareComposeString("start2", writer, 0x3c79f + 8, 8);
+                //compareComposeString("start3", writer, 0x3c79f + 16, 8);
+                //compareComposeString("weapons", writer, 0x13efb, 16);
+                //compareComposeString("weaponcost (2.3)", writer, 0x1a00e, 32);
+                //compareComposeString("armor", writer, 0x13efb + 16, 11);
+                //compareComposeString("armorcost (2.4)", writer, 0x1a00e + 32, 22);
+                //compareComposeString("shields", writer, 0x13efb + 27, 5);
+                //compareComposeString("shieldcost (2.8)", writer, 0x1a00e + 54, 10);
+                //compareComposeString("helmets", writer, 0x13efb + 32, 3);
+                //compareComposeString("helmetcost (3.0)", writer, 0x1a00e + 64, 6);
 
             }
             lblIntensityDesc.Text = "Comparison complete!  (DW3Compare.txt)";
         }
 
-        private StreamWriter compareComposeString(string intro, StreamWriter writer, int startAddress, int length, int skip = 1)
+        private StreamWriter compareComposeString(string intro, StreamWriter writer, int startAddress, int length, int skip = 1, string delimiter = "")
         {
-            string final = "";
-            string final2 = "";
-            for (int lnI = 0; lnI < length; lnI += skip)
+            if (delimiter == "")
             {
-                final += romData[startAddress + lnI].ToString("X2") + " ";
-                final2 += romData2[startAddress + lnI].ToString("X2") + " ";
+                writer.WriteLine(intro);
+                string final = "";
+                string final2 = "";
+                for (int lnI = 0; lnI < length; lnI += skip)
+                {
+                    final += romData[startAddress + lnI].ToString("X2") + " ";
+                    if (lnI % 16 == 15)
+                    {
+                        writer.WriteLine(final);
+                        final = "";
+                    }
+                }
+                writer.WriteLine(final);
+                if (length >= 16) writer.WriteLine();
+                for (int lnI = 0; lnI < length; lnI += skip)
+                {
+                    final2 += romData2[startAddress + lnI].ToString("X2") + " ";
+                    if (lnI % 16 == 15)
+                    {
+                        writer.WriteLine(final2);
+                        final2 = "";
+                    }
+                }
+                writer.WriteLine(final2);
+                writer.WriteLine();
             }
-            writer.WriteLine(intro);
-            writer.WriteLine(final);
-            writer.WriteLine(final2);
-            writer.WriteLine();
+            else
+            {
+                writer.WriteLine(intro);
+
+                string final = "";
+                for (int lnI = 0; lnI < length; lnI += skip)
+                {
+                    final += romData[startAddress + lnI].ToString("X2") + " ";
+                    if (delimiter == "g128" && romData[startAddress + lnI] >= 128)
+                    {
+                        writer.WriteLine(final);
+                        final = "";
+                    }
+                }
+                writer.WriteLine(final);
+                writer.WriteLine("---------------- VS -------------");
+                final = "";
+                for (int lnI = 0; lnI < length; lnI += skip)
+                {
+                    final += romData2[startAddress + lnI].ToString("X2") + " ";
+                    if (delimiter == "g128" && romData2[startAddress + lnI] >= 128)
+                    {
+                        writer.WriteLine(final);
+                        final = "";
+                    }
+                }
+                writer.WriteLine(final);
+                writer.WriteLine("");
+            }
             return writer;
         }
 
