@@ -131,6 +131,7 @@
             // radSlightIntensity
             // 
             this.radSlightIntensity.AutoSize = true;
+            this.radSlightIntensity.Enabled = false;
             this.radSlightIntensity.Location = new System.Drawing.Point(70, 219);
             this.radSlightIntensity.Name = "radSlightIntensity";
             this.radSlightIntensity.Size = new System.Drawing.Size(51, 17);
@@ -142,6 +143,7 @@
             // radModerateIntensity
             // 
             this.radModerateIntensity.AutoSize = true;
+            this.radModerateIntensity.Enabled = false;
             this.radModerateIntensity.Location = new System.Drawing.Point(128, 219);
             this.radModerateIntensity.Name = "radModerateIntensity";
             this.radModerateIntensity.Size = new System.Drawing.Size(70, 17);
@@ -153,6 +155,7 @@
             // radHeavyIntensity
             // 
             this.radHeavyIntensity.AutoSize = true;
+            this.radHeavyIntensity.Enabled = false;
             this.radHeavyIntensity.Location = new System.Drawing.Point(205, 219);
             this.radHeavyIntensity.Name = "radHeavyIntensity";
             this.radHeavyIntensity.Size = new System.Drawing.Size(56, 17);
