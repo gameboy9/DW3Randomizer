@@ -514,12 +514,19 @@ namespace DW3Randomizer
                 for (int lnJ = 0; lnJ < 4; lnJ++)
                 {
                     int totalAtk = enemyStats[4 + lnJ] + ((enemyStats[18 + lnJ] % 4) * 256);
-                    int atkRandom = (r1.Next() % 3);
-                    int atkDiv2 = (enemyStats[4 + lnJ] / 2) + 1;
-                    if (atkRandom == 1)
-                        totalAtk += (r1.Next() % atkDiv2);
-                    else if (atkRandom == 2)
-                        totalAtk -= (r1.Next() % atkDiv2);
+                    if (lnJ == 0 && totalAtk > 0)
+                    {
+                        totalAtk += (r1.Next() % (totalAtk / 2));
+                    }
+                    else
+                    {
+                        int atkRandom = (r1.Next() % 3);
+                        int atkDiv2 = (enemyStats[4 + lnJ] / 2) + 1;
+                        if (atkRandom == 1)
+                            totalAtk += (r1.Next() % atkDiv2);
+                        else if (atkRandom == 2)
+                            totalAtk -= (r1.Next() % atkDiv2);
+                    }
 
                     totalAtk = (totalAtk > 1020 ? 1020 : totalAtk);
                     enemyStats[4 + lnJ] = (byte)(totalAtk % 256);
@@ -712,7 +719,7 @@ namespace DW3Randomizer
                 for (int lnJ = 1; lnJ < 13; lnJ++)
                 {
                     if (gentleZones.IndexOf(lnI) != -1)
-                        romData[byteToUse + lnJ] = monsterOrder[r1.Next() % ((gentleZones.IndexOf(lnI) * 3) + 10)];
+                        romData[byteToUse + lnJ] = monsterOrder[r1.Next() % ((gentleZones.IndexOf(lnI) * 2) + 8)];
                     else if (violentZone1.Contains(lnI))
                         romData[byteToUse + lnJ] = monsterOrder[(r1.Next() % 89) + 40];
                     else if (violentZone2.Contains(lnI))
@@ -785,7 +792,7 @@ namespace DW3Randomizer
                     power = (byte)(Math.Pow(r1.Next() % 500, 2) / 4166); // max 60
                 else
                     power = (byte)(Math.Pow(r1.Next() % 500, 2) / 6250); // max 40
-                power += (byte)((lnI < 31 ? lnI : lnI < 55 ? lnI - 31 : lnI < 62 ? lnI - 55 : lnI - 62) + 1); // To avoid 0 power... and a non-selling item...
+                power += 1; // To avoid 0 power... and a non-selling item...
                 romData[0x279a0 + lnI] = power;
 
                 // You want a max price of about 25000
@@ -905,10 +912,10 @@ namespace DW3Randomizer
             // Totally randomize treasures... but make sure key items exist before they are needed!
             // Keep the Rainbow drop where it is
             int[] treasureAddrZ0 = { 0x29237, 0x29238, 0x29239, 0x2927b, 0x292C4, 0x292C5, 0x292c6, 0x37df1 }; // Up Thief's Key - 8
-            int[] treasureAddrZ1 = { 0x2927c, 0x2927d, 0x375a9 }; // Magic ball - 3
+            int[] treasureAddrZ1 = { 0x2927c, 0x2927d, 0x375aa }; // Magic ball - 3
             int[] treasureAddrZ2 = { 0x2927e, 0x2927f, // Enticement cave
                 0x29234, 0x29235, // Kanave
-                0x2923a, 0x2923b, 0x29280, 0x29281, 0x29282, 0x29283, 0x29284, 0x29285, 0x29286, 0x29287, 0x3b785, // Dream cave/Wake Up Powder
+                0x2923a, 0x2923b, 0x29280, 0x29281, 0x29282, 0x29283, 0x29284, 0x29285, 0x29286, 0x29287, 0x37786, // Dream cave/Wake Up Powder
                 0x29252, 0x292d2, 0x292e6, // champange tower
                 0x2925c, // isis meteorite band
                 0x29249, 0x2924a, 0x2924b, 0x2924c, 0x2924d, 0x2924e, 0x2924f, 0x292b4, 0x292b5, 0x292b6 }; // Pyramid -> Magic key - 29
@@ -919,7 +926,7 @@ namespace DW3Randomizer
                 0x2923c, 0x2923d }; // Dwarf's Cave - Royal Scroll - 35
             int[] treasureAddrZ4 = { 0x29251, 0x292c8, 0x292c9, 0x292ca, 0x292b7, // Garuna Tower
                 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d, // Kidnapper's Cave
-                0x377d4, // Bahrata
+                0x377D5, // Bahrata
                 0x377fe }; // Muor - Black Pepper - 17
             int[] treasureAddrZ5 = { 0x292e4, 0x292e7, // Jipang
                 0x29272, 0x29271, 0x29273, // Pirate Cove
@@ -1170,6 +1177,7 @@ namespace DW3Randomizer
             }
 
             //// Randomize starting stats.  Do not exceed 16 strength and agility, and 40 HP/MP. (13dd1-13ddc)
+            romData[0x1eed7] = (byte)((r1.Next() % 13) + 5 + 9);
             //byte[] stats = { romData[0x13dd1 + 0], romData[0x13dd1 + 1], romData[0x13dd1 + 2], romData[0x13dd1 + 3],
             //    romData[0x13dd1 + 4], romData[0x13dd1 + 5], romData[0x13dd1 + 6], romData[0x13dd1 + 7],
             //    romData[0x13dd1 + 8], romData[0x13dd1 + 9], romData[0x13dd1 + 10], romData[0x13dd1 + 11] };
@@ -1764,7 +1772,74 @@ namespace DW3Randomizer
                 compareComposeString("itemPrice1", writer, 0x11be, 125);
                 compareComposeString("itemPrice2", writer, 0x123b, 125);
 
-                compareComposeString("treasures-0x29228", writer, 0x29228, 0xc0);
+                compareComposeString("treasures-Promontory", writer, 0x29237, 3);
+                compareComposeString("treasures-NajimiBasement", writer, 0x2927B, 3);
+                compareComposeString("treasures-Najimi", writer, 0x292C4, 3);
+                compareComposeString("treasures-Thief'sKey", writer, 0x37DF1, 1);
+                compareComposeString("treasures-MagicBall", writer, 0x375AA, 1);
+                compareComposeString("treasures-Invitation", writer, 0x2927E, 2);
+                compareComposeString("treasures-Kanave", writer, 0x29234, 2);
+                compareComposeString("treasures-Champange1", writer, 0x29252, 1);
+                compareComposeString("treasures-Champange2", writer, 0x292D2, 1);
+                compareComposeString("treasures-Champange3", writer, 0x292E6, 1);
+                compareComposeString("treasures-Isis", writer, 0x2925C, 9);
+                compareComposeString("treasures-IsisWizards", writer, 0x31B9C, 1);
+                compareComposeString("treasures-GoldenClaw", writer, 0x317F4, 1);
+                compareComposeString("treasures-Pyramid1st", writer, 0x29249, 7);
+                compareComposeString("treasures-Pyramid3rd4th5th", writer, 0x292B4, 15);
+                compareComposeString("treasures-DreamCave1", writer, 0x2923A, 2);
+                compareComposeString("treasures-DreamCave2", writer, 0x29280, 8);
+                compareComposeString("treasures-WakeUpNPC", writer, 0x37786, 1);
+                compareComposeString("treasures-Aliahan", writer, 0x29255, 5);
+                compareComposeString("treasures-Portuga", writer, 0x29269, 3);
+                compareComposeString("treasures-RoyalScroll", writer, 0x37CB9, 1);
+                compareComposeString("treasures-Dwarf", writer, 0x2923C, 2);
+                compareComposeString("treasures-Kidnappers1", writer, 0x2923E, 6);
+                compareComposeString("treasures-Kidnappers2", writer, 0x2928B, 4);
+                compareComposeString("treasures-BlackPepperNPC", writer, 0x377D5, 1);
+                compareComposeString("treasures-Tedan1", writer, 0x31B94, 1);
+                compareComposeString("treasures-Tedan2", writer, 0x29270, 1);
+                compareComposeString("treasures-TedanGreenOrb", writer, 0x37828, 1);
+                compareComposeString("treasures-Garuna1", writer, 0x29251, 1);
+                compareComposeString("treasures-Garuna2", writer, 0x292C7, 4);
+                compareComposeString("treasures-NohMask", writer, 0x292E4, 1);
+                compareComposeString("treasures-PurpleOrb", writer, 0x292E7, 1);
+                compareComposeString("treasures-WaterBlaster", writer, 0x377FE, 1);
+                compareComposeString("treasures-PirateCove", writer, 0x29271, 3);
+                compareComposeString("treasures-Eginbear", writer, 0x2925B, 1);
+                compareComposeString("treasures-FinalKey", writer, 0x2922B, 1);
+                compareComposeString("treasures-ArpTower", writer, 0x292CB, 7);
+                compareComposeString("treasures-Soo", writer, 0x31B8C, 1);
+                compareComposeString("treasures-SamanaoCave", writer, 0x29291, 23);
+                compareComposeString("treasures-SamanaoCastle", writer, 0x292E5, 1);
+                compareComposeString("treasures-LancelCave1", writer, 0x29244, 5);
+                compareComposeString("treasures-LancelCave2", writer, 0x2928F, 2);
+                compareComposeString("treasures-Luzami", writer, 0x31B97, 1);
+                compareComposeString("treasures-NewTown1", writer, 0x2926C, 2);
+                compareComposeString("treasures-NewTownYellowOrb", writer, 0x31B80, 1);
+                compareComposeString("treasures-Sailor'sThighNPC", writer, 0x378A9, 1);
+                compareComposeString("treasures-GhostShip", writer, 0x29275, 6);
+                compareComposeString("treasures-SwordOfGaia", writer, 0x31B84, 1);
+                compareComposeString("treasures-Negrogund", writer, 0x29288, 3);
+                compareComposeString("treasures-SilverOrb", writer, 0x37907, 1);
+                compareComposeString("treasures-LeafOfWorld", writer, 0x31B9F, 1);
+                compareComposeString("treasures-SphereOfLight", writer, 0x37929, 1);
+                compareComposeString("treasures-Baramos", writer, 0x29228, 3);
+                compareComposeString("treasures-SwordOfIllusion", writer, 0x37a25, 1);
+                compareComposeString("treasures-Tantegel", writer, 0x29265, 4);
+                compareComposeString("treasures-Erdrick's", writer, 0x292A8, 5);
+                compareComposeString("treasures-SilverHarp", writer, 0x29274, 1);
+                compareComposeString("treasures-MountainCave", writer, 0x292DF, 5);
+                compareComposeString("treasures-Oricon", writer, 0x31B90, 1);
+                compareComposeString("treasures-FairyFlute", writer, 0x31B88, 1);
+                compareComposeString("treasures-KolTower1", writer, 0x29253, 2);
+                compareComposeString("treasures-KolTower2", writer, 0x292D5, 10);
+                compareComposeString("treasures-SacredAmulet", writer, 0x37D5A, 1);
+                compareComposeString("treasures-StaffOfRain", writer, 0x37D9D, 1);
+                compareComposeString("treasures-RainbowDrop", writer, 0x37D80, 1);
+                compareComposeString("treasures-Rimuldar", writer, 0x29233, 1);
+                compareComposeString("treasures-ZomaCastle", writer, 0x292AD, 7);
+
                 compareComposeString("stores", writer, 0x36838, 248, 1, "g128");
 
                 for (int lnI = 0; lnI < 95; lnI++)
