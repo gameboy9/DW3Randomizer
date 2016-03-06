@@ -167,7 +167,8 @@ namespace DW3Randomizer
 
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
-            byte[] codData1 = { 0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the revive one character code that I'm replacing.
+            byte[] codData1 = { 0xa0, 0x00, // Make sure Y is 0 first.
+                0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the revive one character code that I'm replacing.
                 0xc8, 0xc8, // Increment Y twice (Y is used to revive the characters)
                 0xc0, 0x08, // Compare Y with 08
                 0xd0, 0xf7, // If not equal, go back to the JSR mentioned above
@@ -175,7 +176,7 @@ namespace DW3Randomizer
                 0xea, 0xea, 0xea, 0xea, 0xea,
                 0xea, 0xea, 0xea, 0xea, 0xea,
                 0xea, 0xea, 0xea, 0xea, 0xea,
-                0xea, 0xea, 0xea, 0xea, 0xea, 0xea }; // 21 NOPs, since I have nothing else to do.
+                0xea, 0xea, 0xea, 0xea }; // 19 NOPs, since I have nothing else to do.
             byte[] codData2 = { 0xa9, 0x80, // Load 80, the status for alive
                 0x99, 0x3c, 0x07, // store to two status bytes
                 0x99, 0x3d, 0x07,
@@ -505,6 +506,8 @@ namespace DW3Randomizer
                 {
                     int totalAtk = enemyStats[lnJ] + ((enemyStats[lnJ + 14] % 4) * 256);
                     if (lnJ == 3) totalAtk = enemyStats[lnJ];
+                    if (lnJ == 7 && lnI == 0x87) totalAtk = 5; // We want Ortega to die quickly by giving him 5 HP.
+                    if (lnJ == 5 && lnI == 0x87) totalAtk = 2000; // ... or win the battle quickly by giving him hoards of strength!  (he still winds up dead I think)
 
                     if (lnJ == 0 && totalAtk > 0)
                     {
@@ -589,15 +592,15 @@ namespace DW3Randomizer
 
                 int enemyPattern = r1.Next() % 100;
 
-                if (lnI < 15 || lnI == 0x87 || lnI == 0x68)
+                if (lnI < 15 || lnI == 0x87 || lnI == 0x68) // Ortega, so he dies quickly, and red slime, because that monster is WAY out of order
                     enemyPattern = (enemyPattern < pattern1[0] ? 0 : enemyPattern < pattern1[1] ? 1 : enemyPattern < pattern1[2] ? 2 : enemyPattern < pattern1[3] ? 3 : 4);
                 else if (lnI < 30)
                     enemyPattern = (enemyPattern < pattern2[0] ? 0 : enemyPattern < pattern2[1] ? 1 : enemyPattern < pattern2[2] ? 2 : enemyPattern < pattern2[3] ? 3 : 4);
-                else if (lnI < 45 || lnI == 0x88 || lnI == 0x8a)
+                else if (lnI < 45 || lnI == 0x88 || lnI == 0x8a) // Kandar 1 and Kandar Henchman
                     enemyPattern = (enemyPattern < pattern3[0] ? 0 : enemyPattern < pattern3[1] ? 1 : enemyPattern < pattern3[2] ? 2 : enemyPattern < pattern3[3] ? 3 : 4);
                 else if (lnI < 60)
                     enemyPattern = (enemyPattern < pattern4[0] ? 0 : enemyPattern < pattern4[1] ? 1 : enemyPattern < pattern4[2] ? 2 : enemyPattern < pattern4[3] ? 3 : 4);
-                else if (lnI < 75 || lnI == 0x89)
+                else if (lnI < 75 || lnI == 0x89) // Kandar 2
                     enemyPattern = (enemyPattern < pattern5[0] ? 0 : enemyPattern < pattern5[1] ? 1 : enemyPattern < pattern5[2] ? 2 : enemyPattern < pattern5[3] ? 3 : 4);
                 else if (lnI < 90)
                     enemyPattern = (enemyPattern < pattern6[0] ? 0 : enemyPattern < pattern6[1] ? 1 : enemyPattern < pattern6[2] ? 2 : enemyPattern < pattern6[3] ? 3 : 4);
@@ -714,11 +717,12 @@ namespace DW3Randomizer
                     romData[byteValStart + lnJ] = enemyStats[lnJ];
             }
 
-            List<int> gentleZones = new List<int>() { 4, 5, 6, 65, 66, 67, 68, 7, 8, 69, 70 };
-            List<int> violentZone1 = new List<int>() { 78, 48, 79, 81 };
-            List<int> violentZone2 = new List<int>() { 82, 39, 11 };
-            List<int> violentZone3 = new List<int>() { 64, 50, 51, 52, 54, 55, 57, 58, 60, 61, 63, 59, 62, 40, 53, 56 };
-            List<int> violentZone4 = new List<int>() { 25, 34, 38, 63 };
+            // Aliahan 1, 2, 3, Promontory Cave, Tower of Najimi B, 1, 2, Aliahan 4, Enticement Cave 1, 2, Romaly, Kanave, Champange Tower, Noaniels, Dream Cave, Assaram, Isis 1, 2, Pyramid 1, 2, 3
+            List<int> gentleZones = new List<int>() { 4, 5, 6, 65, 66, 67, 68, 7, 69, 70, 8, 9, 71, 72, 10, 74, 75, 12, 13, 14, 76, 77, 80 }; 
+            List<int> violentZone1 = new List<int>() { 78, 48, 79, 81 }; // Cave of Necrogund
+            List<int> violentZone2 = new List<int>() { 82, 39, 11 }; // Baramos Castle
+            List<int> violentZone3 = new List<int>() { 64, 50, 51, 52, 54, 55, 57, 58, 60, 61, 63, 59, 62, 40, 53, 56 };  // Tantegel overworld, caves, and towers
+            List<int> violentZone4 = new List<int>() { 25, 34, 38, 63 }; // Zoma's Castle
             // Totally randomize monster zones
             for (int lnI = 0; lnI < 95; lnI++)
             {
@@ -954,11 +958,11 @@ namespace DW3Randomizer
                 0x29252, 0x292d2, 0x292e6, // champange tower
                 0x2925c, // isis meteorite band
                 0x29249, 0x2924a, 0x2924b, 0x2924c, 0x2924d, 0x2924e, 0x2924f, 0x292b4, 0x292b5, 0x292b6 }; // Pyramid -> Magic key - 29
-            int[] treasureAddrZ3 = { 0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, 0x292c3, 0x317f4, // Pyramid continued
+            int[] treasureAddrZ3 = { 0x292c3, 0x317f4, // Pyramid continued - cannot randomize 12 mummy men chests... 0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, 
                 0x29255, 0x29256, 0x29257, 0x29258, 0x29249, 0x2924a, // Aliahan continued
                 0x31b9c, 0x2925d, 0x2925e, 0x2925f, 0x29260, 0x29261, 0x29262, 0x29263, 0x29264, // Isis continued
                 0x29269, 0x2926a, 0x2926b, 0x37cb9, // Portuga
-                0x2923c, 0x2923d }; // Dwarf's Cave - Royal Scroll - 35
+                0x2923c, 0x2923d }; // Dwarf's Cave - Royal Scroll - 23
             int[] treasureAddrZ4 = { 0x29251, 0x292c8, 0x292c9, 0x292ca, 0x292b7, // Garuna Tower
                 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d, // Kidnapper's Cave
                 0x377D5, // Bahrata
@@ -1168,7 +1172,7 @@ namespace DW3Randomizer
 
             // Verify that key items are available in either a store or a treasure chest in the right zone.
             byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x52, 0x5a, 0x54, 0x6e, 0x6b, 0x11, 0x77, 0x75, 0x70, 0x47, 0x10, 0x72 };
-            byte[] keyTreasure = { 8, 11, 40, 75, 92, 134, 135, 143, 144, 150, 151, 155, 190, 190, 192, 192, 199 };
+            byte[] keyTreasure = { 8, 11, 40, 63, 80, 122, 123, 131, 132, 138, 139, 143, 178, 178, 180, 180, 187 };
             //byte[] keyWStore = { 2, 2, 36, 48, 48, 48, 48, 48, 48 };
             //byte[] keyIStore = { 2, 2, 54, 66, 66, 66, 66, 66, 66 };
             for (int lnI = 0; lnI < keyItems.Length; lnI++)
