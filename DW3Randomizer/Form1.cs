@@ -97,16 +97,49 @@ namespace DW3Randomizer
                 using (TextReader reader = File.OpenText("lastFile.txt"))
                 {
                     txtFileName.Text = reader.ReadLine();
-                    runChecksum();
                     txtCompare.Text = reader.ReadLine();
+                    txtDefault1.Text = reader.ReadLine();
+                    txtDefault2.Text = reader.ReadLine();
+                    txtDefault3.Text = reader.ReadLine();
+                    txtDefault4.Text = reader.ReadLine();
+                    txtDefault5.Text = reader.ReadLine();
+                    txtDefault6.Text = reader.ReadLine();
+                    txtDefault7.Text = reader.ReadLine();
+                    txtDefault8.Text = reader.ReadLine();
+                    txtDefault9.Text = reader.ReadLine();
+                    txtDefault10.Text = reader.ReadLine();
+                    txtDefault11.Text = reader.ReadLine();
+                    txtDefault12.Text = reader.ReadLine();
+                    runChecksum();
                 }
             }
             catch
             {
                 // ignore error
+                txtDefault1.Text = "Brindar";
+                txtDefault2.Text = "Ragnar";
+                txtDefault3.Text = "Adan";
+                txtDefault4.Text = "Glennard";
+                txtDefault5.Text = "Theson";
+                txtDefault6.Text = "Elucidus";
+                txtDefault7.Text = "Harley";
+                txtDefault8.Text = "Mathias";
+                txtDefault9.Text = "Sartris";
+                txtDefault10.Text = "Petrus";
+                txtDefault11.Text = "Hiram";
+                txtDefault12.Text = "Viron";
             }
 
-            radSlightIntensity_CheckedChanged(null, null);
+            radInsaneIntensity_CheckedChanged(null, null);
+            // Lower case letters start at 0x0b, Upper case letters start at 0x25.
+            // Is Q being skipped?!
+            // bcdef01234
+            // 567890abcd
+            // ef01234
+            // 56789abcde
+            // f012345678
+            // 9abcde
+
         }
 
         private void btnNewSeed_Click(object sender, EventArgs e)
@@ -168,7 +201,7 @@ namespace DW3Randomizer
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
             byte[] codData1 = { 0xa0, 0x00, // Make sure Y is 0 first.
-                0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the revive one character code that I'm replacing.
+                0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the "revive one character code" that I'm replacing.
                 0xc8, 0xc8, // Increment Y twice (Y is used to revive the characters)
                 0xc0, 0x08, // Compare Y with 08
                 0xd0, 0xf7, // If not equal, go back to the JSR mentioned above
@@ -202,6 +235,41 @@ namespace DW3Randomizer
                 romData[0xbb80 + lnI] = parryFightFix1[lnI];
             for (int lnI = 0; lnI < parryFightFix2.Length; lnI++)
                 romData[0xa402 + lnI] = parryFightFix2[lnI];
+
+            // Rename the starting characters.
+            for (int lnI = 0; lnI < 12; lnI++)
+            {
+                string name = (lnI == 0 ? txtDefault1.Text :
+                    lnI == 1 ? txtDefault2.Text :
+                    lnI == 2 ? txtDefault3.Text :
+                    lnI == 3 ? txtDefault4.Text :
+                    lnI == 4 ? txtDefault5.Text :
+                    lnI == 5 ? txtDefault6.Text :
+                    lnI == 6 ? txtDefault7.Text :
+                    lnI == 7 ? txtDefault8.Text :
+                    lnI == 8 ? txtDefault9.Text :
+                    lnI == 9 ? txtDefault10.Text :
+                    lnI == 10 ? txtDefault11.Text :
+                    txtDefault12.Text);
+                for (int lnJ = 0; lnJ < 8; lnJ++)
+                {
+                    romData[0x1ed52 + (8 * lnI) + lnJ] = 0;
+                    try
+                    {
+                        char character = Convert.ToChar(name.Substring(lnJ, 1));
+                        if (character >= 0x30 && character <= 0x39)
+                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 47);
+                        if (character >= 0x41 && character <= 0x5a)
+                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 28);
+                        if (character >= 0x61 && character <= 0x7a)
+                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 86);
+                    }
+                    catch
+                    {
+                        romData[0x1ed52 + (8 * lnI) + lnJ] = 0; // no more characters to process - make the rest of the characters blank
+                    }
+                }
+            }
 
             // Fix eight person hero spell glitch as well as the baseline overflow stat glitch, via Eggers' Bug Fix IPS patch
             //byte[] otherFixes1 = { 0x4c, 0xb2, 0xbf };
@@ -507,12 +575,11 @@ namespace DW3Randomizer
                     int totalAtk = enemyStats[lnJ] + ((enemyStats[lnJ + 14] % 4) * 256);
                     if (lnJ == 3) totalAtk = enemyStats[lnJ];
                     if (lnJ == 7 && lnI == 0x87) totalAtk = 5; // We want Ortega to die quickly by giving him 5 HP.
-                    if (lnJ == 5 && lnI == 0x87) totalAtk = 2000; // ... or win the battle quickly by giving him hoards of strength!  (he still winds up dead I think)
+                    if (lnJ == 5 && lnI == 0x87) totalAtk = 2000; // ... or win the battle quickly by giving him hoards of strength!  (he still winds up "dead" I think)
 
-                    if (lnJ == 0 && totalAtk > 0)
-                    {
-                        totalAtk += (r1.Next() % (totalAtk / 2));
-                    }
+                    // Potentially add quadruple the possible gold for each monster.  Average 2 1/2 times...
+                    if (lnJ == 4 && totalAtk > 0)
+                        totalAtk += (r1.Next() % (totalAtk * 3));
                     else
                     {
                         int atkRandom = (r1.Next() % 3);
@@ -1161,7 +1228,7 @@ namespace DW3Randomizer
             // Inn prices randomized
             for (int lnI = 0; lnI < 26; lnI++)
             {
-                int innPrice = r1.Next() % 30;
+                int innPrice = (r1.Next() % 20) + 1;
                 romData[0x367c1 + lnI] -= (byte)(romData[0x367c1 + lnI] % 32);
                 romData[0x367c1 + lnI] += (byte)innPrice;
             }
@@ -1989,6 +2056,18 @@ namespace DW3Randomizer
                 {
                     writer.WriteLine(txtFileName.Text);
                     writer.WriteLine(txtCompare.Text);
+                    writer.WriteLine(txtDefault1.Text);
+                    writer.WriteLine(txtDefault2.Text);
+                    writer.WriteLine(txtDefault3.Text);
+                    writer.WriteLine(txtDefault4.Text);
+                    writer.WriteLine(txtDefault5.Text);
+                    writer.WriteLine(txtDefault6.Text);
+                    writer.WriteLine(txtDefault7.Text);
+                    writer.WriteLine(txtDefault8.Text);
+                    writer.WriteLine(txtDefault9.Text);
+                    writer.WriteLine(txtDefault10.Text);
+                    writer.WriteLine(txtDefault11.Text);
+                    writer.WriteLine(txtDefault12.Text);
                 }
         }
 

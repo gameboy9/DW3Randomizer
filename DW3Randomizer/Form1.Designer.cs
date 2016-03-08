@@ -51,6 +51,19 @@
             this.label5 = new System.Windows.Forms.Label();
             this.txtCompare = new System.Windows.Forms.TextBox();
             this.btnNewSeed = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDefault1 = new System.Windows.Forms.TextBox();
+            this.txtDefault4 = new System.Windows.Forms.TextBox();
+            this.txtDefault5 = new System.Windows.Forms.TextBox();
+            this.txtDefault6 = new System.Windows.Forms.TextBox();
+            this.txtDefault7 = new System.Windows.Forms.TextBox();
+            this.txtDefault8 = new System.Windows.Forms.TextBox();
+            this.txtDefault9 = new System.Windows.Forms.TextBox();
+            this.txtDefault12 = new System.Windows.Forms.TextBox();
+            this.txtDefault11 = new System.Windows.Forms.TextBox();
+            this.txtDefault10 = new System.Windows.Forms.TextBox();
+            this.txtDefault3 = new System.Windows.Forms.TextBox();
+            this.txtDefault2 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtFileName
@@ -124,7 +137,7 @@
             this.chkHalfExpGoldReq.Location = new System.Drawing.Point(12, 129);
             this.chkHalfExpGoldReq.Name = "chkHalfExpGoldReq";
             this.chkHalfExpGoldReq.Size = new System.Drawing.Size(357, 17);
-            this.chkHalfExpGoldReq.TabIndex = 6;
+            this.chkHalfExpGoldReq.TabIndex = 5;
             this.chkHalfExpGoldReq.Text = "Increase experience gain by 133% and half gold requirements for items";
             this.chkHalfExpGoldReq.UseVisualStyleBackColor = true;
             // 
@@ -132,10 +145,10 @@
             // 
             this.radSlightIntensity.AutoSize = true;
             this.radSlightIntensity.Enabled = false;
-            this.radSlightIntensity.Location = new System.Drawing.Point(70, 219);
+            this.radSlightIntensity.Location = new System.Drawing.Point(70, 306);
             this.radSlightIntensity.Name = "radSlightIntensity";
             this.radSlightIntensity.Size = new System.Drawing.Size(51, 17);
-            this.radSlightIntensity.TabIndex = 11;
+            this.radSlightIntensity.TabIndex = 22;
             this.radSlightIntensity.Text = "Slight";
             this.radSlightIntensity.UseVisualStyleBackColor = true;
             this.radSlightIntensity.CheckedChanged += new System.EventHandler(this.radSlightIntensity_CheckedChanged);
@@ -144,10 +157,10 @@
             // 
             this.radModerateIntensity.AutoSize = true;
             this.radModerateIntensity.Enabled = false;
-            this.radModerateIntensity.Location = new System.Drawing.Point(128, 219);
+            this.radModerateIntensity.Location = new System.Drawing.Point(128, 306);
             this.radModerateIntensity.Name = "radModerateIntensity";
             this.radModerateIntensity.Size = new System.Drawing.Size(70, 17);
-            this.radModerateIntensity.TabIndex = 12;
+            this.radModerateIntensity.TabIndex = 23;
             this.radModerateIntensity.Text = "Moderate";
             this.radModerateIntensity.UseVisualStyleBackColor = true;
             this.radModerateIntensity.CheckedChanged += new System.EventHandler(this.radModerateIntensity_CheckedChanged);
@@ -156,10 +169,10 @@
             // 
             this.radHeavyIntensity.AutoSize = true;
             this.radHeavyIntensity.Enabled = false;
-            this.radHeavyIntensity.Location = new System.Drawing.Point(205, 219);
+            this.radHeavyIntensity.Location = new System.Drawing.Point(205, 306);
             this.radHeavyIntensity.Name = "radHeavyIntensity";
             this.radHeavyIntensity.Size = new System.Drawing.Size(56, 17);
-            this.radHeavyIntensity.TabIndex = 13;
+            this.radHeavyIntensity.TabIndex = 24;
             this.radHeavyIntensity.Text = "Heavy";
             this.radHeavyIntensity.UseVisualStyleBackColor = true;
             this.radHeavyIntensity.CheckedChanged += new System.EventHandler(this.radHeavyIntensity_CheckedChanged);
@@ -168,10 +181,10 @@
             // 
             this.radInsaneIntensity.AutoSize = true;
             this.radInsaneIntensity.Checked = true;
-            this.radInsaneIntensity.Location = new System.Drawing.Point(268, 219);
+            this.radInsaneIntensity.Location = new System.Drawing.Point(268, 306);
             this.radInsaneIntensity.Name = "radInsaneIntensity";
             this.radInsaneIntensity.Size = new System.Drawing.Size(68, 17);
-            this.radInsaneIntensity.TabIndex = 14;
+            this.radInsaneIntensity.TabIndex = 25;
             this.radInsaneIntensity.TabStop = true;
             this.radInsaneIntensity.Text = "INSANE!";
             this.radInsaneIntensity.UseVisualStyleBackColor = true;
@@ -179,10 +192,10 @@
             // 
             // btnRandomize
             // 
-            this.btnRandomize.Location = new System.Drawing.Point(448, 219);
+            this.btnRandomize.Location = new System.Drawing.Point(448, 306);
             this.btnRandomize.Name = "btnRandomize";
             this.btnRandomize.Size = new System.Drawing.Size(75, 23);
-            this.btnRandomize.TabIndex = 15;
+            this.btnRandomize.TabIndex = 26;
             this.btnRandomize.Text = "Randomize!";
             this.btnRandomize.UseVisualStyleBackColor = true;
             this.btnRandomize.Click += new System.EventHandler(this.btnRandomize_Click);
@@ -190,7 +203,7 @@
             // lblIntensityDesc
             // 
             this.lblIntensityDesc.AutoSize = true;
-            this.lblIntensityDesc.Location = new System.Drawing.Point(11, 250);
+            this.lblIntensityDesc.Location = new System.Drawing.Point(11, 337);
             this.lblIntensityDesc.MaximumSize = new System.Drawing.Size(500, 0);
             this.lblIntensityDesc.Name = "lblIntensityDesc";
             this.lblIntensityDesc.Size = new System.Drawing.Size(84, 13);
@@ -212,7 +225,7 @@
             this.txtSeed.Location = new System.Drawing.Point(69, 186);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(100, 20);
-            this.txtSeed.TabIndex = 8;
+            this.txtSeed.TabIndex = 7;
             // 
             // label3
             // 
@@ -231,17 +244,17 @@
             this.chkDoubleXP.Location = new System.Drawing.Point(12, 152);
             this.chkDoubleXP.Name = "chkDoubleXP";
             this.chkDoubleXP.Size = new System.Drawing.Size(364, 17);
-            this.chkDoubleXP.TabIndex = 7;
+            this.chkDoubleXP.TabIndex = 6;
             this.chkDoubleXP.Text = "XP +100% for all monsters EXCEPT metal slime/babble, less encounters";
             this.chkDoubleXP.UseVisualStyleBackColor = true;
             // 
             // optNoIntensity
             // 
             this.optNoIntensity.AutoSize = true;
-            this.optNoIntensity.Location = new System.Drawing.Point(12, 219);
+            this.optNoIntensity.Location = new System.Drawing.Point(12, 306);
             this.optNoIntensity.Name = "optNoIntensity";
             this.optNoIntensity.Size = new System.Drawing.Size(51, 17);
-            this.optNoIntensity.TabIndex = 10;
+            this.optNoIntensity.TabIndex = 21;
             this.optNoIntensity.Text = "None";
             this.optNoIntensity.UseVisualStyleBackColor = true;
             // 
@@ -276,16 +289,134 @@
             this.btnNewSeed.Location = new System.Drawing.Point(186, 184);
             this.btnNewSeed.Name = "btnNewSeed";
             this.btnNewSeed.Size = new System.Drawing.Size(75, 23);
-            this.btnNewSeed.TabIndex = 9;
+            this.btnNewSeed.TabIndex = 8;
             this.btnNewSeed.Text = "New Seed";
             this.btnNewSeed.UseVisualStyleBackColor = true;
             this.btnNewSeed.Click += new System.EventHandler(this.btnNewSeed_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 217);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(77, 13);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "Default Names";
+            // 
+            // txtDefault1
+            // 
+            this.txtDefault1.Location = new System.Drawing.Point(95, 216);
+            this.txtDefault1.MaxLength = 8;
+            this.txtDefault1.Name = "txtDefault1";
+            this.txtDefault1.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault1.TabIndex = 9;
+            // 
+            // txtDefault4
+            // 
+            this.txtDefault4.Location = new System.Drawing.Point(198, 216);
+            this.txtDefault4.MaxLength = 8;
+            this.txtDefault4.Name = "txtDefault4";
+            this.txtDefault4.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault4.TabIndex = 12;
+            // 
+            // txtDefault5
+            // 
+            this.txtDefault5.Location = new System.Drawing.Point(198, 242);
+            this.txtDefault5.MaxLength = 8;
+            this.txtDefault5.Name = "txtDefault5";
+            this.txtDefault5.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault5.TabIndex = 13;
+            // 
+            // txtDefault6
+            // 
+            this.txtDefault6.Location = new System.Drawing.Point(198, 269);
+            this.txtDefault6.MaxLength = 8;
+            this.txtDefault6.Name = "txtDefault6";
+            this.txtDefault6.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault6.TabIndex = 14;
+            // 
+            // txtDefault7
+            // 
+            this.txtDefault7.Location = new System.Drawing.Point(301, 216);
+            this.txtDefault7.MaxLength = 8;
+            this.txtDefault7.Name = "txtDefault7";
+            this.txtDefault7.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault7.TabIndex = 15;
+            // 
+            // txtDefault8
+            // 
+            this.txtDefault8.Location = new System.Drawing.Point(301, 242);
+            this.txtDefault8.MaxLength = 8;
+            this.txtDefault8.Name = "txtDefault8";
+            this.txtDefault8.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault8.TabIndex = 16;
+            // 
+            // txtDefault9
+            // 
+            this.txtDefault9.Location = new System.Drawing.Point(300, 269);
+            this.txtDefault9.MaxLength = 8;
+            this.txtDefault9.Name = "txtDefault9";
+            this.txtDefault9.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault9.TabIndex = 17;
+            // 
+            // txtDefault12
+            // 
+            this.txtDefault12.Location = new System.Drawing.Point(407, 269);
+            this.txtDefault12.MaxLength = 8;
+            this.txtDefault12.Name = "txtDefault12";
+            this.txtDefault12.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault12.TabIndex = 20;
+            // 
+            // txtDefault11
+            // 
+            this.txtDefault11.Location = new System.Drawing.Point(407, 242);
+            this.txtDefault11.MaxLength = 8;
+            this.txtDefault11.Name = "txtDefault11";
+            this.txtDefault11.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault11.TabIndex = 19;
+            // 
+            // txtDefault10
+            // 
+            this.txtDefault10.Location = new System.Drawing.Point(407, 216);
+            this.txtDefault10.MaxLength = 8;
+            this.txtDefault10.Name = "txtDefault10";
+            this.txtDefault10.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault10.TabIndex = 18;
+            // 
+            // txtDefault3
+            // 
+            this.txtDefault3.Location = new System.Drawing.Point(95, 269);
+            this.txtDefault3.MaxLength = 8;
+            this.txtDefault3.Name = "txtDefault3";
+            this.txtDefault3.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault3.TabIndex = 11;
+            // 
+            // txtDefault2
+            // 
+            this.txtDefault2.Location = new System.Drawing.Point(95, 242);
+            this.txtDefault2.MaxLength = 8;
+            this.txtDefault2.Name = "txtDefault2";
+            this.txtDefault2.Size = new System.Drawing.Size(81, 20);
+            this.txtDefault2.TabIndex = 10;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(533, 397);
+            this.ClientSize = new System.Drawing.Size(537, 450);
+            this.Controls.Add(this.txtDefault2);
+            this.Controls.Add(this.txtDefault3);
+            this.Controls.Add(this.txtDefault10);
+            this.Controls.Add(this.txtDefault11);
+            this.Controls.Add(this.txtDefault12);
+            this.Controls.Add(this.txtDefault9);
+            this.Controls.Add(this.txtDefault8);
+            this.Controls.Add(this.txtDefault7);
+            this.Controls.Add(this.txtDefault6);
+            this.Controls.Add(this.txtDefault5);
+            this.Controls.Add(this.txtDefault4);
+            this.Controls.Add(this.txtDefault1);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnNewSeed);
             this.Controls.Add(this.btnCompareBrowse);
             this.Controls.Add(this.label5);
@@ -343,6 +474,19 @@
         private System.Windows.Forms.TextBox txtCompare;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnCompareBrowse;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtDefault1;
+        private System.Windows.Forms.TextBox txtDefault4;
+        private System.Windows.Forms.TextBox txtDefault5;
+        private System.Windows.Forms.TextBox txtDefault6;
+        private System.Windows.Forms.TextBox txtDefault7;
+        private System.Windows.Forms.TextBox txtDefault8;
+        private System.Windows.Forms.TextBox txtDefault9;
+        private System.Windows.Forms.TextBox txtDefault12;
+        private System.Windows.Forms.TextBox txtDefault11;
+        private System.Windows.Forms.TextBox txtDefault10;
+        private System.Windows.Forms.TextBox txtDefault3;
+        private System.Windows.Forms.TextBox txtDefault2;
     }
 }
 
