@@ -944,26 +944,26 @@ namespace DW3Randomizer
             int[] commandSpells = { 26, 27, 28, 30, 31, 32, 33, 38, 39, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
             // Randomize 8 command spells for the hero, pilgrim, and wizard.
             int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 39, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 }; ;
-            int[] pilgrimCommand = commandSpells;
-            int[] wizardCommand = commandSpells;
+            int[] pilgrimCommand = { 27, 28, 30, 31, 32, 33, 38, 39, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
+            int[] wizardCommand = { 26, 27, 28, 30, 31, 32, 33, 38, 39, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
 
             for (int lnI = 0; lnI < commandSpells.Length * 20; lnI++)
             {
                 swapArray(heroCommand, (r1.Next() % heroCommand.Length), (r1.Next() % heroCommand.Length));
-                swapArray(pilgrimCommand, (r1.Next() % commandSpells.Length), (r1.Next() % commandSpells.Length));
-                swapArray(wizardCommand, (r1.Next() % commandSpells.Length), (r1.Next() % commandSpells.Length));
+                swapArray(pilgrimCommand, (r1.Next() % pilgrimCommand.Length), (r1.Next() % pilgrimCommand.Length));
+                swapArray(wizardCommand, (r1.Next() % wizardCommand.Length), (r1.Next() % wizardCommand.Length));
             }
 
             // Randomize 16 fight spells for the hero, and 24 spells for the pilgrim, and wizard.
             int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-            int[] pilgrimFight = fightSpells;
-            int[] wizardFight = fightSpells;
+            int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
+            int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
 
             for (int lnI = 0; lnI < fightSpells.Length * 20; lnI++)
             {
                 swapArray(heroFight, (r1.Next() % heroFight.Length), (r1.Next() % heroFight.Length));
-                swapArray(pilgrimFight, (r1.Next() % fightSpells.Length), (r1.Next() % fightSpells.Length));
-                swapArray(wizardFight, (r1.Next() % fightSpells.Length), (r1.Next() % fightSpells.Length));
+                swapArray(pilgrimFight, (r1.Next() % pilgrimFight.Length), (r1.Next() % pilgrimFight.Length));
+                swapArray(wizardFight, (r1.Next() % wizardFight.Length), (r1.Next() % wizardFight.Length));
             }
 
             for (int lnI = 0; lnI < 8; lnI++)
@@ -982,6 +982,11 @@ namespace DW3Randomizer
             }
             romData[0x22e7 + 24] = 38; // Hero learns Return first.
             romData[0x29d6 + romData[0x22e7 + 24]] = 2;
+            romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
+            romData[0x29d6 + romData[0x22e7 + 32 + 24]] = 2;
+            romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
+            romData[0x29d6 + romData[0x22e7 + 64 + 24]] = 2;
+
             romData[0x29d6 + 63 + romData[0x22e7 + 32 + 24]] = 1;
             romData[0x29d6 + 126 + romData[0x22e7 + 64 + 24]] = 1;
 
