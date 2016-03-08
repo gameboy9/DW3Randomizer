@@ -25,7 +25,7 @@
 - Weapon and armor prices are adjusted according to the power randomized.  (power ^ 1.98, 2.26, 2.42, 2.68 for weapons, armor, shields, and helmets respectively, for a maximum price of about 20,000 GP)
 - Who equips each weapon, armor, shield, and helmet is also randomized.
 - The only exceptions are the starting equipment (maximum power 12 for each), which is not changed for any party member.
-- Spells are learned randomly, but return is learned for the hero between levels 2-4.
+- Spells are learned randomly, but return is learned for the hero, antidote is learned for the pilgrim, and heal is learned for the wizard, all between levels 2-4.
 - Treasures are completely randomized, but you will find all key items before they are required either in the treasures to be found, NPCs you run into, or possibly weapon and item stores.
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
