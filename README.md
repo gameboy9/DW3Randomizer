@@ -7,12 +7,12 @@
 - Super speedy battles!
 - Parry/Fight technique removed (I personally don't think it should be there)
 - An opportunity to rename the starting characters from the get go!
-- All party members are revived with full HP and, with all three characters, MP on a party wipe(AKA ColdAsACod), regardless of save location.
+- All party members are revived with full HP and MP on a party wipe(AKA ColdAsACod), regardless of save location.
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
 
-### Insane difficulty
+### Insane randomness
 - All monsters, except Zoma, are completely randomized, except for their HP, Defense, Attack Power, XP. (in first three cases, it is an equal chances of 0%, -50%(minimum), or +50%(maximum) of their original power)
 - Gold may be increased up to quadruple their normal value.
 - Monsters resistances are randomized as well, but higher level monsters have a higher chance of higher resistances.
@@ -25,7 +25,7 @@
 - Weapon and armor prices are adjusted according to the power randomized.  (power ^ 1.98, 2.26, 2.42, 2.68 for weapons, armor, shields, and helmets respectively, for a maximum price of about 20,000 GP)
 - Who equips each weapon, armor, shield, and helmet is also randomized.
 - The only exceptions are the starting equipment (maximum power 12 for each), which is not changed for any party member.
-- Spells are learned randomly, but return is learned for the hero between levels 2-4.
+- Spells are learned randomly, but return is learned for the hero, antidote is learned for the pilgrim, and heal is learned for the wizard, all between levels 2-4.
 - Treasures are completely randomized, but you will find all key items before they are required either in the treasures to be found, NPCs you run into, or possibly weapon and item stores.
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
@@ -39,6 +39,7 @@
 - Randomize stat gains
 - Randomize boss fights (much easier said than done I'm afraid)
 - Remove "baseline" for all stats (probably), removing the dreaded "0/1" chance
+- Add the other three randomizations
 
 ## Special Thanks
 - Mcgrew, for his Dragon Warrior 1 Randomizer(https://github.com/mcgrew/dwrandomizer), giving me the inspiration to create this randomizer.  Twitch:  http://www.twitch.tv/mcgrew
