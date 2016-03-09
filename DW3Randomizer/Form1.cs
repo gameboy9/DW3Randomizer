@@ -271,6 +271,8 @@ namespace DW3Randomizer
                 }
             }
 
+            romData[0x3cc6a] = 0x4c; // Forces a jump out of the king scolding routine, saving at least 13 seconds / party wipe.  There are graphical errors, but I'll take it!
+
             // Fix eight person hero spell glitch as well as the baseline overflow stat glitch, via Eggers' Bug Fix IPS patch
             //byte[] otherFixes1 = { 0x4c, 0xb2, 0xbf };
             //byte[] otherFixes2 = { 0xa5, 0x05, 0xf0, 0x08, 0xa9, 0x20, 0x85, 0x05, 0xa9, 0xff, 0xd0, 0x02, 0xa5, 0x04, 0x18, 0x69, 0x0a, 0x90, 0x02, 0xa9, 0xff, 0x85, 0x42, 0x68, 0x4a, 0x18, 0x65, 0x42, 0x90, 0x02, 0xa9, 0xff, 0xa4, 0x51, 0x4c, 0x70, 0xa4 };
@@ -1033,13 +1035,14 @@ namespace DW3Randomizer
             int[] treasureAddrZ3 = { 0x292c3, 0x317f4, // Pyramid continued - cannot randomize 12 mummy men chests... 0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, 
                 0x29255, 0x29256, 0x29257, 0x29258, 0x29249, 0x2924a, // Aliahan continued
                 0x31b9c, 0x2925d, 0x2925e, 0x2925f, 0x29260, 0x29261, 0x29262, 0x29263, 0x29264, // Isis continued
-                0x29269, 0x2926a, 0x2926b, 0x37cb9, // Portuga
-                0x2923c, 0x2923d }; // Dwarf's Cave - Royal Scroll - 23
+                0x29269, 0x2926a, 0x2926b, // Portuga
+                0x2923c, 0x2923d }; // Dwarf's Cave - Royal Scroll - 22
             int[] treasureAddrZ4 = { 0x29251, 0x292c8, 0x292c9, 0x292ca, 0x292b7, // Garuna Tower
                 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d, // Kidnapper's Cave
                 0x377D5, // Bahrata
                 0x377fe }; // Muor - Black Pepper - 17
-            int[] treasureAddrZ5 = { 0x292e4, 0x292e7, // Jipang
+            int[] treasureAddrZ5 = { 0x31b94, 0x29270, // Tedan (except Green Orb)
+                0x292e4, 0x292e7, // Jipang
                 0x29272, 0x29271, 0x29273, // Pirate Cove
                 0x2925b, // Eginbear
                 0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb, // Arp Tower
@@ -1048,13 +1051,13 @@ namespace DW3Randomizer
                 0x29296, 0x29297, 0x292a3, 0x292a4, 0x292a2, 0x2929f, 0x2929e, 0x292a0, 0x292a5, 0x292a1, 0x292a7, 0x29296, // Samanao Cave
                 0x31b97, // Luzami
                 0x2926c, 0x2926d, 0x31b80, // New Town
-                0x31b9f }; // World Tree - Vase of Draught - 42
+                0x31b9f }; // World Tree - Vase of Draught - 44
             int[] treasureAddrZ6 = { 0x2922b }; // Final Key Shrine - Final Key - 1
             int[] treasureAddrZ7 = { 0x292e5, 0x29246, 0x29248, 0x29247, 0x29245, 0x29244, 0x29290, 0x2928f }; // Staff Of Change - Samanao Castle, Lancel Cave - 8
             int[] treasureAddrZ8 = { 0x378a9 }; // Sailor's Thigh Bone - Sailor's Thigh Bone location - 1
             int[] treasureAddrZ9 = { 0x29277, 0x29276, 0x29275, 0x29278, 0x29279, 0x2927a }; // Locket of Love - Ghost ship - 6
             int[] treasureAddrZ10 = { 0x31b84 }; // Sword Of Gaia - Sword Of Gaia shrine - 1
-            int[] treasureAddrZ11 = { 0x29288, 0x29289, 0x2928a, 0x37907 }; // Silver Orb - Cave Of Necrogund - 4
+            int[] treasureAddrZ11 = { 0x29288, 0x29289, 0x2928a }; // Silver Orb - Cave Of Necrogund - 3
             int[] treasureAddrZ12 = { 0x37929, // Sphere Of Light location
                 0x2922a, 0x29229, 0x29228, // Baramos's Castle
                 0x37a25, // Portuga post-Baramos
@@ -1244,7 +1247,7 @@ namespace DW3Randomizer
 
             // Verify that key items are available in either a store or a treasure chest in the right zone.
             byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x52, 0x5a, 0x54, 0x6e, 0x6b, 0x11, 0x77, 0x75, 0x70, 0x47, 0x10, 0x72 };
-            byte[] keyTreasure = { 8, 11, 40, 63, 80, 122, 123, 131, 132, 138, 139, 143, 178, 178, 180, 180, 187 };
+            byte[] keyTreasure = { 8, 11, 40, 62, 79, 123, 124, 132, 133, 139, 140, 143, 178, 178, 180, 180, 187 };
             //byte[] keyWStore = { 2, 2, 36, 48, 48, 48, 48, 48, 48 };
             //byte[] keyIStore = { 2, 2, 54, 66, 66, 66, 66, 66, 66 };
             for (int lnI = 0; lnI < keyItems.Length; lnI++)
@@ -1280,11 +1283,21 @@ namespace DW3Randomizer
             //// Randomize starting stats.  Do not exceed 16 strength and agility, and 40 HP/MP. (13dd1-13ddc)
             // Give each hero from 22HP (min for Wizard) to about 36 HP.  (Hero)  Just so everybody has a minor chance!
             romData[0x1eed7] = (byte)((r1.Next() % 13) + 5 + 9);
-            // Remove the baseline for HP so you have a chance...
+            // Remove the baseline for HP...
             romData[0x24fd] = 0xea;
             romData[0x24fe] = 0x4c;
             romData[0x24ff] = 0xfa;
             romData[0x2500] = 0xa4;
+            // ... and MP...
+            romData[0x255e] = 0xea;
+            romData[0x255f] = 0x4c;
+            romData[0x2560] = 0x5b;
+            romData[0x2561] = 0xa5;
+            // ... and the rest!
+            romData[0x2480] = 0xea;
+            romData[0x2481] = 0x4c;
+            romData[0x2482] = 0x7d;
+            romData[0x2483] = 0xa4;
 
             //byte[] stats = { romData[0x13dd1 + 0], romData[0x13dd1 + 1], romData[0x13dd1 + 2], romData[0x13dd1 + 3],
             //    romData[0x13dd1 + 4], romData[0x13dd1 + 5], romData[0x13dd1 + 6], romData[0x13dd1 + 7],
