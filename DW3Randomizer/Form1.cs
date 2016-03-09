@@ -1246,8 +1246,8 @@ namespace DW3Randomizer
             //    romData[0x19f90 + lnI] = (byte)((r1.Next() % 20) + 1);
 
             // Verify that key items are available in either a store or a treasure chest in the right zone.
-            byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x52, 0x5a, 0x54, 0x6e, 0x6b, 0x11, 0x77, 0x75, 0x70, 0x47, 0x10, 0x72 };
-            byte[] keyTreasure = { 8, 11, 40, 62, 79, 123, 124, 132, 133, 139, 140, 143, 178, 178, 180, 180, 187 };
+            byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x52, 0x5a, 0x54, 0x6e, 0x6b, 0x11, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x75, 0x70, 0x47, 0x10, 0x72 };
+            byte[] keyTreasure = { 8, 11, 40, 62, 79, 123, 124, 132, 133, 139, 140, 143, 143, 143, 143, 143, 143, 178, 178, 180, 180, 187 };
             //byte[] keyWStore = { 2, 2, 36, 48, 48, 48, 48, 48, 48 };
             //byte[] keyIStore = { 2, 2, 54, 66, 66, 66, 66, 66, 66 };
             for (int lnI = 0; lnI < keyItems.Length; lnI++)
@@ -1266,6 +1266,7 @@ namespace DW3Randomizer
                     if (tRand != 0 && tRand != 1)
                     {
                         bool dupCheck = false;
+                        // Make sure we're not replacing a item that also happens to be key!
                         for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
                         {
                             if (romData[allTreasure[tRand]] == keyItems[lnJ])
@@ -1281,7 +1282,7 @@ namespace DW3Randomizer
             }
 
             //// Randomize starting stats.  Do not exceed 16 strength and agility, and 40 HP/MP. (13dd1-13ddc)
-            // Give each hero from 22HP (min for Wizard) to about 36 HP.  (Hero)  Just so everybody has a minor chance!
+            // Give each hero from 22HP (min for Wizard) to about 36 HP.  (Hero)  Just so everybody has a chance!
             romData[0x1eed7] = (byte)((r1.Next() % 13) + 5 + 9);
             // Remove the baseline for HP...
             romData[0x24fd] = 0xea;
@@ -1298,99 +1299,6 @@ namespace DW3Randomizer
             romData[0x2481] = 0x4c;
             romData[0x2482] = 0x7d;
             romData[0x2483] = 0xa4;
-
-            //byte[] stats = { romData[0x13dd1 + 0], romData[0x13dd1 + 1], romData[0x13dd1 + 2], romData[0x13dd1 + 3],
-            //    romData[0x13dd1 + 4], romData[0x13dd1 + 5], romData[0x13dd1 + 6], romData[0x13dd1 + 7],
-            //    romData[0x13dd1 + 8], romData[0x13dd1 + 9], romData[0x13dd1 + 10], romData[0x13dd1 + 11] };
-
-            //for (int lnI = 0; lnI < 12; lnI++)
-            //{
-            //    if (lnI == 3) // Midenhall starts with 0 MP.
-            //        continue;
-            //    switch (lnI % 4)
-            //    {
-            //        case 0:
-            //        case 1:
-            //        case 3:
-            //            randomModifier = (r1.Next() % 16);
-            //            break;
-            //        case 2:
-            //            randomModifier = 24 + (r1.Next() % 16);
-            //            break;
-            //    }
-
-            //    if (romData[0x13dd1 + lnI] + randomModifier >= 0)
-            //    {
-            //        romData[0x13dd1 + lnI] = (byte)(randomModifier);
-            //        stats[lnI] = romData[0x13dd1 + lnI];
-            //    }
-            //}
-
-            //int maxStrength = 255 - maxPower[0];
-            //int maxAgility = 510 - ((maxPower[1] + maxPower[2] + maxPower[3]) * 2);
-            //maxAgility = (maxAgility > 255 ? 255 : maxAgility);
-            //int avgStrength = ((maxStrength / 50));
-            //int[] avg7 = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 15 };
-            //int[] avg5 = { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-            //int[] avg4 = { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
-            //int[] avg3 = { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10 };
-            //// Randomize stat gains... but don't put any stat above 255! (13ddd-13eda)
-            //// 98 bytes for Midenhall, 88 bytes for Cannock, 68 bytes for Moonbrooke.  First break at 210, second break at 250.
-            //for (int lnI = 0; lnI < 254; lnI++)
-            //{
-            //    int byteToUse = 0x13ddd + lnI;
-
-            //    int statToUse1 = (lnI > 244 ? lnI % 2 : (lnI > 206 ? lnI % 4 : lnI % 6)) * 2;
-            //    int statToUse2 = (lnI > 244 ? lnI % 2 : (lnI > 206 ? lnI % 4 : lnI % 6)) * 2 + 1;
-
-            //    int randomModifier1 = 0;
-            //    int randomModifier2 = 0;
-
-            //    if (lnI % 2 == 0)
-            //    {
-            //        int r1Result = (r1.Next() % 30);
-            //        r1Result = (r1Result < 0 ? 0 : r1Result);
-            //        randomModifier1 = (avgStrength == 5 ? avg5[r1Result] : avgStrength == 4 ? avg4[r1Result] : avg3[r1Result]);
-            //        if (stats[statToUse1] + randomModifier1 > maxStrength)
-            //            randomModifier1 = 0;
-
-            //        int r2Result = (r1.Next() % 30);
-            //        r2Result = (r2Result < 0 ? 0 : r2Result);
-            //        randomModifier2 = (statToUse2 == 1 ? avg4[r2Result] : statToUse2 == 5 ? avg5[r2Result] : avg7[r2Result]);
-            //        if (stats[statToUse2] + randomModifier2 > maxAgility)
-            //            randomModifier2 = 0;
-            //    }
-            //    else
-            //    {
-            //        int r1Result = (r1.Next() % 30);
-            //        r1Result = (r1Result < 0 ? 0 : r1Result);
-            //        randomModifier1 = avg5[r1Result];
-            //        if (stats[statToUse1] + randomModifier1 > 255)
-            //            randomModifier1 = 0;
-
-            //        int r2Result = (r1.Next() % 30);
-            //        r2Result = (r2Result < 0 ? 0 : r2Result);
-            //        randomModifier2 = (statToUse2 == 3 ? 0 : statToUse2 == 7 ? avg5[r2Result] : avg7[r2Result]);
-            //        if (stats[statToUse2] + randomModifier2 > 255)
-            //            randomModifier2 = 0;
-            //    }
-
-            //    romData[byteToUse] = (byte)((randomModifier1 * 16) + randomModifier2);
-            //    stats[statToUse1] += (byte)randomModifier1;
-            //    stats[statToUse2] += (byte)randomModifier2;
-            //}
-
-            // Randomize starting equipment. (3c79f-3c7b6)  Target range:  6-24 attack, 4-16 defense.  If it can't be reached, assign lowest weapon and armor.
-            // Remember to add 64 to the starting equipment!!!
-            //List<byte> legalWeapon = new List<byte>();
-            //List<byte> legalArmor = new List<byte>();
-            //for (int lnI = 0; lnI < 3; lnI++)
-            //{
-            //    // Just give them the bamboo pole and the clothes for now.  We might randomize starting equipment later.
-            //    int byteToUse = 0x3c79f + (8 * lnI);
-            //    romData[byteToUse + 0] = 64 + 1;
-            //    romData[byteToUse + 1] = 64 + 17;
-            //}
         }
 
         private void randomize()
