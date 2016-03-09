@@ -5,9 +5,10 @@
 - Four Levels Of Randomization (with an option to not randomize at all) (only insane randomness is available currently; the rest is coming soon!)
 - An opportunity to adjust the seed from 1 to 2^32 (2 billion plus) for racing possibilities.
 - Super speedy battles!
-- Parry/Fight technique removed (I personally don't think it should be there)
+- Parry/Fight technique removed (I personally don't think it should have been there in the first place...)
 - An opportunity to rename the starting characters from the get go!
-- All party members are revived with full HP and MP on a party wipe(AKA ColdAsACod), regardless of save location.
+- All party members are revived with full HP and MP on a party wipe, regardless of save location. (this causes graphical errors, but it does not affect the game overall)
+- No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this also causes graphical errors, but, again, it does not affect the game overall)
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
@@ -30,7 +31,7 @@
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
 - HP starts between 9 and 23 points higher than usual.
-- The "baseline" for all stats is removed.  This means you will never run into a 0/1 scenario.  This also means that changing classes is probably a VERY GOOD idea!
+- The "baseline" for HP is removed. (it probably will be removed for ALL stats in the future)
 
 ## To Do/Wishlist
 - Randomize spell strengths
@@ -38,6 +39,7 @@
 - Randomize house of healing costs
 - Randomize stat gains
 - Randomize boss fights (much easier said than done I'm afraid)
+- Remove "baseline" for all stats (probably), removing the dreaded "0/1" chance
 - Add the other three randomizations
 
 ## Special Thanks
