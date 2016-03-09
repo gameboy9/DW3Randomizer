@@ -30,7 +30,7 @@
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
 - HP starts between 9 and 23 points higher than usual.
-- The "baseline" for HP is removed. (it probably will be removed for ALL stats in the future)
+- The "baseline" for all stats is removed.  This means you will never run into a 0/1 scenario.  This also means that changing classes is probably a VERY GOOD idea!
 
 ## To Do/Wishlist
 - Randomize spell strengths
@@ -38,7 +38,6 @@
 - Randomize house of healing costs
 - Randomize stat gains
 - Randomize boss fights (much easier said than done I'm afraid)
-- Remove "baseline" for all stats (probably), removing the dreaded "0/1" chance
 - Add the other three randomizations
 
 ## Special Thanks
