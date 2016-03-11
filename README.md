@@ -5,9 +5,10 @@
 - Four Levels Of Randomization (with an option to not randomize at all) (only insane randomness is available currently; the rest is coming soon!)
 - An opportunity to adjust the seed from 1 to 2^32 (2 billion plus) for racing possibilities.
 - Super speedy battles!
-- Parry/Fight technique removed (I personally don't think it should be there)
+- Parry/Fight technique removed (I personally don't think it should have been there in the first place...)
 - An opportunity to rename the starting characters from the get go!
-- All party members are revived with full HP and MP on a party wipe(AKA ColdAsACod), regardless of save location.
+- All party members are revived with full HP and MP on a party wipe, regardless of save location. (this causes graphical errors, but it does not affect the game overall)
+- No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this also causes graphical errors, but, again, it does not affect the game overall)
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
