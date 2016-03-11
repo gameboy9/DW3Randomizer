@@ -273,6 +273,11 @@ namespace DW3Randomizer
 
             romData[0x3cc6a] = 0x4c; // Forces a jump out of the king scolding routine, saving at least 13 seconds / party wipe.  There are graphical errors, but I'll take it!
 
+            // Remove the golden claw 100/256 encounter rate
+            romData[0x185c] = 0x4c;
+            romData[0x185d] = 0x5b;
+            romData[0x185e] = 0x98;
+
             // Fix eight person hero spell glitch as well as the baseline overflow stat glitch, via Eggers' Bug Fix IPS patch
             //byte[] otherFixes1 = { 0x4c, 0xb2, 0xbf };
             //byte[] otherFixes2 = { 0xa5, 0x05, 0xf0, 0x08, 0xa9, 0x20, 0x85, 0x05, 0xa9, 0xff, 0xd0, 0x02, 0xa5, 0x04, 0x18, 0x69, 0x0a, 0x90, 0x02, 0xa9, 0xff, 0x85, 0x42, 0x68, 0x4a, 0x18, 0x65, 0x42, 0x90, 0x02, 0xa9, 0xff, 0xa4, 0x51, 0x4c, 0x70, 0xa4 };
@@ -826,7 +831,7 @@ namespace DW3Randomizer
                 }
             }
 
-            // Randomize the 19 special battles (106b1-106fc)
+            // Randomize the 19 special battles
             for (int lnI = 0; lnI < 20; lnI++)
             {
                 int byteToUse = 0x107a + (6 * lnI);
@@ -837,7 +842,11 @@ namespace DW3Randomizer
                 }
             }
 
-            // Not sure we can really randomize boss fights... (ff separates boss fights)
+            // Not sure we can really randomize boss fights... (ff separates boss fights - 0x8ee-0x918 AND 0x919-0x944)
+            // But I can change the Mummy Men treasure fights to Shadow fights!
+            romData[0x909] = 0x18; // was 0x20 - Mummy Men
+            // We could randomize the Granite Titan and Boss Troll fights too...
+            // Maybe remove two of the Kandar Henchmen in the first fight and place two "bonus monsters" in other fights...
 
             //// Randomize the first 12 boss fights, but make sure the last four of those involve Atlas, Bazuzu, Zarlox, and Hargon.
             //// The 13th and final fight cannot be manipulated:  Malroth, and Malroth alone.
@@ -933,6 +942,10 @@ namespace DW3Randomizer
             romData[0x1147 + 0x20] = 255;
             romData[0x1147 + 0x22] = 255;
             romData[0x1147 + 0x30] = 255;
+
+            // Remove the lines that penalize a fighter for not equipping claws.
+            romData[0x1507] = romData[0x1508] = romData[0x1509] = romData[0x150a] = 0xea;
+
             //for (int lnI = 70; lnI < 125; lnI++)
             //    romData[0x1147 + lnI] = 255; // everybody can use everything else?
 
@@ -1167,9 +1180,7 @@ namespace DW3Randomizer
                 romData[0x36838 + lnStoreI] = (byte)itemToSell;
                 lnStoreI++;
             }
-            // ---------------------------------------------------------------
-            // NEXT:  Randomization of when the item stores end.  Do NOT exceed 12 items in a store!
-            // ---------------------------------------------------------------
+
             int[] weaponStoreArray = weaponStore.ToArray();
             int[] itemStoreArray = itemStore.ToArray();
 
@@ -1248,20 +1259,18 @@ namespace DW3Randomizer
                 while (!legal)
                 {
                     byte tRand = (byte)(r1.Next() % keyTreasure[lnI]);
-                    if (tRand != 0 && tRand != 1)
+
+                    bool dupCheck = false;
+                    // Make sure we're not replacing a item that also happens to be key!
+                    for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
                     {
-                        bool dupCheck = false;
-                        // Make sure we're not replacing a item that also happens to be key!
-                        for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
-                        {
-                            if (romData[allTreasure[tRand]] == keyItems[lnJ])
-                                dupCheck = true;
-                        }
-                        if (dupCheck == false)
-                        {
-                            romData[allTreasure[tRand]] = keyItems[lnI];
-                            legal = true;
-                        }
+                        if (romData[allTreasure[tRand]] == keyItems[lnJ])
+                            dupCheck = true;
+                    }
+                    if (dupCheck == false)
+                    {
+                        romData[allTreasure[tRand]] = keyItems[lnI];
+                        legal = true;
                     }
                 }
             }
