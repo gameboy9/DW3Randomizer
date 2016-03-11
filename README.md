@@ -9,6 +9,7 @@
 - An opportunity to rename the starting characters from the get go!
 - All party members are revived with full HP and MP on a party wipe, regardless of save location. (this causes graphical errors, but it does not affect the game overall)
 - No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this also causes graphical errors, but, again, it does not affect the game overall)
+- The super-high encounter rate when possessing a Golden Claw has been removed.
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
@@ -31,7 +32,8 @@
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
 - HP starts between 9 and 23 points higher than usual.
-- The "baseline" for HP is removed. (it probably will be removed for ALL stats in the future)
+- The "baseline" for all stats are removed.  This makes it a GREAT idea to change classes!
+- Fighters are no longer penalized for equipping non-claw items.
 
 ## To Do/Wishlist
 - Randomize spell strengths
@@ -39,9 +41,8 @@
 - Randomize house of healing costs
 - Randomize stat gains
 - Randomize boss fights (much easier said than done I'm afraid)
-- Remove "baseline" for all stats (probably), removing the dreaded "0/1" chance
 - Add the other three randomizations
 
 ## Special Thanks
 - Mcgrew, for his Dragon Warrior 1 Randomizer(https://github.com/mcgrew/dwrandomizer), giving me the inspiration to create this randomizer.  Twitch:  http://www.twitch.tv/mcgrew
-- Foggrey (Twitch:  http://www.twitch.tv/foggrey) and PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo) for testing.
+- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), and HighSpirits (Twitch:  http://www.twitch.tv/highspirits) for testing.
