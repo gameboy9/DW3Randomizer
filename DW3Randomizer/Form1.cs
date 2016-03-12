@@ -278,18 +278,6 @@ namespace DW3Randomizer
             romData[0x185d] = 0x5b;
             romData[0x185e] = 0x98;
 
-            // Fix eight person hero spell glitch as well as the baseline overflow stat glitch, via Eggers' Bug Fix IPS patch
-            //byte[] otherFixes1 = { 0x4c, 0xb2, 0xbf };
-            //byte[] otherFixes2 = { 0xa5, 0x05, 0xf0, 0x08, 0xa9, 0x20, 0x85, 0x05, 0xa9, 0xff, 0xd0, 0x02, 0xa5, 0x04, 0x18, 0x69, 0x0a, 0x90, 0x02, 0xa9, 0xff, 0x85, 0x42, 0x68, 0x4a, 0x18, 0x65, 0x42, 0x90, 0x02, 0xa9, 0xff, 0xa4, 0x51, 0x4c, 0x70, 0xa4 };
-            //byte[] otherFixes3 = { 0x07 };
-
-            //for (int lnI = 0; lnI < otherFixes1.Length; lnI++)
-            //    romData[0x2482 + lnI] = otherFixes1[lnI];
-            //for (int lnI = 0; lnI < otherFixes2.Length; lnI++)
-            //    romData[0x3fd2 + lnI] = otherFixes2[lnI];
-            //for (int lnI = 0; lnI < otherFixes3.Length; lnI++)
-            //    romData[0x1ef82 + lnI] = otherFixes3[lnI];
-
             saveRom();
         }
 
@@ -546,6 +534,17 @@ namespace DW3Randomizer
                 3, 3, 2, 3, 4, 1, 3, 3, 8, 7, 4, 2, 7, 4, 3, 2, 
                 3, 3, 3, 3, 3, 3, 3, 4, 4, 2, 1, 2, 4, 2, 3, 3, 
                 3, 1, 1, 3, 1, 1, 1, 2, 3, 3, 4 };
+
+            string[] weaponText = { "Cypress stick", "Club", "Copper sword", "Magic Knife", "Iron Spear", "Battle Axe", "Broad Sword", "Wizard's Wand",
+                "Poison Needle", "Iron Claw", "Thorn Whip", "Giant Shears", "Chain Sickle", "Thor's Sword", "Snowblast Sword", "Demon Axe",
+                "Staff of Rain", "Sword of Gaia", "Staff of Reflection", "Sword of Destruction", "Multi - Edge Sword", "Staff of Force", "Sword of Illusion", "Zombie Slasher",
+                "Falcon Sword", "Sledge Hammer", "Thunder Sword", "Staff of Thunder", "Sword of Kings", "Orochi Sword", "Dragon Killer", "Staff of Judgement",
+                "Clothes", "Training Suit", "Leather Armor", "Flashy Clothes", "Half Plate Armor", "Full Plate Armor", "Magic Armor", "Cloak of Evasion",
+                "Armor of Radiance", "Iron Apron", "Animal Suit", "Fightting Suit", "Sacred Robe", "Armor of Hades", "Water Flying Cloth", "Chain Mail",
+                "Wayfarers Clothes", "Revealing Swimsuit", "Magic Bikini", "Shell Armor", "Armor of Terrafirma", "Dragon Mail", "Swordedge Armor", "Angel's Robe",
+                "Leather Shield", "Iron Shield", "Shield of Strength", "Shield of Heroes", "Shield of Sorrow", "Bronze Shield", "Silver Shield", "Golden Crown",
+                "Iron Helmet", "Mysterious Hat", "Unlucky Helmet", "Turban", "Noh Mask", "Leather Helmet", "Iron Mask", "Golden Claw" };
+
 
             // Totally randomize monsters (13805-13cd2)
             for (int lnI = 0; lnI < 0x8a; lnI++)
@@ -932,16 +931,47 @@ namespace DW3Randomizer
                 }
             }
 
+            string options = (chkHalfExpGoldReq.Checked ? "h" : "");
+            options += (chkDoubleXP.Checked ? "d" : "");
+            options += (optNoIntensity.Checked ? "_none" : radSlightIntensity.Checked ? "_slight" : radModerateIntensity.Checked ? "_moderate" : radHeavyIntensity.Checked ? "_heavy" : "_insane");
+            string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + options + "_guide.txt");
+
             // Totally randomize who can equip (1a3ce-1a3f0).  At least one person can equip something...
-            for (int lnI = 0; lnI <= 70; lnI++)
-                romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
-            // Everybody should be able to equip the starting equipment.
-            romData[0x1147 + 0x00] = 255;
-            romData[0x1147 + 0x01] = 255;
-            romData[0x1147 + 0x02] = 255;
-            romData[0x1147 + 0x20] = 255;
-            romData[0x1147 + 0x22] = 255;
-            romData[0x1147 + 0x30] = 255;
+            using (StreamWriter writer = File.CreateText(finalFile))
+            {
+                for (int lnI = 0; lnI <= 74; lnI++)
+                {
+                    if (lnI == 71 || lnI == 72 || lnI == 73)
+                        continue;
+                    // Maintain equipment requirements for the starting equipment
+                    if (!(lnI == 0x00 || lnI == 0x01 || lnI == 0x02 || lnI == 0x20 || lnI == 0x22 || lnI == 0x30))
+                        romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
+
+                    // Might put this in... we'll see.
+                    //// I have a feeling that 255 is bad news... remove the fighter's ability to equip if that happens.
+                    //if (romData[0x1147 + lnI] == 255)
+                    //    romData[0x1147 + lnI] -= 64;
+
+                    string equipOut = "";
+                    equipOut += (romData[0x1147 + lnI] % 2 >= 1 ? "Hr  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 32 >= 16 ? "Sr  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 8 >= 4 ? "Pr  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 4 >= 2 ? "Wi  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 16 >= 8 ? "Sg  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 128 >= 64 ? "Fi  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] % 64 >= 32 ? "Mr  " : "--  ");
+                    equipOut += (romData[0x1147 + lnI] >= 128 ? "Gf  " : "--  ");
+                    if (lnI == 74)
+                    {
+                        writer.WriteLine(weaponText[71].PadRight(24) + equipOut);
+                        break;
+                    }
+                    else
+                    {
+                        writer.WriteLine(weaponText[lnI].PadRight(24) + equipOut);
+                    }
+                }
+            }
 
             // Remove the lines that penalize a fighter for not equipping claws.
             romData[0x1507] = romData[0x1508] = romData[0x1509] = romData[0x150a] = 0xea;
