@@ -1302,15 +1302,15 @@ namespace DW3Randomizer
             // Give each hero from 22HP (min for Wizard) to about 36 HP.  (Hero)  Just so everybody has a chance!
             romData[0x1eed7] = (byte)((r1.Next() % 13) + 5 + 9);
             // Remove the baseline for HP...
-            romData[0x24fd] = 0xea;
-            romData[0x24fe] = 0x4c;
-            romData[0x24ff] = 0xfa;
-            romData[0x2500] = 0xa4;
+            romData[0x24f4] = 0xea;
+            romData[0x24f5] = 0x4c;
+            romData[0x24f6] = 0xfa;
+            romData[0x24f7] = 0xa4;
             // ... and MP...
-            romData[0x255e] = 0xea;
-            romData[0x255f] = 0x4c;
-            romData[0x2560] = 0x5b;
-            romData[0x2561] = 0xa5;
+            romData[0x2555] = 0xea;
+            romData[0x2556] = 0x4c;
+            romData[0x2557] = 0x5b;
+            romData[0x2558] = 0xa5;
             // ... and the rest!
             romData[0x2480] = 0xea;
             romData[0x2481] = 0x4c;
