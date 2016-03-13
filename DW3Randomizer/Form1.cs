@@ -1323,6 +1323,71 @@ namespace DW3Randomizer
             romData[0x2481] = 0x4c;
             romData[0x2482] = 0x7d;
             romData[0x2483] = 0xa4;
+
+            // Randomize stat gains.
+            // First, we'll randomize the multipliers.  They will range from 8 to 32, in multiples of 8.
+            for (int lnI = 0; lnI < 10; lnI++)
+                romData[0x281b + lnI] = (byte)(((r1.Next() % 4) + 1) * 8);
+
+            int[] baseStat = { 3, 2, 4, 3, 2, // Hero
+                               1, 3, 2, 3, 2, // Wizard
+                               2, 2, 2, 3, 2, // Pilgrim
+                               2, 2, 2, 2, 2, // Sage
+                               3, 1, 4, 1, 1, // Soldier
+                               3, 2, 3, 2, 1, // Merchant
+                               4, 4, 3, 3, 1, // Fighter
+                               3, 4, 3, 4, 1}; // Goof-off, s/b 1, 2, 2, 10, 3, but rewarding for trying something crazy
+            for (int lnI = 0; lnI < 40; lnI++)
+            {
+                int newBase = 0;
+                int[] basePossible;
+                if (baseStat[lnI] == 1)
+                {
+                    int[] bp2 = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6 };
+                    basePossible = bp2;
+                } else if (baseStat[lnI] == 2)
+                {
+                    int[] bp2 = { 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 5, 6 };
+                    basePossible = bp2;
+                }
+                else if (baseStat[lnI] == 3)
+                {
+                    int[] bp2 = { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 6 };
+                    basePossible = bp2;
+                }
+                else // (baseStat[lnI] == 4)
+                {
+                    int[] bp2 = { 1, 2, 3, 4, 4, 4, 4, 4 };
+                    basePossible = bp2;
+                }
+                newBase = basePossible[r1.Next() % 8];
+                if (lnI >= 16 && lnI < 24 && newBase == 1)
+                    newBase++; // Vitality base REALLY shouldn't be 1.  You'll never get HP, and you'll never survive, so we'll just add one to everyone.
+                int charLevel = 0;
+                for (int lnJ = 0; lnJ < 5; lnJ++)
+                {
+                    if (lnJ == 0) // Determine Multiplier path A or B with byte 0.
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)((r1.Next() % 2) * 128);
+                    if (lnJ == 1)
+                        romData[0x290e + (lnI * 5) + lnJ] = 0;
+                    if (lnJ == 2)
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase >= 4 ? 128 : 0);
+                    if (lnJ == 3)
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase == 2 || newBase == 3 || newBase == 5 || newBase == 6 ? 128 : 0);
+                    if (lnJ == 4)
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase == 1 || newBase == 3 || newBase == 5 ? 255 : 127);
+
+                    if (lnJ <= 3)
+                    {
+                        int lvlsToNext = (r1.Next() % (50 - charLevel));
+                        if (lvlsToNext < 2 && charLevel == 0)
+                            lvlsToNext = 2;
+
+                        romData[0x290e + (lnI * 5) + lnJ] += (byte)(lvlsToNext);
+                        charLevel += lvlsToNext;
+                    }
+                }
+            }
         }
 
         private void randomize()
@@ -1902,12 +1967,13 @@ namespace DW3Randomizer
                 //for (int lnI = 0; lnI < 13; lnI++)
                 //    compareComposeString("monsterBoss" + lnI.ToString("X2"), writer, (0x10356 + (4 * lnI)), 4);
                 //compareComposeString("statStart", writer, 0x13dd1, 12);
-                //for (int lnI = 0; lnI < 35; lnI++)
-                //    compareComposeString("statUps" + lnI.ToString(), writer, 0x13ddd + (6 * lnI), 6);
-                //for (int lnI = 0; lnI < 10; lnI++)
-                //    compareComposeString("statUps" + (lnI + 35).ToString(), writer, 0x13ddd + 210 + (4 * lnI), 4);
-                //for (int lnI = 0; lnI < 5; lnI++)
-                //    compareComposeString("statUps" + (lnI + 45).ToString(), writer, 0x13ddd + 250 + (2 * lnI), 2);
+                compareComposeString("statMult", writer, 0x281b, 10);
+                compareComposeString("statUpsStrength", writer, 0x290e + 0, 40);
+                compareComposeString("statUpsAgility", writer, 0x290e + 40, 40);
+                compareComposeString("statUpsVitality", writer, 0x290e + 80, 40);
+                compareComposeString("statUpsLuck", writer, 0x290e + 120, 40);
+                compareComposeString("statUpsIntelligence", writer, 0x290e + 160, 40);
+
                 compareComposeString("spellLearningHero", writer, 0x29d6, 63);
                 compareComposeString("spellsLearnedHero", writer, 0x22E7, 32);
                 compareComposeString("spellLearningPilgrim", writer, 0x2A15, 63);
