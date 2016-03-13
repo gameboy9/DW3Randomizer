@@ -273,10 +273,10 @@ namespace DW3Randomizer
 
             romData[0x3cc6a] = 0x4c; // Forces a jump out of the king scolding routine, saving at least 13 seconds / party wipe.  There are graphical errors, but I'll take it!
 
-            // Remove the golden claw 100/256 encounter rate
-            romData[0x185c] = 0x4c;
-            romData[0x185d] = 0x5b;
-            romData[0x185e] = 0x98;
+            // Remove the golden claw 100/256 encounter rate - Can't because the king won't check if you have the black pepper.
+            //romData[0x185c] = 0x4c;
+            //romData[0x185d] = 0x5b;
+            //romData[0x185e] = 0x98;
 
             saveRom();
         }
@@ -366,23 +366,23 @@ namespace DW3Randomizer
         {
             //// Divide encounter rates by half, rounded down for the first few zones, then rounded up for the rest. (day/night thing)
             romData[0x944] = 2; // was 4
-            romData[0x945] = 7; // was 15
-            romData[0x946] = 5; // was 10
-            romData[0x947] = 7; // was 15
-            romData[0x948] = 9; // was 18
-            romData[0x949] = 12; // was 25
-            romData[0x94a] = 42; // was 84
-            romData[0x94b] = 9; // was 18
-            romData[0x94c] = 5; // was 10
-            romData[0x94d] = 3; // was 5
-            romData[0x94e] = 10; // was 19
-            romData[0x94f] = 7; // was 13
-            romData[0x950] = 10; // was 19
-            romData[0x951] = 11; // was 22
-            romData[0x952] = 16; // was 31
-            romData[0x953] = 42; // was 84
-            romData[0x954] = 11; // was 22
-            romData[0x955] = 5; // was 10
+            romData[0x945] = 5; // was 15
+            romData[0x946] = 4; // was 10
+            romData[0x947] = 5; // was 15
+            romData[0x948] = 6; // was 18
+            romData[0x949] = 8; // was 25
+            romData[0x94a] = 28; // was 84
+            romData[0x94b] = 6; // was 18
+            romData[0x94c] = 4; // was 10
+            romData[0x94d] = 2; // was 5
+            romData[0x94e] = 6; // was 19
+            romData[0x94f] = 4; // was 13
+            romData[0x950] = 6; // was 19
+            romData[0x951] = 7; // was 22
+            romData[0x952] = 10; // was 31
+            romData[0x953] = 28; // was 84
+            romData[0x954] = 7; // was 22
+            romData[0x955] = 3; // was 10
 
             romData[0x282fd] = 25; // instead of 24 -> This will raise the exp earned by 133%
 
@@ -605,18 +605,18 @@ namespace DW3Randomizer
                         enemyStats[lnJ + 14] = (byte)(enemyStats[lnJ + 14] - (enemyStats[lnJ + 14] % 4) + (totalAtk / 256));
                 }
                 enemyStats[8] = 255; // Always make sure the monster has MP
-                
+
                 // Needs to be a "legal treasure..."
                 byte[] legalMonsterTreasures = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                                      0x10, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
-                                      0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4e,
-                                      0x50, 0x52, 0x53, 0x54, 0x55, 0x56, 0x58, 0x59, 0x5a, 0x5e, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
-                                      0x70, 0x71, 0x73, 0x74,
-                                      0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
-                                      0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74 };
+                                    0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+                                    0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+                                    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+                                    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
+                                    0x50, 0x55, 0x56, 0x58, 0x59, 0x5a, 0x5e, 0x5f,
+                                    0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
+                                    0x70, 0x71, 0x73, 0x74,
+                                    0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
+                                    0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74 };
                 enemyStats[9] = (legalMonsterTreasures[r1.Next() % legalMonsterTreasures.Length]);
 
                 byte[] res1 = { 0, 0, 0, 0, 0, 1, 2, 3 };
@@ -939,10 +939,8 @@ namespace DW3Randomizer
             // Totally randomize who can equip (1a3ce-1a3f0).  At least one person can equip something...
             using (StreamWriter writer = File.CreateText(finalFile))
             {
-                for (int lnI = 0; lnI <= 74; lnI++)
+                for (int lnI = 0; lnI <= 70; lnI++)
                 {
-                    if (lnI == 71 || lnI == 72 || lnI == 73)
-                        continue;
                     // Maintain equipment requirements for the starting equipment
                     if (!(lnI == 0x00 || lnI == 0x01 || lnI == 0x02 || lnI == 0x20 || lnI == 0x22 || lnI == 0x30))
                         romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
@@ -961,15 +959,7 @@ namespace DW3Randomizer
                     equipOut += (romData[0x1147 + lnI] % 128 >= 64 ? "Fi  " : "--  ");
                     equipOut += (romData[0x1147 + lnI] % 64 >= 32 ? "Mr  " : "--  ");
                     equipOut += (romData[0x1147 + lnI] >= 128 ? "Gf  " : "--  ");
-                    if (lnI == 74)
-                    {
-                        writer.WriteLine(weaponText[71].PadRight(24) + equipOut);
-                        break;
-                    }
-                    else
-                    {
-                        writer.WriteLine(weaponText[lnI].PadRight(24) + equipOut);
-                    }
+                    writer.WriteLine(weaponText[lnI].PadRight(24) + equipOut);
                 }
             }
 
@@ -1028,6 +1018,8 @@ namespace DW3Randomizer
             }
             romData[0x22e7 + 24] = 38; // Hero learns Return first.
             romData[0x29d6 + romData[0x22e7 + 24]] = 2;
+            romData[0x22e7 + 24] = 57; // ... and Outside
+            romData[0x29d6 + romData[0x22e7 + 24]] = 2;
             romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
             romData[0x29d6 + romData[0x22e7 + 32 + 24]] = 2;
             romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
@@ -1081,15 +1073,11 @@ namespace DW3Randomizer
                 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d, // Kidnapper's Cave
                 0x31b94, 0x29270, // Tedan (except Green Orb)
                 0x292e4, 0x292e7, // Jipang
-                0x29272, 0x29271, 0x29273, // Pirate Cove 0x2925b, // Eginbear NOT randomized.
-                0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb, // Arp Tower
-                0x31b8c, // Soo
+                0x29272, 0x29271, 0x29273, // Pirate Cove
+                0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb, // Arp Tower 
                 0x29299, 0x2929c, 0x2929b, 0x2929d, 0x2929a, 0x29298, 0x29293, 0x29294, 0x29295, 0x29291, 0x29292, // Samanao Cave
-                0x29296, 0x29297, 0x292a3, 0x292a4, 0x292a2, 0x2929f, 0x2929e, 0x292a0, 0x292a5, 0x292a1, 0x292a7, 0x29296, // Samanao Cave
-                0x31b97, // Luzami
-                0x2926c, 0x2926d, 0x31b80, // New Town
-                0x31b9f }; // World Tree - Vase of Draught - 80
-            int[] treasureAddrZ6 = { 0x2922b }; // Final Key Shrine, Mirror Of Ra - Final Key - 1
+                0x29296, 0x29297, 0x292a3, 0x292a4, 0x292a2, 0x2929f, 0x2929e, 0x292a0, 0x292a5, 0x292a1, 0x292a7, 0x29296, // Samanao Cave //  NOT randomized
+                0x2926c, 0x2926d, 0x31b80 }; // New Town - Final Key, Mirror Of Ra - 77
             int[] treasureAddrZ7 = { 0x292e5, 0x29246, 0x29248, 0x29247, 0x29245, 0x29244, 0x29290, 0x2928f }; // Staff Of Change - Samanao Castle, Lancel Cave - 8
             int[] treasureAddrZ8 = { 0x29277, 0x29276, 0x29275, 0x29278, 0x29279, 0x2927a }; // Locket of Love - Ghost ship - 6
             int[] treasureAddrZ9 = { 0x31b84 }; // Sword Of Gaia - Sword Of Gaia shrine - 1
@@ -1104,13 +1092,17 @@ namespace DW3Randomizer
                 0x29253, 0x29254, 0x292d7, 0x292d5, 0x292d6, 0x292d8, 0x292da, 0x292d9, 0x292db, 0x292dc, 0x292de, 0x292dd, // Kol Tower
                 0x29233 }; // Rimuldar - Stones Of Sunlight, Fairy Flute - 32
             int[] treasureAddrZ12 = { 0x292ad, 0x292ae, 0x292af, 0x292b0, 0x292b1, 0x292b2, 0x292b3, // Zoma's Castle
-                0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2 }; // Pyramid Mummy Men Chests - Dead zone - 19
+                0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, // Pyramid Mummy Men Chests
+                0x2925b, // Eginbear
+                0x31b9f, // World Tree
+                0x31b97, // Luzami
+                0x31b8c, // Soo
+                0x2922b }; // Final Key Shrine - Dead zone - 23
 
             List<int> allTreasureList = new List<int>();
 
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ0);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ3);
-            allTreasureList = addTreasure(allTreasureList, treasureAddrZ6);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ7);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ8);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ9);
@@ -1129,8 +1121,8 @@ namespace DW3Randomizer
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
                                       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4e, 0x4f,
-                                      0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f,
+                                      0x50, 0x51, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5c, 0x5d, 0x5e, 0x5f,
+                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6b, 0x6c, 0x6d, 0x6f,
                                       0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c,
                                       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8,
                                       0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff};
@@ -1142,8 +1134,8 @@ namespace DW3Randomizer
                     byte treasure = (byte)((r1.Next() % legalTreasures.Length)); // the last two items we can't get...
                     treasure = legalTreasures[treasure];
                     // Verify that only one location exists for key items
-                    if (!(treasureList.Contains(treasure) && (treasure == 0x4f || treasure == 0x51 || treasure == 0x52 || treasure == 0x53 
-                        || treasure == 0x54 || treasure == 0x57 || treasure == 0x58 || treasure == 0x59 || treasure == 0x5a || treasure == 0x5b || treasure == 0x5c 
+                    if (!(treasureList.Contains(treasure) && (treasure == 0x10 || treasure == 0x11 || treasure == 0x4f || treasure == 0x51 || treasure == 0x53 
+                        || treasure == 0x54 || treasure == 0x57 || treasure == 0x58 || treasure == 0x59 || treasure == 0x5a || treasure == 0x5c 
                         || treasure == 0x5d || treasure == 0x6b || treasure == 0x6e || treasure == 0x6f || treasure == 0x70 || treasure == 0x71 || treasure == 0x72 
                         || treasure == 0x75 || treasure == 0x76 || treasure == 0x77 || treasure == 0x78 || treasure == 0x79 || treasure == 0x7a || treasure == 0x7b || treasure == 0x7c)))
                     {
@@ -1272,14 +1264,15 @@ namespace DW3Randomizer
             //    romData[0x19f90 + lnI] = (byte)((r1.Next() % 20) + 1);
 
             // Verify that key items are available in either a store or a treasure chest in the right zone.
-            byte[] keyItems = { 0x59, 0x52, 0x5a, 0x54, 0x6b, 0x11, 0x78, 0x79, 0x7a, 0x7b, 0x75, 0x70 };
-            byte[] keyTreasure = { 37, 117, 118, 126, 132, 133, 136, 136, 136, 136, 168, 168 };
+            byte[] keyItems = { 0x59, 0x5a, 0x54, 0x6b, 0x11, 0x78, 0x79, 0x7a, 0x7b, 0x10, 0x75 };
+            byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 133 };
+            byte[] keyTreasure = { 37, 114, 122, 128, 129, 132, 132, 132, 132, 164, 164 };
             //byte[] keyWStore = { 2, 2, 36, 48, 48, 48, 48, 48, 48 };
             //byte[] keyIStore = { 2, 2, 54, 66, 66, 66, 66, 66, 66 };
             for (int lnI = 0; lnI < keyItems.Length; lnI++)
             {
                 bool legal = false;
-                for (int lnJ = 0; lnJ < keyTreasure[lnI]; lnJ++)
+                for (int lnJ = minKeyTreasure[lnI]; lnJ < keyTreasure[lnI]; lnJ++)
                 {
                     if (romData[allTreasure[lnJ]] == keyItems[lnI])
                         legal = true;
