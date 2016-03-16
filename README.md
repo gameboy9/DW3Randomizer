@@ -44,4 +44,4 @@
 
 ## Special Thanks
 - Mcgrew, for his Dragon Warrior 1 Randomizer(https://github.com/mcgrew/dwrandomizer), giving me the inspiration to create this randomizer.  Twitch:  http://www.twitch.tv/mcgrew
-- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), and HighSpirits (Twitch:  http://www.twitch.tv/highspirits) for testing.
+- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), Shoobinator (Twitch:  http://www.twitch.tv/shoobinator) and HighSpirits (Twitch:  http://www.twitch.tv/highspirits) for testing.
