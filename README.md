@@ -9,7 +9,6 @@
 - An opportunity to rename the starting characters from the get go!
 - All party members are revived with full HP and MP on a party wipe, regardless of save location. (this causes graphical errors, but it does not affect the game overall)
 - No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this also causes graphical errors, but, again, it does not affect the game overall)
-- The super-high encounter rate when possessing a Golden Claw has been removed.
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
@@ -25,21 +24,21 @@
 - Weapon and item stores are completely randomized.  You theoretically could buy items such as Water Flying Clothes, Thunder Swords, Leaves of The World Tree, Final Keys, and so forth.  Orbs and Rainbow Drops, as examples, still have to be found.
 - Weapon and armor power are completely randomized from 1 to 150 for weapons, 80 for armor, 60 for shields, and 40 for helmets.
 - Weapon and armor prices are adjusted according to the power randomized.  (power ^ 1.98, 2.26, 2.42, 2.68 for weapons, armor, shields, and helmets respectively, for a maximum price of about 20,000 GP)
-- Who equips each weapon, armor, shield, and helmet is also randomized.
+- Who equips each weapon, armor, shield, and helmet is also randomized. (an equipment guide is written so you don't spend a long period of time trying to figure out who can equip what)
 - The only exceptions are the starting equipment (maximum power 12 for each), which is not changed for any party member.
-- Spells are learned randomly, but return is learned for the hero, antidote is learned for the pilgrim, and heal is learned for the wizard, all between levels 2-4.
+- Spells are learned randomly, but return and outside is learned for the hero, antidote is learned for the pilgrim, and heal is learned for the wizard, all between levels 2-4.
 - Treasures are completely randomized, but you will find all key items before they are required either in the treasures to be found, NPCs you run into, or possibly weapon and item stores.
 - Starting gold is randomized from 0-255.
 - The inns are randomized as well from 1-20GP/person.
 - HP starts between 9 and 23 points higher than usual.
 - The "baseline" for all stats are removed.  This makes it a GREAT idea to change classes!
 - Fighters are no longer penalized for equipping non-claw items.
+- Statistical gains are randomized
 
 ## To Do/Wishlist
 - Randomize spell strengths
 - Randomize weapons used as items, and possibly what spells they cast!
 - Randomize house of healing costs
-- Randomize stat gains
 - Randomize boss fights (much easier said than done I'm afraid)
 - Add the other three randomizations
 
