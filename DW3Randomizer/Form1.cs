@@ -1022,8 +1022,8 @@ namespace DW3Randomizer
             }
             romData[0x22e7 + 24] = 38; // Hero learns Return first.
             romData[0x29d6 + romData[0x22e7 + 24]] = 2;
-            romData[0x22e7 + 24] = 57; // ... and Outside
-            romData[0x29d6 + romData[0x22e7 + 24]] = 2;
+            romData[0x22e7 + 24 + 1] = 59; // ... and Outside
+            romData[0x29d6 + romData[0x22e7 + 24 + 1]] = 2;
             romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
             romData[0x29d6 + romData[0x22e7 + 32 + 24]] = 2;
             romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
