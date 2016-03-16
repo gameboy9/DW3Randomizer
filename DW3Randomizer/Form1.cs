@@ -379,7 +379,7 @@ namespace DW3Randomizer
             romData[0x94f] = 4; // was 13
             romData[0x950] = 6; // was 19
             romData[0x951] = 7; // was 22
-            romData[0x952] = 10; // was 31
+            romData[0x952] = 10; // was 31 
             romData[0x953] = 28; // was 84
             romData[0x954] = 7; // was 22
             romData[0x955] = 3; // was 10
@@ -944,6 +944,10 @@ namespace DW3Randomizer
                     // Maintain equipment requirements for the starting equipment
                     if (!(lnI == 0x00 || lnI == 0x01 || lnI == 0x02 || lnI == 0x20 || lnI == 0x22 || lnI == 0x30))
                         romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
+
+                    // EXCEPT those that are "FF", update the "who can use the item" to the people who are allowed to equip the item
+                    if (romData[0x1196 + lnI] != 255 && romData[0x1196 + lnI] != 0 && lnI < 32)
+                        romData[0x1196 + lnI] = romData[0x1147 + lnI];
 
                     // Might put this in... we'll see.
                     //// I have a feeling that 255 is bad news... remove the fighter's ability to equip if that happens.
