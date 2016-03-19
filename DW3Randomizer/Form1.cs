@@ -1165,24 +1165,6 @@ namespace DW3Randomizer
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74
             };
-            int[] legalStoreWeapons =
-            {
-                0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                                      0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
-                                      0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46
-            };
-            int[] legalStoreItems2 =
-            {
-                0x48, 0x49, 0x4b, 0x4c, 0x4e,
-                                      0x50, 0x52, 0x53, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
-                                      0x70, 0x71, 0x73, 0x74,
-                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
-                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
-                                      0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74
-            };
 
             int[] storeItems = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1203,69 +1185,29 @@ namespace DW3Randomizer
             List<int> itemStore = new List<int>();
             List<int> weaponStore = new List<int>();
             for (int lnI = 0; lnI < 248; lnI++)
-            {
-                storeItems[lnI] = legalStoreItems[(r1.Next() % legalStoreItems.Length)];
-                if (storeItems[lnI] <= 70)
-                    weaponStore.Add(storeItems[lnI]);
-                else
-                    itemStore.Add(storeItems[lnI]);
-            }
-            int lnStoreI = 0;
-            foreach (int weaponToSell in weaponStore)
-            {
-                romData[0x36838 + lnStoreI] = (byte)weaponToSell;
-                lnStoreI++;
-            }
-            foreach (int itemToSell in itemStore)
-            {
-                romData[0x36838 + lnStoreI] = (byte)itemToSell;
-                lnStoreI++;
-            }
+                romData[0x36838 + lnI] = (byte)(legalStoreItems[(r1.Next() % legalStoreItems.Length)]);
 
-            int[] weaponStoreArray = weaponStore.ToArray();
-            int[] itemStoreArray = itemStore.ToArray();
-
-            int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, weaponStoreArray.Length };
-            int[] itemStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247 };
+            int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247 };
 
             int lnMarker = -1;
             // Need to make sure this doesn't exceed 11
-            int average = weaponStoreArray.Length / weaponStoreLocations.Length;
+            int average = 248 / weaponStoreLocations.Length;
             for (int lnI = 0; lnI < weaponStoreLocations.Length - 1; lnI++)
             {
                 int storeSize = average;
                 storeSize += (-3 + (r1.Next() % 7));
-                if (storeSize > 12)
+                if (storeSize > 12 || average >= 10)
                     storeSize = 12;
                 lnMarker += storeSize;
                 weaponStoreLocations[lnI] = lnMarker;
-                int avgPart1 = weaponStoreArray.Length - lnMarker + 1;
+                int avgPart1 = 248 - lnMarker + 1;
                 int avgPart2 = weaponStoreLocations.Length - lnI - 1;
-                average = ((weaponStoreArray.Length - lnMarker + 1) / (weaponStoreLocations.Length - lnI - 1));
-            }
-            average = (248 - weaponStoreArray.Length) / itemStoreLocations.Length;
-            for (int lnI = 0; lnI < itemStoreLocations.Length - 1; lnI++)
-            {
-                int storeSize = average;
-                storeSize += (-3 + (r1.Next() % 7));
-                if (storeSize < 1)
-                    storeSize = 1;
-                if (storeSize > 12)
-                    storeSize = 12;
-                lnMarker += storeSize;
-                itemStoreLocations[lnI] = lnMarker;
-                average = ((248 - lnMarker + 1) / (itemStoreLocations.Length - lnI));
+                average = ((248 - lnMarker + 1) / (weaponStoreLocations.Length - lnI - 1));
             }
 
             // Now we can plug in the numbers...
             for (int lnI = 0; lnI < weaponStoreLocations.Length; lnI++)
-            {
                 romData[0x36838 + weaponStoreLocations[lnI]] += 128;
-            }
-            for (int lnI = 0; lnI < itemStoreLocations.Length; lnI++)
-            {
-                romData[0x36838 + itemStoreLocations[lnI]] += 128;
-            }
 
             // Go through each of the stores and check for duplicates.
             int startStore = 0;
@@ -1276,14 +1218,7 @@ namespace DW3Randomizer
                 int itemToCompare = (romData[0x36838 + lnI] >= 128 ? romData[0x36838 + lnI] - 128 : romData[0x36838 + lnI]);
                 if (storeContents.Contains(itemToCompare))
                 {
-                    // Get new weapon/item.
-                    if (itemToCompare <= 0x48)
-                    {
-                        romData[0x36838 + lnI] = (byte)((lastItem ? 128 : 0) + legalStoreWeapons[r1.Next() % legalStoreWeapons.Length]);
-                    } else
-                    {
-                        romData[0x36838 + lnI] = (byte)((lastItem ? 128 : 0) + legalStoreItems2[r1.Next() % legalStoreItems2.Length]);
-                    }
+                    romData[0x36838 + lnI] = (byte)((lastItem ? 128 : 0) + legalStoreItems[r1.Next() % legalStoreItems.Length]);
                     lnI = startStore - 1;
                     storeContents.Clear();
                     continue;
@@ -1362,15 +1297,15 @@ namespace DW3Randomizer
             romData[0x2483] = 0xa4;
 
             // Randomize stat gains.
-            // First, we'll randomize the multipliers.  They will range from 8 to 32, in multiples of 8.
+            // First, we'll randomize the multipliers.  They will range from 4 to 16, in multiples of 4.
 
             bool low = false;
             for (int lnI = 0; lnI < 10; lnI++)
             {
                 if (lnI == 5) low = false;
-                romData[0x281b + lnI] = (byte)(((r1.Next() % 4) + 1) * 8);
+                romData[0x281b + lnI] = (byte)(((r1.Next() % 4) + 1) * 4);
                 // Only one low multiplier per five bit segment.
-                if (romData[0x281b + lnI] == 8)
+                if (romData[0x281b + lnI] == 4)
                     if (low)
                         lnI--;
                     else
@@ -1391,26 +1326,30 @@ namespace DW3Randomizer
                 int[] basePossible;
                 if (baseStat[lnI] == 1)
                 {
-                    int[] bp2 = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6 };
+                    int[] bp2 = { 2, 2, 2, 2, 2, 2, 2, 3, 3, 4 };
                     basePossible = bp2;
-                } else if (baseStat[lnI] == 2)
+                }
+                else if (baseStat[lnI] == 2)
                 {
-                    int[] bp2 = { 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 5, 6 };
+                    int[] bp2 = { 3, 4, 4, 4, 4, 4, 4, 5, 5 };
                     basePossible = bp2;
                 }
                 else if (baseStat[lnI] == 3)
                 {
-                    int[] bp2 = { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 6 };
+                    int[] bp2 = { 4, 5, 5, 6, 6, 6, 7, 7, 8 };
                     basePossible = bp2;
                 }
                 else // (baseStat[lnI] == 4)
                 {
-                    int[] bp2 = { 1, 2, 3, 4, 4, 4, 4, 5, 5, 6 };
+                    int[] bp2 = { 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 10, 10, 11 };
                     basePossible = bp2;
                 }
                 newBase = basePossible[r1.Next() % 8];
-                if (lnI >= 16 && lnI < 24 && newBase == 1)
+                //newBase = 14; // <----------------- TEMPORARY OVERRIDE
+                if (lnI >= 16 && lnI < 24)
                     newBase++; // Vitality base REALLY shouldn't be 1.  You'll never get HP, and you'll never survive, so we'll just add one to everyone.
+                if (lnI >= 32 && lnI < 40)
+                    newBase++; // Intelligence base REALLY shouldn't be 1.  You'll never get MP, so you'll never cast spells, so we'll just add one to everyone.
                 if (lnI >= 36 && lnI < 40)
                     newBase = 0; // Give out no intelligence to non-MP users.
                 int charLevel = 0;
@@ -1419,13 +1358,13 @@ namespace DW3Randomizer
                     if (lnJ == 0) // Determine Multiplier path A or B with byte 0.
                         romData[0x290e + (lnI * 5) + lnJ] = (byte)((r1.Next() % 2) * 128);
                     if (lnJ == 1)
-                        romData[0x290e + (lnI * 5) + lnJ] = 0;
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase >= 8 ? 128 : 0);
                     if (lnJ == 2)
-                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase >= 4 ? 128 : 0);
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 8 >= 4 ? 128 : 0);
                     if (lnJ == 3)
-                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase == 2 || newBase == 3 || newBase == 5 || newBase == 6 ? 128 : 0);
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 4 >= 2 ? 128 : 0);
                     if (lnJ == 4)
-                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase == 1 || newBase == 3 || newBase == 5 ? 255 : 127);
+                        romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 2 == 1 ? 255 : 127);
 
                     if (lnJ <= 3)
                     {
@@ -1934,7 +1873,7 @@ namespace DW3Randomizer
             if (!loadRom(true)) return;
             using (StreamWriter writer = File.CreateText(Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Compare.txt")))
             {
-                for (int lnI = 0; lnI < 125; lnI++)
+                for (int lnI = 0; lnI < 0x8a; lnI++)
                     compareComposeString("monsters" + (lnI + 1).ToString("X2"), writer, (0x32e3 + (23 * lnI)), 23);
 
                 compareComposeString("itemPrice1", writer, 0x11be, 128);
