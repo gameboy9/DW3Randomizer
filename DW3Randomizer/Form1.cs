@@ -171,6 +171,8 @@ namespace DW3Randomizer
             }
             else
             {
+                if (radInsaneIntensity.Checked)
+                    forceItemSell();
                 if (chkHalfExpGoldReq.Checked) halfExpAndGoldReq();
                 if (radInsaneIntensity.Checked)
                     superRandomize();
@@ -362,6 +364,46 @@ namespace DW3Randomizer
             }
         }
 
+        private void forceItemSell()
+        {
+            int[] forcedItemSell = { 0x16, 0x1c, 0x28, 0x32, 0x34, 0x36, 0x3b, 0x3f, 0x42, 0x48, 0x4b, 0x4c, 0x50, 0x52, 0x53, 0x58, 0x59, 0x69, 0x6f, 0x70, 0x71 };
+            for (int lnI = 0; lnI < forcedItemSell.Length; lnI++)
+                if (romData[0x11be + forcedItemSell[lnI]] % 32 >= 16) // Not allowed to be sold
+                    romData[0x11be + forcedItemSell[lnI]] -= 16; // Now allowed to be sold!
+
+            int[] itemstoAdjust = { 0x16, 0x1c, 0x28, 0x32, 0x34, 0x36, 0x3b, 0x3f, 0x42, 0x48, 0x4b, 0x4c, 0x50, 0x52, 0x53, 0x58, 0x59, 0x5a, 0x69, 0x6f, 0x70, 0x71, // forced items to sell AND...
+               0x5f, 0x60, 0x62, 0x64, 0x57, 0x75, 0x55, 0x4e, 0x4f, 0x49 }; // Some other items I want sold (see above)
+
+            int[] itemPriceAdjust = { 5000, 35000, 15000, 10000, 8000, 12000, 10000, 800, 10, 5000, 5000, 8000, 20000, 1000, 1000, 500, 2000, 5000, 5000, 500, 2000, 500,
+                5000, 3000, 2500, 5000, 800, 10000, 3000, 2000, 10000, 5000, 1000 };
+
+            for (int lnI = 0; lnI < itemstoAdjust.Length; lnI++)
+            {
+                // Remove any price adjustment first.
+                romData[0x11be + itemstoAdjust[lnI]] -= (byte)(romData[0x11be + itemstoAdjust[lnI]] % 4);
+                int priceToUse = (romData[0x123b + itemstoAdjust[lnI]] >= 128 ? romData[0x123b + itemstoAdjust[lnI]] - 128 : romData[0x123b + itemstoAdjust[lnI]]);
+                if (itemPriceAdjust[lnI] >= 10000)
+                {
+                    romData[0x11be + itemstoAdjust[lnI]] += 3; // Now multiply by 1000
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 1000) + 128 : itemPriceAdjust[lnI] / 1000);
+                }
+                else if (itemPriceAdjust[lnI] >= 1000)
+                {
+                    romData[0x11be + itemstoAdjust[lnI]] += 2; // Now multiply by 100
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 100) + 128 : itemPriceAdjust[lnI] / 100);
+                }
+                else if (itemPriceAdjust[lnI] >= 100)
+                {
+                    romData[0x11be + itemstoAdjust[lnI]] += 1; // Now multiply by 10
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 10) + 128 : itemPriceAdjust[lnI] / 10);
+                }
+                else
+                {
+                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? itemPriceAdjust[lnI] + 128 : itemPriceAdjust[lnI]);
+                }
+            }
+        }
+
         private void halfExpAndGoldReq(bool special = false)
         {
             //// Divide encounter rates by half, rounded down for the first few zones, then rounded up for the rest. (day/night thing)
@@ -421,43 +463,6 @@ namespace DW3Randomizer
             // Wizard's Ring:  10000G
             // Black Pepper:  5000G
             // Shoes of Happiness:  5000G
-
-            int[] forcedItemSell = { 0x16, 0x1c, 0x28, 0x32, 0x34, 0x36, 0x3b, 0x3f, 0x42, 0x48, 0x4b, 0x4c, 0x50, 0x52, 0x53, 0x58, 0x59, 0x6f, 0x70, 0x71 };
-            for (int lnI = 0; lnI < forcedItemSell.Length; lnI++)
-                if (romData[0x11be + forcedItemSell[lnI]] % 32 >= 16) // Not allowed to be sold
-                    romData[0x11be + forcedItemSell[lnI]] -= 16; // Now allowed to be sold!
-
-            int[] itemstoAdjust = { 0x16, 0x1c, 0x28, 0x32, 0x34, 0x36, 0x3b, 0x3f, 0x42, 0x48, 0x4b, 0x4c, 0x50, 0x52, 0x53, 0x58, 0x59, 0x5a, 0x6f, 0x70, 0x71, // forced items to sell AND...
-               0x5f, 0x60, 0x62, 0x64, 0x57, 0x75, 0x55, 0x4e, 0x4f, 0x49 }; // Some other items I want sold (see above)
-
-            int[] itemPriceAdjust = { 5000, 35000, 15000, 10000, 8000, 12000, 10000, 800, 10, 5000, 5000, 8000, 20000, 1000, 1000, 500, 2000, 5000, 500, 2000, 500,
-                5000, 3000, 2500, 5000, 800, 10000, 3000, 2000, 10000, 5000, 5000 };
-
-            for (int lnI = 0; lnI < itemstoAdjust.Length; lnI++)
-            {
-                // Remove any price adjustment first.
-                romData[0x11be + itemstoAdjust[lnI]] -= (byte)(romData[0x11be + itemstoAdjust[lnI]] % 4);
-                int priceToUse = (romData[0x123b + itemstoAdjust[lnI]] >= 128 ? romData[0x123b + itemstoAdjust[lnI]] - 128 : romData[0x123b + itemstoAdjust[lnI]]);
-                if (itemPriceAdjust[lnI] >= 10000)
-                {
-                    romData[0x11be + itemstoAdjust[lnI]] += 3; // Now multiply by 1000
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 1000) + 128 : itemPriceAdjust[lnI] / 1000);
-                }
-                else if (itemPriceAdjust[lnI] >= 1000)
-                {
-                    romData[0x11be + itemstoAdjust[lnI]] += 2; // Now multiply by 100
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 100) + 128 : itemPriceAdjust[lnI] / 100);
-                }
-                else if (itemPriceAdjust[lnI] >= 100)
-                {
-                    romData[0x11be + itemstoAdjust[lnI]] += 1; // Now multiply by 10
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? (itemPriceAdjust[lnI] / 10) + 128 : itemPriceAdjust[lnI] / 10);
-                }
-                else
-                {
-                    romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? itemPriceAdjust[lnI] + 128 : itemPriceAdjust[lnI]);
-                }
-            }
 
             for (int lnI = 0; lnI < 125; lnI++)
             {
@@ -878,18 +883,18 @@ namespace DW3Randomizer
                 if (lnI == 0 || lnI == 1 || lnI == 2 || lnI == 32 || lnI == 34 || lnI == 48)
                     power = (byte)(r1.Next() % 12);
                 else if (lnI < 31)
-                    power = (byte)(Math.Pow(r1.Next() % 500, 2) / 1667); // max 150
+                    power = (byte)(Math.Pow(r1.Next() % 1000, 2.5) / 243252); // max 130
                 else if (lnI < 55)
-                    power = (byte)(Math.Pow(r1.Next() % 500, 2) / 3125); // max 80
+                    power = (byte)(Math.Pow(r1.Next() % 1000, 2.5) / 395284); // max 80
                 else if (lnI < 62)
-                    power = (byte)(Math.Pow(r1.Next() % 500, 2) / 4166); // max 60
+                    power = (byte)(Math.Pow(r1.Next() % 1000, 2.5) / 574959); // max 55
                 else
-                    power = (byte)(Math.Pow(r1.Next() % 500, 2) / 6250); // max 40
+                    power = (byte)(Math.Pow(r1.Next() % 1000, 2.5) / 903507); // max 35
                 power += 2; // To avoid 0 power...
                 romData[0x279a0 + lnI] = power;
 
-                // You want a max price of about 20000
-                double price = Math.Round((lnI < 31 ? Math.Pow(power, 1.98) : lnI < 55 ? Math.Pow(power, 2.26) : lnI < 62 ? Math.Pow(power, 2.42) : Math.Pow(power, 2.68)), 0);
+                // You want a max price of about 20000, shields 18300, helmets 15000
+                double price = Math.Round((lnI < 31 ? Math.Pow(power, 2.04) : lnI < 55 ? Math.Pow(power, 2.26) : lnI < 62 ? Math.Pow(power, 2.45) : Math.Pow(power, 2.7)), 0);
                 // TO DO:  Round to the nearest 10 (after 100GP), 50(after 1000 GP), or 100 (after 2500 GP)
                 price = (float)Math.Round(price, 0);
 
@@ -1299,60 +1304,72 @@ namespace DW3Randomizer
             // Randomize stat gains.
             // First, we'll randomize the multipliers.  They will range from 4 to 16, in multiples of 4.
 
-            bool low = false;
+            //bool low = false;
             for (int lnI = 0; lnI < 10; lnI++)
             {
-                if (lnI == 5) low = false;
-                romData[0x281b + lnI] = (byte)(((r1.Next() % 4) + 1) * 4);
-                // Only one low multiplier per five bit segment.
-                if (romData[0x281b + lnI] == 4)
-                    if (low)
-                        lnI--;
-                    else
-                        low = true;
+                romData[0x281b + lnI] = 8;
+                //if (lnI == 5) low = false;
+                //romData[0x281b + lnI] = (byte)(((r1.Next() % 4) + 1) * 4);
+                //// Only one low multiplier per five bit segment.
+                //if (romData[0x281b + lnI] == 4)
+                //    if (low)
+                //        lnI--;
+                //    else
+                //        low = true;
             }
 
-            int[] baseStat = { 3, 2, 4, 3, 2, // Hero
-                               1, 3, 2, 3, 2, // Wizard
-                               2, 2, 2, 3, 2, // Pilgrim
-                               2, 2, 2, 2, 2, // Sage
-                               3, 1, 4, 1, 1, // Soldier
-                               3, 2, 3, 2, 1, // Merchant
-                               4, 4, 3, 3, 1, // Fighter
-                               3, 4, 3, 4, 1}; // Goof-off, s/b 1, 2, 2, 10, 3, but rewarding for trying something crazy
+            //int[] baseStat = { 3, 2, 4, 3, 2, // Hero
+            //                   1, 3, 2, 3, 2, // Wizard
+            //                   2, 2, 2, 3, 2, // Pilgrim
+            //                   2, 2, 2, 2, 2, // Sage
+            //                   3, 1, 4, 1, 1, // Soldier
+            //                   3, 2, 3, 2, 1, // Merchant
+            //                   4, 4, 3, 3, 1, // Fighter
+            //                   3, 4, 3, 4, 1}; // Goof-off, s/b 1, 2, 2, 10, 3, but rewarding for trying something crazy
+            int[] baseStat = { 5, 4, 7, 5, 3, // Hero
+                               1, 6, 5, 6, 5, // Wizard
+                               2, 3, 4, 5, 5, // Pilgrim
+                               4, 4, 6, 4, 4, // Sage
+                               6, 2, 7, 1, 1, // Soldier
+                               4, 4, 4, 3, 3, // Merchant
+                               8, 8, 6, 6, 2, // Fighter
+                               2, 2, 3, 10, 2}; // Goof-off, s/b 2, 2, 3, 10, 2, but rewarding for trying something crazy
+
             for (int lnI = 0; lnI < 40; lnI++)
             {
-                int newBase = 0;
-                int[] basePossible;
-                if (baseStat[lnI] == 1)
+                int newBase = baseStat[lnI];
+                int upDown = (r1.Next() % 3);
+                if (upDown == 0)
                 {
-                    int[] bp2 = { 2, 2, 2, 2, 2, 2, 2, 3, 3, 4 };
-                    basePossible = bp2;
-                }
-                else if (baseStat[lnI] == 2)
+                    while (upDown == 0)
+                    {
+                        newBase--;
+                        upDown = (r1.Next() % 2);
+                    }
+                } else if (upDown == 2)
                 {
-                    int[] bp2 = { 3, 4, 4, 4, 4, 4, 4, 5, 5 };
-                    basePossible = bp2;
+                    upDown = 0;
+                    while (upDown == 0)
+                    {
+                        newBase++;
+                        upDown = (r1.Next() % 2);
+                    }
                 }
-                else if (baseStat[lnI] == 3)
-                {
-                    int[] bp2 = { 4, 5, 5, 6, 6, 6, 7, 7, 8 };
-                    basePossible = bp2;
-                }
-                else // (baseStat[lnI] == 4)
-                {
-                    int[] bp2 = { 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 10, 10, 11 };
-                    basePossible = bp2;
-                }
-                newBase = basePossible[r1.Next() % 8];
+                if (newBase >= baseStat[lnI] + 3)
+                    newBase = baseStat[lnI] + 3;
+                if (newBase <= baseStat[lnI] - 3)
+                    newBase = baseStat[lnI] - 3;
+
+                if (newBase < 1)
+                    newBase = 1;
                 //newBase = 14; // <----------------- TEMPORARY OVERRIDE
-                if (lnI >= 16 && lnI < 24)
-                    newBase++; // Vitality base REALLY shouldn't be 1.  You'll never get HP, and you'll never survive, so we'll just add one to everyone.
-                if (lnI >= 32 && lnI < 40)
-                    newBase++; // Intelligence base REALLY shouldn't be 1.  You'll never get MP, so you'll never cast spells, so we'll just add one to everyone.
+                if (lnI >= 16 && lnI < 24 && newBase < 3)
+                    newBase = 3; // Vitality base REALLY needs to be 3 or greater or you'll never survive.
+                if (lnI >= 32 && lnI < 36 && newBase < 3)
+                    newBase = 3; // Intelligence base REALLY needs to be 3 or greater or you'll never get MP.
                 if (lnI >= 36 && lnI < 40)
                     newBase = 0; // Give out no intelligence to non-MP users.
-                int charLevel = 0;
+                //int charLevel = 0;
                 for (int lnJ = 0; lnJ < 5; lnJ++)
                 {
                     if (lnJ == 0) // Determine Multiplier path A or B with byte 0.
@@ -1368,12 +1385,12 @@ namespace DW3Randomizer
 
                     if (lnJ <= 3)
                     {
-                        int lvlsToNext = (r1.Next() % (50 - charLevel));
-                        if (lvlsToNext < 2 && charLevel == 0)
-                            lvlsToNext = 2;
+                        int lvlsToNext = 16; // (r1.Next() % (50 - charLevel));
+                        //if (lvlsToNext < 2 && charLevel == 0)
+                        //    lvlsToNext = 2;
 
                         romData[0x290e + (lnI * 5) + lnJ] += (byte)(lvlsToNext);
-                        charLevel += lvlsToNext;
+                        //charLevel += lvlsToNext;
                     }
                 }
             }
