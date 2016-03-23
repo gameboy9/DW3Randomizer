@@ -243,9 +243,9 @@
             this.chkDoubleXP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDoubleXP.Location = new System.Drawing.Point(12, 152);
             this.chkDoubleXP.Name = "chkDoubleXP";
-            this.chkDoubleXP.Size = new System.Drawing.Size(364, 17);
+            this.chkDoubleXP.Size = new System.Drawing.Size(358, 17);
             this.chkDoubleXP.TabIndex = 6;
-            this.chkDoubleXP.Text = "XP +100% for all monsters EXCEPT metal slime/babble, less encounters";
+            this.chkDoubleXP.Text = "XP +50% for all monsters EXCEPT metal slime/babble, less encounters";
             this.chkDoubleXP.UseVisualStyleBackColor = true;
             // 
             // optNoIntensity
