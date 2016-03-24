@@ -804,8 +804,8 @@ namespace DW3Randomizer
                 {
                     if (r1.Next() % 1000 < badChance)
                     {
-                        enemyPatterns[5] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
-                        enemyPatterns[6] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
+                        enemyPatterns[4] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
+                        enemyPatterns[5] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
                         break;
                     }
                 }
@@ -813,8 +813,8 @@ namespace DW3Randomizer
                 {
                     if (r1.Next() % 1000 < badChance)
                     {
-                        enemyPatterns[7] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
-                        enemyPatterns[8] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
+                        enemyPatterns[6] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
+                        enemyPatterns[7] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
                         break;
                     }
                 }
