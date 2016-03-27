@@ -203,15 +203,17 @@ namespace DW3Randomizer
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
             byte[] codData1 = { 0xa0, 0x00, // Make sure Y is 0 first.
+                0xb9, 0x3c, 0x07,
+                0xc9, 0x80,
+                0xd0, 0x03,
                 0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the "revive one character code" that I'm replacing.
                 0xc8, 0xc8, // Increment Y twice (Y is used to revive the characters)
                 0xc0, 0x08, // Compare Y with 08
-                0xd0, 0xf7, // If not equal, go back to the JSR mentioned above
+                0xd0, 0xf0, // If not equal, go back to the JSR mentioned above
                 0xa0, 0x00, // Set Y back to 0 to make sure the game doesn't think something is up
                 0xea, 0xea, 0xea, 0xea, 0xea,
                 0xea, 0xea, 0xea, 0xea, 0xea,
-                0xea, 0xea, 0xea, 0xea, 0xea,
-                0xea, 0xea, 0xea, 0xea }; // 19 NOPs, since I have nothing else to do.
+                0xea, 0xea }; // 12 NOPs, since I have nothing else to do.
             byte[] codData2 = { 0xa9, 0x80, // Load 80, the status for alive
                 0x99, 0x3c, 0x07, // store to two status bytes
                 0x99, 0x3d, 0x07,
