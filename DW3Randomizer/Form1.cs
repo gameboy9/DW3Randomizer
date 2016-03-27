@@ -798,8 +798,7 @@ namespace DW3Randomizer
                 if (lnI == 0x57) // Bomb Crag
                     enemyPatterns[0] = 21; // Sacrifice!  :)
 
-                // Establish a x% chance of double attacks and regen.  x = game's monster order * .9%, or 75%, whichever is lower.
-                int badChance = (9 * lnI > 750 ? 750 : 9 * lnI);
+                int badChance = (3 * lnI > 300 ? 300 : 3 * lnI);
                 for (int lnJ = 0; lnJ < 3; lnJ++)
                 {
                     if (r1.Next() % 1000 < badChance)
@@ -981,11 +980,6 @@ namespace DW3Randomizer
                     if (romData[0x1196 + lnI] != 255 && romData[0x1196 + lnI] != 0 && lnI < 32)
                         romData[0x1196 + lnI] = romData[0x1147 + lnI];
 
-                    // Might put this in... we'll see.
-                    //// I have a feeling that 255 is bad news... remove the fighter's ability to equip if that happens.
-                    //if (romData[0x1147 + lnI] == 255)
-                    //    romData[0x1147 + lnI] -= 64;
-
                     string equipOut = "";
                     equipOut += (romData[0x1147 + lnI] % 2 >= 1 ? "Hr  " : "--  ");
                     equipOut += (romData[0x1147 + lnI] % 32 >= 16 ? "Sr  " : "--  ");
@@ -1018,7 +1012,7 @@ namespace DW3Randomizer
             int[] fightSpells = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
             int[] commandSpells = { 26, 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
             // Randomize 8 command spells for the hero, pilgrim, and wizard.
-            int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
+            int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 52, 53, 54, 55, 56, 57, 58, 60, 61 };
             int[] pilgrimCommand = { 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
             int[] wizardCommand = { 26, 27, 28, 30, 31, 32, 33, 38, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
 
@@ -1030,7 +1024,7 @@ namespace DW3Randomizer
             }
 
             // Randomize 16 fight spells for the hero, and 24 spells for the pilgrim, and wizard.
-            int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
+            int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
             int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
             int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
 
@@ -1348,13 +1342,17 @@ namespace DW3Randomizer
             romData[0x2556] = 0x4c;
             romData[0x2557] = 0x5b;
             romData[0x2558] = 0xa5;
-            // ... and the rest!  Well, sort of.  Set a permanent baseline to 250 to prevent stats from gaining 200 points a level...
+            // ... and the rest!  But we also need to prevent someone gaining 200 points in a stat...
             romData[0x247c] = 0xa9;
-            romData[0x247d] = 0xfa;
+            romData[0x247d] = 0x00;
+            romData[0x247e] = 0x8d;
+            romData[0x247f] = 0x05;
+            romData[0x2480] = 0x00;
+            romData[0x2481] = 0x4c;
+            romData[0x2482] = 0x7d;
+            romData[0x2483] = 0xa4;
+
             //romData[0x2480] = 0xea;
-            //romData[0x2481] = 0x4c;
-            //romData[0x2482] = 0x7d;
-            //romData[0x2483] = 0xa4;
 
             // Randomize stat gains.
             // First, we'll randomize the multipliers.  They will range from 4 to 16, in multiples of 4.
@@ -1381,10 +1379,19 @@ namespace DW3Randomizer
             //                   3, 2, 3, 2, 1, // Merchant
             //                   4, 4, 3, 3, 1, // Fighter
             //                   3, 4, 3, 4, 1}; // Goof-off, s/b 1, 2, 2, 10, 3, but rewarding for trying something crazy
-            int[] baseStat = { 5, 4, 7, 5, 4, // Hero (7 vit, 3 int originally)
-                               1, 6, 5, 6, 6, // Wizard (5 vit, 5 int originally)
-                               2, 3, 4, 5, 6, // Pilgrim (4 vit, 5 int originally)
-                               4, 4, 6, 4, 5, // Sage (6 vit, 4 int originally)
+            //int[] baseStat = { 15, 14, 14, 15, 15, // Hero (7 vit, 3 int originally)
+            //                   11, 15, 14, 14, 14, // Wizard (5 vit, 5 int originally)
+            //                   12, 13, 14, 15, 14, // Pilgrim (4 vit, 5 int originally)
+            //                   14, 14, 14, 14, 14, // Sage (6 vit, 4 int originally)
+            //                   12, 12, 14, 11, 11, // Soldier (7 vit originally)
+            //                   14, 14, 14, 14, 13, // Merchant (4 vit originally)
+            //                   12, 14, 14, 14, 12, // Fighter (6 vit originally)
+            //                   12, 12, 13, 10, 12}; // Goof-off, s/b 2, 2, 3, 10, 2, but rewarding for trying something crazy
+
+            int[] baseStat = { 5, 4, 7, 5, 5, // Hero (7 vit, 3 int originally)
+                               1, 6, 5, 6, 7, // Wizard (5 vit, 5 int originally)
+                               2, 3, 4, 5, 7, // Pilgrim (4 vit, 5 int originally)
+                               4, 4, 6, 4, 6, // Sage (6 vit, 4 int originally)
                                6, 2, 7, 1, 1, // Soldier (7 vit originally)
                                4, 4, 4, 3, 3, // Merchant (4 vit originally)
                                8, 8, 6, 6, 2, // Fighter (6 vit originally)
