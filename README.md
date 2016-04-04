@@ -7,8 +7,8 @@
 - Super speedy battles!
 - Parry/Fight technique removed (I personally don't think it should have been there in the first place...)
 - An opportunity to rename the starting characters from the get go!
-- All party members are revived with full HP and MP on a party wipe, regardless of save location. (this causes graphical errors, but it does not affect the game overall)
-- No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this also causes graphical errors, but, again, it does not affect the game overall)
+- All party members are revived with full HP and MP on a party wipe, regardless of save location.
+- No more lectures after a party wipe, saving 13 seconds minimum for each instance.  (this causes temporary graphical errors, but it does not affect the game overall)
 
 ### For the first three levels (Slight, Moderate, Heavy)
 - Coming soon!
@@ -44,4 +44,4 @@
 
 ## Special Thanks
 - Mcgrew, for his Dragon Warrior 1 Randomizer(https://github.com/mcgrew/dwrandomizer), giving me the inspiration to create this randomizer.  Twitch:  http://www.twitch.tv/mcgrew
-- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), Shoobinator (Twitch:  http://www.twitch.tv/shoobinator) and HighSpirits (Twitch:  http://www.twitch.tv/highspirits) for testing.
+- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), Shoobinator (Twitch:  http://www.twitch.tv/shoobinator), HighSpirits (Twitch:  http://www.twitch.tv/highspirits), and Deranged Squirrel Fighter (Twitch: https://www.twitch.tv/deranged_squirrel_fighter) for testing.
