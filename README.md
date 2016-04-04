@@ -39,7 +39,6 @@
 
 
 ## To Do/Wishlist
-- Randomize house of healing costs
 - Randomize boss fights (much easier said than done I'm afraid)
 - Add the other three randomizations
 
