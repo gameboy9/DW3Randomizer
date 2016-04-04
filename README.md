@@ -34,10 +34,11 @@
 - The "baseline" for all stats are removed.  This makes it a GREAT idea to change classes!
 - Fighters are no longer penalized for equipping non-claw items.
 - Statistical gains are randomized
+- Spell strengths are randomized
+- Equipments used as an item are randomized, as well as the "spells" they cast!
+
 
 ## To Do/Wishlist
-- Randomize spell strengths
-- Randomize weapons used as items, and possibly what spells they cast!
 - Randomize house of healing costs
 - Randomize boss fights (much easier said than done I'm afraid)
 - Add the other three randomizations
