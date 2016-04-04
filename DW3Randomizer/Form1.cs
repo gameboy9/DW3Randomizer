@@ -205,7 +205,7 @@ namespace DW3Randomizer
             byte[] codData1 = { 0xa0, 0x00, // Make sure Y is 0 first.
                 0xb9, 0x3c, 0x07,
                 0xc9, 0x80,
-                0xd0, 0x03,
+                0x90, 0x03, // If less than 0x80, skip.
                 0x20, 0xb2, 0xbf, // JSR to a bunch of unused code, which will have the "revive one character code" that I'm replacing.
                 0xc8, 0xc8, // Increment Y twice (Y is used to revive the characters)
                 0xc0, 0x08, // Compare Y with 08
@@ -532,14 +532,14 @@ namespace DW3Randomizer
                 return;
             }
 
-            byte[] monsterSize = { 8, 4, 4, 4, 4, 4, 7, 4, 4, 8, 4, 4, 4, 2, 4, 4, 
-                4, 4, 5, 5, 2, 4, 4, 5, 4, 4, 4, 4, 4, 4, 3, 2, 
-                4, 4, 4, 2, 4, 5, 4, 4, 4, 4, 4, 8, 4, 4, 4, 3, 
-                2, 8, 4, 3, 4, 4, 2, 3, 4, 7, 3, 4, 2, 4, 4, 7, 
-                8, 3, 3, 4, 3, 2, 3, 4, 4, 4, 4, 4, 4, 3, 3, 4, 
+            byte[] monsterSize = { 8, 4, 4, 4, 4, 4, 7, 4, 4, 8, 4, 4, 4, 2, 4, 4,
+                4, 4, 5, 5, 2, 4, 4, 5, 4, 4, 4, 4, 4, 4, 3, 2,
+                4, 4, 4, 2, 4, 5, 4, 4, 4, 4, 4, 8, 4, 4, 4, 3,
+                2, 8, 4, 3, 4, 4, 2, 3, 4, 7, 3, 4, 2, 4, 4, 7,
+                8, 3, 3, 4, 3, 2, 3, 4, 4, 4, 4, 4, 4, 3, 3, 4,
                 2, 4, 3, 4, 3, 2, 2, 4, 3, 2, 2, 3, 2, 5, 1, 4,
-                3, 3, 2, 3, 4, 1, 3, 3, 8, 7, 4, 2, 7, 4, 3, 2, 
-                3, 3, 3, 3, 3, 3, 3, 4, 4, 2, 1, 2, 4, 2, 3, 3, 
+                3, 3, 2, 3, 4, 1, 3, 3, 8, 7, 4, 2, 7, 4, 3, 2,
+                3, 3, 3, 3, 3, 3, 3, 4, 4, 2, 1, 2, 4, 2, 3, 3,
                 3, 1, 1, 3, 1, 1, 1, 2, 3, 3, 4 };
 
             string[] weaponText = { "Cypress stick", "Club", "Copper sword", "Magic Knife", "Iron Spear", "Battle Axe", "Broad Sword", "Wizard's Wand",
@@ -625,9 +625,9 @@ namespace DW3Randomizer
                                     0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
                                     0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                     0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
-                                    0x50, 0x55, 0x56, 0x58, 0x59, 0x5a, 0x5e, 0x5f,
-                                    0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
+                                    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
+                                    0x50, 0x55, 0x56, 0x5f,
+                                    0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
                                     0x70, 0x71, 0x73, 0x74,
                                     0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                     0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74 };
@@ -787,7 +787,7 @@ namespace DW3Randomizer
                     enemyPatterns[1] = (byte)((r1.Next() % 3) + 16); // breathe something
                 }
                 // Flamapede, Heat Cloud, Sky Dragon, Lava Basher, Orochi, Salamander, Hydra, Green Dragon, King Hydra
-                if (lnI == 0x23 || lnI == 0x29 || lnI == 0x3a || lnI == 0x4e || lnI == 0x65 || lnI == 0x67 || lnI == 0x7a || lnI == 0x7c || lnI == 0x81) 
+                if (lnI == 0x23 || lnI == 0x29 || lnI == 0x3a || lnI == 0x4e || lnI == 0x65 || lnI == 0x67 || lnI == 0x7a || lnI == 0x7c || lnI == 0x81)
                 {
                     enemyPatterns[0] = (byte)((r1.Next() % 3) + 10); // breathe fire
                     enemyPatterns[1] = (byte)((r1.Next() % 3) + 10); // breathe fire
@@ -800,25 +800,26 @@ namespace DW3Randomizer
                 if (lnI == 0x57) // Bomb Crag
                     enemyPatterns[0] = 21; // Sacrifice!  :)
 
+                // Both bits set = 2 attacks guaranteed.  2nd bit set = up to 3 attacks.  1st bit set = up to 2 attacks.
                 int badChance = (3 * lnI > 300 ? 300 : 3 * lnI);
-                for (int lnJ = 0; lnJ < 3; lnJ++)
+                if (r1.Next() % 1000 < badChance / 4)
+                    enemyPatterns[5] += 128;
+                else if (r1.Next() % 1000 < badChance / 3)
                 {
-                    if (r1.Next() % 1000 < badChance)
-                    {
-                        enemyPatterns[4] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
-                        enemyPatterns[5] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
-                        break;
-                    }
-                }
-                for (int lnJ = 0; lnJ < 3; lnJ++)
+                    enemyPatterns[4] += 128;
+                    enemyPatterns[5] += 128;
+                } else if (r1.Next() % 1000 < badChance)
+                    enemyPatterns[4] += 128;
+
+                if (r1.Next() % 1000 < badChance / 3)
                 {
-                    if (r1.Next() % 1000 < badChance)
-                    {
-                        enemyPatterns[6] += (byte)(lnJ == 0 || lnJ == 2 ? 128 : 0);
-                        enemyPatterns[7] += (byte)(lnJ == 0 || lnJ == 1 ? 128 : 0);
-                        break;
-                    }
+                    enemyPatterns[6] += 128;
+                    enemyPatterns[7] += 128;
                 }
+                else if (r1.Next() % 1000 < badChance / 2)
+                    enemyPatterns[7] += 128;
+                else if (r1.Next() % 1000 < badChance)
+                    enemyPatterns[6] += 128;
 
                 for (int lnJ = 0; lnJ < 8; lnJ++)
                     enemyStats[10 + lnJ] = (enemyPatterns[lnJ]);
@@ -828,7 +829,7 @@ namespace DW3Randomizer
             }
 
             // Aliahan 1, 2, 3, Promontory Cave, Tower of Najimi B, 1, 2, Aliahan 4, Enticement Cave 1, 2, Romaly, Kanave, Champange Tower, Noaniels, Dream Cave, Assaram, Isis 1, 2, Pyramid 1, 2, 3
-            List<int> gentleZones = new List<int>() { 4, 5, 6, 65, 66, 67, 68, 7, 69, 70, 8, 9, 71, 72, 10, 74, 75, 12, 13, 14, 76, 77, 80 }; 
+            List<int> gentleZones = new List<int>() { 4, 5, 6, 65, 66, 67, 68, 7, 69, 70, 8, 9, 71, 72, 10, 74, 75, 12, 13, 14, 76, 77, 80 };
             List<int> violentZone1 = new List<int>() { 78, 48, 79, 81 }; // Cave of Necrogund
             List<int> violentZone2 = new List<int>() { 82, 39, 11 }; // Baramos Castle
             List<int> violentZone3 = new List<int>() { 64, 50, 51, 52, 54, 55, 57, 58, 60, 61, 63, 59, 62, 40, 53, 56 };  // Tantegel overworld, caves, and towers
@@ -896,12 +897,84 @@ namespace DW3Randomizer
             //    romData[byteToUse + 3] = 8; // It's too many monsters, but the width of the screen will trim the rest of the monsters off.
             //}
 
-            //// Randomize which items equate to which effects (except the Wizard's Ring, Medical Herb, and Antidote Herb) (13537-1353b)
-            //for (int lnI = 0; lnI < 5; lnI++)
-            //{
-            //    // randomize from 1-35
-            //    romData[0x13537 + lnI] = (byte)((r1.Next() % 35) + 1);
-            //}
+            //// Randomize which items equate to which effects
+            // Select 21 items randomly from a set defined as follows:
+            int[] legalEffectItems = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                                      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+                                      0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46 };
+
+            List<int> keyEffectItems = new List<int> { 0x10, 0x11 };
+
+            // Wipe out the use byte by totally resetting the price.
+            for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
+            {
+                int oldVal = romData[0x11be + legalEffectItems[lnI]];
+                romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32);
+                //romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32 >= 16 ? 0x10 : 0x00);
+                //romData[0x11be + legalEffectItems[lnI]] += (byte)(oldVal % 16 >= 8 ? 0x08 : 0x00);
+            }
+            int oldVal1 = romData[0x11be + 0x4a];
+            romData[0x11be + 0x4a] = (byte)(oldVal1 % 32);
+            int oldVal2 = romData[0x11be + 0x5b];
+            romData[0x11be + 0x5b] = (byte)(oldVal2 % 32);
+
+            int[] legalItemSpells = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                                      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e,
+                                      0x30, 0x31, 0x32, 0x34,
+                                      0x38, 0x39, 0x3a }; // restore MP, everyone sneezes, self numb - 54 spells total
+
+            List<int> enemyGroupSpells = new List<int> { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f,
+                                       0x10, 0x12, 0x13, 0x15, 0x16, 0x17, 0x18, 0x22, 0x24, 0x25, 0x27, 0x2b, 0x2c }; // 25
+            List<int> enemyAllSpells = new List<int> { 0x06, 0x07, 0x08, 0x0c, 0x11, 0x14, 0x39 }; // 7
+            List<int> allySelfSpells = new List<int> { 0x1a, 0x1b, 0x1c, 0x23, 0x29, 0x2d, 0x30, 0x32, 0x34, 0x38, 0x3a }; // 11
+            List<int> allySelectSpells = new List<int> { 0x20, 0x21, 0x28 }; // 3
+            List<int> allyAllSpells = new List<int> { 0x19, 0x1d, 0x1e, 0x1f, 0x26, 0x2a, 0x2e, 0x31 }; // 8
+
+            for (int lnI = 0; lnI < 21; lnI++)
+            {
+                int effectItem = legalEffectItems[r1.Next() % legalEffectItems.Length];
+                if (romData[0x11be + effectItem] >= 0x80) // If it's already been selected...
+                {
+                    lnI--;
+                }
+                else
+                {
+                    romData[0x11be + effectItem] += 0x80;
+                }
+            }
+
+            int iSpell = -1;
+            for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
+            {
+                // Otherwise, randomize the spell it will be using.
+                if (romData[0x11be + legalEffectItems[lnI]] < 0x80)
+                    continue;
+
+                int effectSpell = legalItemSpells[r1.Next() % legalItemSpells.Length];
+                if (effectSpell == 0x38 && keyEffectItems.Contains(effectSpell)) // Can't let a key item potentially crumble!  Redo that randomization.
+                {
+                    lnI--;
+                    continue;
+                }
+
+                iSpell++;
+                // Now determine what spell it is... that will determine whether to "attack" yourself, a group of monsters, a selected ally, or all monsters/allies.
+                if (enemyGroupSpells.Contains(effectSpell))
+                    romData[0x11be + legalEffectItems[lnI]] += 0x60;
+                else if (enemyAllSpells.Contains(effectSpell))
+                    romData[0x11be + legalEffectItems[lnI]] += 0x20;
+                else if (allySelfSpells.Contains(effectSpell)) // 50/50 chance of targetting for self or an ally.
+                    romData[0x11be + legalEffectItems[lnI]] += (byte)(r1.Next() % 2 == 1 ? 0x00 : 0x40);
+                else if (allySelectSpells.Contains(effectSpell))
+                    romData[0x11be + legalEffectItems[lnI]] += 0x40;
+                else if (allyAllSpells.Contains(effectSpell))
+                    romData[0x11be + legalEffectItems[lnI]] += 0x00;
+
+                romData[0x13280 + iSpell] = (byte)effectSpell;
+            }
 
             // Totally randomize weapons, armor, shields, helmets (13efb-13f1d, 1a00e-1a08b for pricing)
             for (int lnI = 0; lnI <= 70; lnI++)
@@ -997,15 +1070,6 @@ namespace DW3Randomizer
 
             // Remove the lines that penalize a fighter for not equipping claws.
             romData[0x1507] = romData[0x1508] = romData[0x1509] = romData[0x150a] = 0xea;
-
-            //for (int lnI = 70; lnI < 125; lnI++)
-            //    romData[0x1147 + lnI] = 255; // everybody can use everything else?
-
-            // Totally randomize spell strengths (18be0, 13be8, 13bf0, 127d5-1286a for strength, 134fa-13508 for cost, 13509-13517 for 3/4 cost)
-            // LATER
-
-            // Randomize field item strengths (124b2(Wizard's Ring), 18be0(Heal), 18be8(Healmore), 18bf0(Healall), 19602(Medical Herb) only)
-            // LATER
 
             // Totally randomize spell learning
             // First, clear out all of the magic bytes...
@@ -1112,6 +1176,26 @@ namespace DW3Randomizer
             romData[0x29d6 + 188] = 0xff;
             romData[0x29d6 + 251] = 0xff;
 
+            // Totally randomize spell strengths - first, attack spells
+            for (int lnI = 0; lnI < 17; lnI++)
+            {
+                int byteToUse = 0x134b1 + (lnI * 2);
+                romData[byteToUse] = (byte)((r1.Next() % 200) + 2);
+                if (lnI == 0x0d || lnI == 0x0e || lnI == 0x0f)
+                    romData[byteToUse + 1] = (byte)(r1.Next() % romData[byteToUse]);
+                else
+                    romData[byteToUse + 1] = (byte)(r1.Next() % (romData[byteToUse] / 2));
+            }
+
+            // And then healing spells
+            for (int lnI = 0; lnI < 6; lnI++)
+            {
+                if (lnI == 2 || lnI == 5) continue; // Healall/Healusall
+                int byteToUse = 0x134f9 + (lnI * 2);
+                romData[byteToUse] = (byte)((r1.Next() % 200) + 2);
+                romData[byteToUse + 1] = (byte)(r1.Next() % (romData[byteToUse] / 2));
+            }
+
             // Totally randomize treasures... but make sure key items exist before they are needed!
             // Keep the Rainbow drop where it is
             int[] treasureAddrZ0 = { 0x29237, 0x29238, 0x29239, // Promontory Cave
@@ -1132,14 +1216,13 @@ namespace DW3Randomizer
                 0x31b94, 0x29270, // Tedan (except Green Orb)
                 0x292e4, 0x292e7, // Jipang
                 0x29272, 0x29271, 0x29273, // Pirate Cove
-                0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb, // Arp Tower 
-                0x29299, 0x2929c, 0x2929b, 0x2929d, 0x2929a, 0x29298, 0x29293, 0x29294, 0x29295, 0x29291, 0x29292, // Samanao Cave
+                0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb }; // Arp Tower - Final Key - 52
+            int[] treasureAddrZ4 = { 0x29299, 0x2929c, 0x2929b, 0x2929d, 0x2929a, 0x29298, 0x29293, 0x29294, 0x29295, 0x29291, 0x29292, // Samanao Cave
                 0x29296, 0x29297, 0x292a3, 0x292a4, 0x292a2, 0x2929f, 0x2929e, 0x292a0, 0x292a5, 0x292a6, 0x292a1, 0x292a7, 0x29296, // Samanao Cave
-                0x2926c, 0x2926d, 0x31b80 }; // New Town - Final Key, Mirror Of Ra - 79
-            int[] treasureAddrZ7 = { 0x292e5, 0x29246, 0x29248, 0x29247, 0x29245, 0x29244, 0x29290, 0x2928f }; // Staff Of Change - Samanao Castle, Lancel Cave - 8
-            int[] treasureAddrZ8 = { 0x29277, 0x29276, 0x29275, 0x29278, 0x29279, 0x2927a }; // Locket of Love - Ghost ship - 6
-            int[] treasureAddrZ9 = { 0x31b84 }; // Sword Of Gaia - Sword Of Gaia shrine - 1
-            int[] treasureAddrZ10 = { 0x29288, 0x29289, 0x2928a }; // All Orbs - Cave Of Necrogund - 3
+                0x29246, 0x29248, 0x29247, 0x29245, 0x29244, 0x29290, 0x2928f }; // Lancel Cave - Mirror Of Ra - 31
+            int[] treasureAddrZ7 = { 0x292e5 }; // Staff Of Change - Samanao Castle - 1
+            int[] treasureAddrZ8 = { 0x29277, 0x29276, 0x29275, 0x29278, 0x29279, 0x2927a }; // Sword Of Gaia - Ghost ship - 6
+            int[] treasureAddrZ10 = { 0x29288, 0x29289, 0x2928a }; // Four orbs - Cave Of Necrogund - 3
             int[] treasureAddrZ11 = { 0x2922a, 0x29229, 0x29228, // Baramos's Castle
                 0x29267, 0x29266, 0x29265, 0x29268, // Tantegel Castle
                 0x292a8, 0x292ab, 0x292ac, 0x292aa, 0x292a9, // Erdrick's Cave
@@ -1148,25 +1231,27 @@ namespace DW3Randomizer
                 0x31b90, // Hauksness
                 0x31b88, // Kol
                 0x29253, 0x29254, 0x292d7, 0x292d5, 0x292d6, 0x292d8, 0x292da, 0x292d9, 0x292db, 0x292dc, 0x292de, 0x292dd, // Kol Tower
-                0x29233 }; // Rimuldar - Stones Of Sunlight, Fairy Flute - 32
-            int[] treasureAddrZ12 = { 0x292ad, 0x292ae, 0x292af, 0x292b0, 0x292b1, 0x292b2, 0x292b3, // Zoma's Castle
-                0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, // Pyramid Mummy Men Chests
+                0x29233 }; // Rimuldar - Staff Of Rain, Stones Of Sunlight, Sacred Amulet - 33
+            int[] treasureAddrZ12 = { 0x292ad, 0x292ae, 0x292af, 0x292b0, 0x292b1, 0x292b2, 0x292b3 }; // Zoma's Castle - Sphere of Light - 7
+            int[] treasureAddrZ13 = { 0x292b7, 0x292b8, 0x292b9, 0x292ba, 0x292bb, 0x292bc, 0x292bd, 0x292be, 0x292bf, 0x292c0, 0x292c1, 0x292c2, // Pyramid Mummy Men Chests
                 0x2925b, // Eginbear
                 0x31b9f, // World Tree
                 0x31b97, // Luzami
                 0x31b8c, // Soo
-                0x2922b }; // Final Key Shrine - Dead zone - 23
+                0x2922b, // Final Key Shrine
+                0x2926c, 0x2926d, 0x31b80 }; // New town - Dead zone - 20
 
             List<int> allTreasureList = new List<int>();
 
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ0);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ3);
+            allTreasureList = addTreasure(allTreasureList, treasureAddrZ4);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ7);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ8);
-            allTreasureList = addTreasure(allTreasureList, treasureAddrZ9);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ10);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ11);
             allTreasureList = addTreasure(allTreasureList, treasureAddrZ12);
+            allTreasureList = addTreasure(allTreasureList, treasureAddrZ13);
 
             int[] allTreasure = allTreasureList.ToArray();
 
@@ -1179,9 +1264,9 @@ namespace DW3Randomizer
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
                                       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4b, 0x4c, 0x4e, 0x4f,
-                                      0x50, 0x51, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5c, 0x5d, 0x5e, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6b, 0x6c, 0x6d, 0x6f,
-                                      0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c,
+                                      0x50, 0x51, 0x53, 0x54, 0x55, 0x56, 0x58, 0x59, 0x5a, 0x5c, 0x5d, 0x5f,
+                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
+                                      0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x78, 0x79, 0x7a, 0x7b,
                                       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8,
                                       0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff};
             for (int lnI = 0; lnI < allTreasureList.Count; lnI++)
@@ -1191,11 +1276,38 @@ namespace DW3Randomizer
                 {
                     byte treasure = (byte)((r1.Next() % legalTreasures.Length)); // the last two items we can't get...
                     treasure = legalTreasures[treasure];
+                    // Disallow earning gold for searchable items... this is because 0x80 = 0x00 in this scenario, so anything over 0x80 is useless.  
+                    // (in fact, 0xfd = 0x7d, the Stick Slime, a null item.)
+                    if (allTreasure[lnI] > 0x29400 && treasure >= 0x80)
+                        continue;
+
+                    //byte[] keyItems = { 0x59, 0x5a, 0x54, 0x11, 0x78, 0x79, 0x7a, 0x7b, 0x10, 0x75 };
+                    //byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 134 };
+                    //byte[] keyTreasure = { 37, 116, 124, 130, 133, 133, 133, 133, 165, 165 };
+
+                    // We need to make sure key items doesn't exceed a certain point in the story.
+                    if ((treasure == 0x58 && lnI >= 9) || 
+                        (treasure == 0x59 && lnI >= 37) ||
+                        (treasure == 0x5d && lnI >= 57) ||
+                        (treasure == 0x4f && lnI >= 75) ||
+                        (treasure == 0x5a && lnI >= 89) ||
+                        (treasure == 0x51 && lnI >= 120) ||
+                        (treasure == 0x54 && lnI >= 121) ||
+                        (treasure == 0x11 && lnI >= 127) ||
+                        (treasure == 0x78 && lnI >= 130) ||
+                        (treasure == 0x79 && lnI >= 130) ||
+                        (treasure == 0x7a && lnI >= 130) ||
+                        (treasure == 0x7b && lnI >= 130) ||
+                        (treasure == 0x72 && !(lnI >= 134 && lnI <= 170)) ||
+                        (treasure == 0x10 && !(lnI >= 134 && lnI <= 163)) ||
+                        (treasure == 0x75 && !(lnI >= 134 && lnI <= 163)))
+                        continue;                    
+
                     // Verify that only one location exists for key items
                     if (!(treasureList.Contains(treasure) && (treasure == 0x10 || treasure == 0x11 || treasure == 0x4f || treasure == 0x51 || treasure == 0x53 
-                        || treasure == 0x54 || treasure == 0x57 || treasure == 0x58 || treasure == 0x59 || treasure == 0x5a || treasure == 0x5c 
-                        || treasure == 0x5d || treasure == 0x6b || treasure == 0x6e || treasure == 0x6f || treasure == 0x70 || treasure == 0x71 || treasure == 0x72 
-                        || treasure == 0x75 || treasure == 0x76 || treasure == 0x77 || treasure == 0x78 || treasure == 0x79 || treasure == 0x7a || treasure == 0x7b || treasure == 0x7c)))
+                        || treasure == 0x54 || treasure == 0x58 || treasure == 0x59 || treasure == 0x5a || treasure == 0x5c || treasure == 0x5d
+                        || treasure == 0x70 || treasure == 0x71 || treasure == 0x72 || treasure == 0x75
+                        || treasure == 0x78 || treasure == 0x79 || treasure == 0x7a || treasure == 0x7b)))
                     {
                         legal = true;
                         treasureList.Add(treasure);
@@ -1212,8 +1324,8 @@ namespace DW3Randomizer
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
                                       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46,
                                       0x48, 0x49, 0x4b, 0x4c, 0x4e,
-                                      0x50, 0x52, 0x53, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d, 0x6f,
+                                      0x50, 0x53, 0x55, 0x56, 0x5f,
+                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
                                       0x70, 0x71, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
@@ -1297,9 +1409,9 @@ namespace DW3Randomizer
             }
 
             // Verify that key items are available in either a store or a treasure chest in the right zone.
-            byte[] keyItems = { 0x59, 0x5a, 0x54, 0x6b, 0x11, 0x78, 0x79, 0x7a, 0x7b, 0x10, 0x75 };
-            byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 135, 135 };
-            byte[] keyTreasure = { 37, 116, 124, 130, 131, 134, 134, 134, 134, 166, 166 };
+            byte[] keyItems = { 0x59, 0x5a, 0x51, 0x54, 0x11, 0x78, 0x79, 0x7a, 0x7b, 0x10, 0x75, 0x72 };
+            byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 134, 134 };
+            byte[] keyTreasure = { 37, 89, 120, 121, 127, 130, 130, 130, 130, 163, 163, 170 };
             //byte[] keyWStore = { 2, 2, 36, 48, 48, 48, 48, 48, 48 };
             //byte[] keyIStore = { 2, 2, 54, 66, 66, 66, 66, 66, 66 };
             for (int lnI = 0; lnI < keyItems.Length; lnI++)
@@ -1314,7 +1426,7 @@ namespace DW3Randomizer
                 // If legal = false, then the item was not found, so we'll have to place it in a treasure somewhere...
                 while (!legal)
                 {
-                    byte tRand = (byte)(r1.Next() % keyTreasure[lnI]);
+                    byte tRand = (byte)((r1.Next() % (keyTreasure[lnI] - minKeyTreasure[lnI] + 1)) + minKeyTreasure[lnI]);
 
                     bool dupCheck = false;
                     // Make sure we're not replacing a item that also happens to be key!
@@ -1390,10 +1502,10 @@ namespace DW3Randomizer
             //                   12, 14, 14, 14, 12, // Fighter (6 vit originally)
             //                   12, 12, 13, 10, 12}; // Goof-off, s/b 2, 2, 3, 10, 2, but rewarding for trying something crazy
 
-            int[] baseStat = { 5, 4, 7, 5, 5, // Hero (7 vit, 3 int originally)
-                               1, 6, 5, 6, 7, // Wizard (5 vit, 5 int originally)
-                               2, 3, 4, 5, 7, // Pilgrim (4 vit, 5 int originally)
-                               4, 4, 6, 4, 6, // Sage (6 vit, 4 int originally)
+            int[] baseStat = { 5, 4, 7, 5, 4, // Hero (7 vit, 3 int originally)
+                               1, 6, 5, 6, 6, // Wizard (5 vit, 5 int originally)
+                               2, 3, 4, 5, 6, // Pilgrim (4 vit, 5 int originally)
+                               4, 4, 6, 4, 5, // Sage (6 vit, 4 int originally)
                                6, 2, 7, 1, 1, // Soldier (7 vit originally)
                                4, 4, 4, 3, 3, // Merchant (4 vit originally)
                                8, 8, 6, 6, 2, // Fighter (6 vit originally)
@@ -1943,6 +2055,7 @@ namespace DW3Randomizer
 
                 compareComposeString("itemPrice1", writer, 0x11be, 128);
                 compareComposeString("itemPrice2", writer, 0x123b, 128);
+                compareComposeString("weaponEffects", writer, 0x13280, 40);
 
                 compareComposeString("treasures-Promontory", writer, 0x29237, 3);
                 compareComposeString("treasures-NajimiBasement", writer, 0x2927B, 3);
