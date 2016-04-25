@@ -36,17 +36,11 @@
             this.label4 = new System.Windows.Forms.Label();
             this.lblReqChecksum = new System.Windows.Forms.Label();
             this.chkHalfExpGoldReq = new System.Windows.Forms.CheckBox();
-            this.radSlightIntensity = new System.Windows.Forms.RadioButton();
-            this.radModerateIntensity = new System.Windows.Forms.RadioButton();
-            this.radHeavyIntensity = new System.Windows.Forms.RadioButton();
-            this.radInsaneIntensity = new System.Windows.Forms.RadioButton();
             this.btnRandomize = new System.Windows.Forms.Button();
-            this.lblIntensityDesc = new System.Windows.Forms.Label();
             this.btnCompare = new System.Windows.Forms.Button();
             this.txtSeed = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.chkDoubleXP = new System.Windows.Forms.CheckBox();
-            this.optNoIntensity = new System.Windows.Forms.RadioButton();
             this.btnCompareBrowse = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.txtCompare = new System.Windows.Forms.TextBox();
@@ -64,6 +58,15 @@
             this.txtDefault10 = new System.Windows.Forms.TextBox();
             this.txtDefault3 = new System.Windows.Forms.TextBox();
             this.txtDefault2 = new System.Windows.Forms.TextBox();
+            this.chkRandStores = new System.Windows.Forms.CheckBox();
+            this.chkRandEnemyPatterns = new System.Windows.Forms.CheckBox();
+            this.chkRandMonsterZones = new System.Windows.Forms.CheckBox();
+            this.chkRandEquip = new System.Windows.Forms.CheckBox();
+            this.chkRandSpellLearning = new System.Windows.Forms.CheckBox();
+            this.chkRandSpellStrength = new System.Windows.Forms.CheckBox();
+            this.chkRandTreasures = new System.Windows.Forms.CheckBox();
+            this.chkRandStatGains = new System.Windows.Forms.CheckBox();
+            this.lblIntensityDesc = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtFileName
@@ -141,74 +144,15 @@
             this.chkHalfExpGoldReq.Text = "Increase experience gain by 133% and half gold requirements for items";
             this.chkHalfExpGoldReq.UseVisualStyleBackColor = true;
             // 
-            // radSlightIntensity
-            // 
-            this.radSlightIntensity.AutoSize = true;
-            this.radSlightIntensity.Enabled = false;
-            this.radSlightIntensity.Location = new System.Drawing.Point(70, 306);
-            this.radSlightIntensity.Name = "radSlightIntensity";
-            this.radSlightIntensity.Size = new System.Drawing.Size(51, 17);
-            this.radSlightIntensity.TabIndex = 22;
-            this.radSlightIntensity.Text = "Slight";
-            this.radSlightIntensity.UseVisualStyleBackColor = true;
-            this.radSlightIntensity.CheckedChanged += new System.EventHandler(this.radSlightIntensity_CheckedChanged);
-            // 
-            // radModerateIntensity
-            // 
-            this.radModerateIntensity.AutoSize = true;
-            this.radModerateIntensity.Enabled = false;
-            this.radModerateIntensity.Location = new System.Drawing.Point(128, 306);
-            this.radModerateIntensity.Name = "radModerateIntensity";
-            this.radModerateIntensity.Size = new System.Drawing.Size(70, 17);
-            this.radModerateIntensity.TabIndex = 23;
-            this.radModerateIntensity.Text = "Moderate";
-            this.radModerateIntensity.UseVisualStyleBackColor = true;
-            this.radModerateIntensity.CheckedChanged += new System.EventHandler(this.radModerateIntensity_CheckedChanged);
-            // 
-            // radHeavyIntensity
-            // 
-            this.radHeavyIntensity.AutoSize = true;
-            this.radHeavyIntensity.Enabled = false;
-            this.radHeavyIntensity.Location = new System.Drawing.Point(205, 306);
-            this.radHeavyIntensity.Name = "radHeavyIntensity";
-            this.radHeavyIntensity.Size = new System.Drawing.Size(56, 17);
-            this.radHeavyIntensity.TabIndex = 24;
-            this.radHeavyIntensity.Text = "Heavy";
-            this.radHeavyIntensity.UseVisualStyleBackColor = true;
-            this.radHeavyIntensity.CheckedChanged += new System.EventHandler(this.radHeavyIntensity_CheckedChanged);
-            // 
-            // radInsaneIntensity
-            // 
-            this.radInsaneIntensity.AutoSize = true;
-            this.radInsaneIntensity.Checked = true;
-            this.radInsaneIntensity.Location = new System.Drawing.Point(268, 306);
-            this.radInsaneIntensity.Name = "radInsaneIntensity";
-            this.radInsaneIntensity.Size = new System.Drawing.Size(68, 17);
-            this.radInsaneIntensity.TabIndex = 25;
-            this.radInsaneIntensity.TabStop = true;
-            this.radInsaneIntensity.Text = "INSANE!";
-            this.radInsaneIntensity.UseVisualStyleBackColor = true;
-            this.radInsaneIntensity.CheckedChanged += new System.EventHandler(this.radInsaneIntensity_CheckedChanged);
-            // 
             // btnRandomize
             // 
-            this.btnRandomize.Location = new System.Drawing.Point(448, 306);
+            this.btnRandomize.Location = new System.Drawing.Point(448, 416);
             this.btnRandomize.Name = "btnRandomize";
             this.btnRandomize.Size = new System.Drawing.Size(75, 23);
             this.btnRandomize.TabIndex = 26;
             this.btnRandomize.Text = "Randomize!";
             this.btnRandomize.UseVisualStyleBackColor = true;
             this.btnRandomize.Click += new System.EventHandler(this.btnRandomize_Click);
-            // 
-            // lblIntensityDesc
-            // 
-            this.lblIntensityDesc.AutoSize = true;
-            this.lblIntensityDesc.Location = new System.Drawing.Point(11, 337);
-            this.lblIntensityDesc.MaximumSize = new System.Drawing.Size(500, 0);
-            this.lblIntensityDesc.Name = "lblIntensityDesc";
-            this.lblIntensityDesc.Size = new System.Drawing.Size(84, 13);
-            this.lblIntensityDesc.TabIndex = 15;
-            this.lblIntensityDesc.Text = "Description here";
             // 
             // btnCompare
             // 
@@ -222,7 +166,7 @@
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(69, 186);
+            this.txtSeed.Location = new System.Drawing.Point(69, 296);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(100, 20);
             this.txtSeed.TabIndex = 7;
@@ -230,7 +174,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 188);
+            this.label3.Location = new System.Drawing.Point(12, 298);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 20;
@@ -247,16 +191,6 @@
             this.chkDoubleXP.TabIndex = 6;
             this.chkDoubleXP.Text = "XP +50% for all monsters EXCEPT metal slime/babble, less encounters";
             this.chkDoubleXP.UseVisualStyleBackColor = true;
-            // 
-            // optNoIntensity
-            // 
-            this.optNoIntensity.AutoSize = true;
-            this.optNoIntensity.Location = new System.Drawing.Point(12, 306);
-            this.optNoIntensity.Name = "optNoIntensity";
-            this.optNoIntensity.Size = new System.Drawing.Size(51, 17);
-            this.optNoIntensity.TabIndex = 21;
-            this.optNoIntensity.Text = "None";
-            this.optNoIntensity.UseVisualStyleBackColor = true;
             // 
             // btnCompareBrowse
             // 
@@ -286,7 +220,7 @@
             // 
             // btnNewSeed
             // 
-            this.btnNewSeed.Location = new System.Drawing.Point(186, 184);
+            this.btnNewSeed.Location = new System.Drawing.Point(186, 294);
             this.btnNewSeed.Name = "btnNewSeed";
             this.btnNewSeed.Size = new System.Drawing.Size(75, 23);
             this.btnNewSeed.TabIndex = 8;
@@ -297,7 +231,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 217);
+            this.label6.Location = new System.Drawing.Point(12, 327);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 13);
             this.label6.TabIndex = 25;
@@ -305,7 +239,7 @@
             // 
             // txtDefault1
             // 
-            this.txtDefault1.Location = new System.Drawing.Point(95, 216);
+            this.txtDefault1.Location = new System.Drawing.Point(95, 326);
             this.txtDefault1.MaxLength = 8;
             this.txtDefault1.Name = "txtDefault1";
             this.txtDefault1.Size = new System.Drawing.Size(81, 20);
@@ -313,7 +247,7 @@
             // 
             // txtDefault4
             // 
-            this.txtDefault4.Location = new System.Drawing.Point(198, 216);
+            this.txtDefault4.Location = new System.Drawing.Point(198, 326);
             this.txtDefault4.MaxLength = 8;
             this.txtDefault4.Name = "txtDefault4";
             this.txtDefault4.Size = new System.Drawing.Size(81, 20);
@@ -321,7 +255,7 @@
             // 
             // txtDefault5
             // 
-            this.txtDefault5.Location = new System.Drawing.Point(198, 242);
+            this.txtDefault5.Location = new System.Drawing.Point(198, 352);
             this.txtDefault5.MaxLength = 8;
             this.txtDefault5.Name = "txtDefault5";
             this.txtDefault5.Size = new System.Drawing.Size(81, 20);
@@ -329,7 +263,7 @@
             // 
             // txtDefault6
             // 
-            this.txtDefault6.Location = new System.Drawing.Point(198, 269);
+            this.txtDefault6.Location = new System.Drawing.Point(198, 379);
             this.txtDefault6.MaxLength = 8;
             this.txtDefault6.Name = "txtDefault6";
             this.txtDefault6.Size = new System.Drawing.Size(81, 20);
@@ -337,7 +271,7 @@
             // 
             // txtDefault7
             // 
-            this.txtDefault7.Location = new System.Drawing.Point(301, 216);
+            this.txtDefault7.Location = new System.Drawing.Point(301, 326);
             this.txtDefault7.MaxLength = 8;
             this.txtDefault7.Name = "txtDefault7";
             this.txtDefault7.Size = new System.Drawing.Size(81, 20);
@@ -345,7 +279,7 @@
             // 
             // txtDefault8
             // 
-            this.txtDefault8.Location = new System.Drawing.Point(301, 242);
+            this.txtDefault8.Location = new System.Drawing.Point(301, 352);
             this.txtDefault8.MaxLength = 8;
             this.txtDefault8.Name = "txtDefault8";
             this.txtDefault8.Size = new System.Drawing.Size(81, 20);
@@ -353,7 +287,7 @@
             // 
             // txtDefault9
             // 
-            this.txtDefault9.Location = new System.Drawing.Point(300, 269);
+            this.txtDefault9.Location = new System.Drawing.Point(300, 379);
             this.txtDefault9.MaxLength = 8;
             this.txtDefault9.Name = "txtDefault9";
             this.txtDefault9.Size = new System.Drawing.Size(81, 20);
@@ -361,7 +295,7 @@
             // 
             // txtDefault12
             // 
-            this.txtDefault12.Location = new System.Drawing.Point(407, 269);
+            this.txtDefault12.Location = new System.Drawing.Point(407, 379);
             this.txtDefault12.MaxLength = 8;
             this.txtDefault12.Name = "txtDefault12";
             this.txtDefault12.Size = new System.Drawing.Size(81, 20);
@@ -369,7 +303,7 @@
             // 
             // txtDefault11
             // 
-            this.txtDefault11.Location = new System.Drawing.Point(407, 242);
+            this.txtDefault11.Location = new System.Drawing.Point(407, 352);
             this.txtDefault11.MaxLength = 8;
             this.txtDefault11.Name = "txtDefault11";
             this.txtDefault11.Size = new System.Drawing.Size(81, 20);
@@ -377,7 +311,7 @@
             // 
             // txtDefault10
             // 
-            this.txtDefault10.Location = new System.Drawing.Point(407, 216);
+            this.txtDefault10.Location = new System.Drawing.Point(407, 326);
             this.txtDefault10.MaxLength = 8;
             this.txtDefault10.Name = "txtDefault10";
             this.txtDefault10.Size = new System.Drawing.Size(81, 20);
@@ -385,7 +319,7 @@
             // 
             // txtDefault3
             // 
-            this.txtDefault3.Location = new System.Drawing.Point(95, 269);
+            this.txtDefault3.Location = new System.Drawing.Point(95, 379);
             this.txtDefault3.MaxLength = 8;
             this.txtDefault3.Name = "txtDefault3";
             this.txtDefault3.Size = new System.Drawing.Size(81, 20);
@@ -393,17 +327,130 @@
             // 
             // txtDefault2
             // 
-            this.txtDefault2.Location = new System.Drawing.Point(95, 242);
+            this.txtDefault2.Location = new System.Drawing.Point(95, 352);
             this.txtDefault2.MaxLength = 8;
             this.txtDefault2.Name = "txtDefault2";
             this.txtDefault2.Size = new System.Drawing.Size(81, 20);
             this.txtDefault2.TabIndex = 10;
             // 
+            // chkRandStores
+            // 
+            this.chkRandStores.AutoSize = true;
+            this.chkRandStores.Checked = true;
+            this.chkRandStores.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandStores.Location = new System.Drawing.Point(12, 175);
+            this.chkRandStores.Name = "chkRandStores";
+            this.chkRandStores.Size = new System.Drawing.Size(123, 17);
+            this.chkRandStores.TabIndex = 27;
+            this.chkRandStores.Text = "Randomize all stores";
+            this.chkRandStores.UseVisualStyleBackColor = true;
+            // 
+            // chkRandEnemyPatterns
+            // 
+            this.chkRandEnemyPatterns.AutoSize = true;
+            this.chkRandEnemyPatterns.Checked = true;
+            this.chkRandEnemyPatterns.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandEnemyPatterns.Location = new System.Drawing.Point(12, 198);
+            this.chkRandEnemyPatterns.Name = "chkRandEnemyPatterns";
+            this.chkRandEnemyPatterns.Size = new System.Drawing.Size(154, 17);
+            this.chkRandEnemyPatterns.TabIndex = 28;
+            this.chkRandEnemyPatterns.Text = "Randomize enemy patterns";
+            this.chkRandEnemyPatterns.UseVisualStyleBackColor = true;
+            // 
+            // chkRandMonsterZones
+            // 
+            this.chkRandMonsterZones.AutoSize = true;
+            this.chkRandMonsterZones.Checked = true;
+            this.chkRandMonsterZones.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandMonsterZones.Location = new System.Drawing.Point(186, 198);
+            this.chkRandMonsterZones.Name = "chkRandMonsterZones";
+            this.chkRandMonsterZones.Size = new System.Drawing.Size(150, 17);
+            this.chkRandMonsterZones.TabIndex = 29;
+            this.chkRandMonsterZones.Text = "Randomize monster zones";
+            this.chkRandMonsterZones.UseVisualStyleBackColor = true;
+            // 
+            // chkRandEquip
+            // 
+            this.chkRandEquip.AutoSize = true;
+            this.chkRandEquip.Checked = true;
+            this.chkRandEquip.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandEquip.Location = new System.Drawing.Point(186, 175);
+            this.chkRandEquip.Name = "chkRandEquip";
+            this.chkRandEquip.Size = new System.Drawing.Size(320, 17);
+            this.chkRandEquip.TabIndex = 30;
+            this.chkRandEquip.Text = "Randomize equipment power, item effects, and who can equip";
+            this.chkRandEquip.UseVisualStyleBackColor = true;
+            // 
+            // chkRandSpellLearning
+            // 
+            this.chkRandSpellLearning.AutoSize = true;
+            this.chkRandSpellLearning.Checked = true;
+            this.chkRandSpellLearning.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandSpellLearning.Location = new System.Drawing.Point(12, 221);
+            this.chkRandSpellLearning.Name = "chkRandSpellLearning";
+            this.chkRandSpellLearning.Size = new System.Drawing.Size(143, 17);
+            this.chkRandSpellLearning.TabIndex = 31;
+            this.chkRandSpellLearning.Text = "Randomize spell learning";
+            this.chkRandSpellLearning.UseVisualStyleBackColor = true;
+            // 
+            // chkRandSpellStrength
+            // 
+            this.chkRandSpellStrength.AutoSize = true;
+            this.chkRandSpellStrength.Checked = true;
+            this.chkRandSpellStrength.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandSpellStrength.Location = new System.Drawing.Point(186, 221);
+            this.chkRandSpellStrength.Name = "chkRandSpellStrength";
+            this.chkRandSpellStrength.Size = new System.Drawing.Size(149, 17);
+            this.chkRandSpellStrength.TabIndex = 32;
+            this.chkRandSpellStrength.Text = "Randomize spell strengths";
+            this.chkRandSpellStrength.UseVisualStyleBackColor = true;
+            // 
+            // chkRandTreasures
+            // 
+            this.chkRandTreasures.AutoSize = true;
+            this.chkRandTreasures.Checked = true;
+            this.chkRandTreasures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandTreasures.Location = new System.Drawing.Point(12, 267);
+            this.chkRandTreasures.Name = "chkRandTreasures";
+            this.chkRandTreasures.Size = new System.Drawing.Size(410, 17);
+            this.chkRandTreasures.TabIndex = 33;
+            this.chkRandTreasures.Text = "Randomize all treasures and NPCs except Sailor\'s Thigh Bone and Rainbow Drop";
+            this.chkRandTreasures.UseVisualStyleBackColor = true;
+            // 
+            // chkRandStatGains
+            // 
+            this.chkRandStatGains.AutoSize = true;
+            this.chkRandStatGains.Checked = true;
+            this.chkRandStatGains.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRandStatGains.Location = new System.Drawing.Point(12, 244);
+            this.chkRandStatGains.Name = "chkRandStatGains";
+            this.chkRandStatGains.Size = new System.Drawing.Size(127, 17);
+            this.chkRandStatGains.TabIndex = 34;
+            this.chkRandStatGains.Text = "Randomize stat gains";
+            this.chkRandStatGains.UseVisualStyleBackColor = true;
+            // 
+            // lblIntensityDesc
+            // 
+            this.lblIntensityDesc.Location = new System.Drawing.Point(12, 421);
+            this.lblIntensityDesc.Name = "lblIntensityDesc";
+            this.lblIntensityDesc.Size = new System.Drawing.Size(400, 48);
+            this.lblIntensityDesc.TabIndex = 35;
+            this.lblIntensityDesc.Text = "a867549bad1cba4cd6f6dd51743e78596b982bd8";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(537, 450);
+            this.ClientSize = new System.Drawing.Size(537, 478);
+            this.Controls.Add(this.lblIntensityDesc);
+            this.Controls.Add(this.chkRandStatGains);
+            this.Controls.Add(this.chkRandTreasures);
+            this.Controls.Add(this.chkRandSpellStrength);
+            this.Controls.Add(this.chkRandSpellLearning);
+            this.Controls.Add(this.chkRandEquip);
+            this.Controls.Add(this.chkRandMonsterZones);
+            this.Controls.Add(this.chkRandEnemyPatterns);
+            this.Controls.Add(this.chkRandStores);
             this.Controls.Add(this.txtDefault2);
             this.Controls.Add(this.txtDefault3);
             this.Controls.Add(this.txtDefault10);
@@ -421,17 +468,11 @@
             this.Controls.Add(this.btnCompareBrowse);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtCompare);
-            this.Controls.Add(this.optNoIntensity);
             this.Controls.Add(this.chkDoubleXP);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtSeed);
             this.Controls.Add(this.btnCompare);
-            this.Controls.Add(this.lblIntensityDesc);
             this.Controls.Add(this.btnRandomize);
-            this.Controls.Add(this.radInsaneIntensity);
-            this.Controls.Add(this.radHeavyIntensity);
-            this.Controls.Add(this.radModerateIntensity);
-            this.Controls.Add(this.radSlightIntensity);
             this.Controls.Add(this.chkHalfExpGoldReq);
             this.Controls.Add(this.lblReqChecksum);
             this.Controls.Add(this.label4);
@@ -459,17 +500,11 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblReqChecksum;
         private System.Windows.Forms.CheckBox chkHalfExpGoldReq;
-        private System.Windows.Forms.RadioButton radSlightIntensity;
-        private System.Windows.Forms.RadioButton radModerateIntensity;
-        private System.Windows.Forms.RadioButton radHeavyIntensity;
-        private System.Windows.Forms.RadioButton radInsaneIntensity;
         private System.Windows.Forms.Button btnRandomize;
-        private System.Windows.Forms.Label lblIntensityDesc;
         private System.Windows.Forms.Button btnCompare;
         private System.Windows.Forms.TextBox txtSeed;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox chkDoubleXP;
-        private System.Windows.Forms.RadioButton optNoIntensity;
         private System.Windows.Forms.Button btnNewSeed;
         private System.Windows.Forms.TextBox txtCompare;
         private System.Windows.Forms.Label label5;
@@ -487,6 +522,15 @@
         private System.Windows.Forms.TextBox txtDefault10;
         private System.Windows.Forms.TextBox txtDefault3;
         private System.Windows.Forms.TextBox txtDefault2;
+        private System.Windows.Forms.CheckBox chkRandStores;
+        private System.Windows.Forms.CheckBox chkRandEnemyPatterns;
+        private System.Windows.Forms.CheckBox chkRandMonsterZones;
+        private System.Windows.Forms.CheckBox chkRandEquip;
+        private System.Windows.Forms.CheckBox chkRandSpellLearning;
+        private System.Windows.Forms.CheckBox chkRandSpellStrength;
+        private System.Windows.Forms.CheckBox chkRandTreasures;
+        private System.Windows.Forms.CheckBox chkRandStatGains;
+        private System.Windows.Forms.Label lblIntensityDesc;
     }
 }
 
