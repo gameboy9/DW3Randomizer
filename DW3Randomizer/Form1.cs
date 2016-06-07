@@ -741,10 +741,12 @@ namespace DW3Randomizer
                     if (lnI == 0x07 || lnI == 0x22 || lnI == 0x25 || lnI == 0x28 || lnI == 0x2e || lnI == 0x34 || lnI == 0x35 || // Magician, Lumpus, Mage Toadstool, Nev, Evil Mage, Demonite, Deranger
                         lnI == 0x3c || lnI == 0x4f || lnI == 0x50 || lnI == 0x59 || lnI == 0x5f || lnI == 0x6b || lnI == 0x77 || lnI == 0x78) // Witch, Witch Doctor, Old Hag, Voodoo Shaman, Minidemon, Voodoo Warlock, Archmage, Magiwyvern
                     {
-                        enemyPatterns[0] = (byte)((r1.Next() % 38) + 19); // Any magic spell
-                        enemyPatterns[1] = (byte)((r1.Next() % 38) + 19);
-                        enemyPatterns[2] = (byte)((r1.Next() % 38) + 19);
-                        enemyPatterns[3] = (byte)((r1.Next() % 38) + 19);
+                        for (int lnJ = 0; lnJ <= 3; lnJ++)
+                        {
+                            enemyPatterns[lnJ] = (byte)((r1.Next() % 38) + 19); // Any magic spell
+                            if (enemyPatterns[lnJ] == 0x2b)
+                                lnJ--;
+                        }                        
                     }
                     if (lnI == 0x12) // Gas clouds
                     {
