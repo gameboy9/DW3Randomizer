@@ -67,6 +67,13 @@
             this.chkRandTreasures = new System.Windows.Forms.CheckBox();
             this.chkRandStatGains = new System.Windows.Forms.CheckBox();
             this.lblIntensityDesc = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.grpMonsterStat = new System.Windows.Forms.GroupBox();
+            this.optMonsterSilly = new System.Windows.Forms.RadioButton();
+            this.optMonsterHeavy = new System.Windows.Forms.RadioButton();
+            this.optMonsterMedium = new System.Windows.Forms.RadioButton();
+            this.optMonsterLight = new System.Windows.Forms.RadioButton();
+            this.grpMonsterStat.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtFileName
@@ -137,7 +144,7 @@
             this.chkHalfExpGoldReq.AutoSize = true;
             this.chkHalfExpGoldReq.Checked = true;
             this.chkHalfExpGoldReq.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHalfExpGoldReq.Location = new System.Drawing.Point(12, 129);
+            this.chkHalfExpGoldReq.Location = new System.Drawing.Point(12, 160);
             this.chkHalfExpGoldReq.Name = "chkHalfExpGoldReq";
             this.chkHalfExpGoldReq.Size = new System.Drawing.Size(357, 17);
             this.chkHalfExpGoldReq.TabIndex = 5;
@@ -146,7 +153,7 @@
             // 
             // btnRandomize
             // 
-            this.btnRandomize.Location = new System.Drawing.Point(448, 416);
+            this.btnRandomize.Location = new System.Drawing.Point(448, 447);
             this.btnRandomize.Name = "btnRandomize";
             this.btnRandomize.Size = new System.Drawing.Size(75, 23);
             this.btnRandomize.TabIndex = 26;
@@ -166,7 +173,7 @@
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(69, 296);
+            this.txtSeed.Location = new System.Drawing.Point(69, 327);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(100, 20);
             this.txtSeed.TabIndex = 7;
@@ -174,7 +181,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 298);
+            this.label3.Location = new System.Drawing.Point(12, 329);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 20;
@@ -185,7 +192,7 @@
             this.chkDoubleXP.AutoSize = true;
             this.chkDoubleXP.Checked = true;
             this.chkDoubleXP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDoubleXP.Location = new System.Drawing.Point(12, 152);
+            this.chkDoubleXP.Location = new System.Drawing.Point(12, 183);
             this.chkDoubleXP.Name = "chkDoubleXP";
             this.chkDoubleXP.Size = new System.Drawing.Size(358, 17);
             this.chkDoubleXP.TabIndex = 6;
@@ -220,7 +227,7 @@
             // 
             // btnNewSeed
             // 
-            this.btnNewSeed.Location = new System.Drawing.Point(186, 294);
+            this.btnNewSeed.Location = new System.Drawing.Point(186, 325);
             this.btnNewSeed.Name = "btnNewSeed";
             this.btnNewSeed.Size = new System.Drawing.Size(75, 23);
             this.btnNewSeed.TabIndex = 8;
@@ -231,7 +238,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 327);
+            this.label6.Location = new System.Drawing.Point(12, 358);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 13);
             this.label6.TabIndex = 25;
@@ -239,7 +246,7 @@
             // 
             // txtDefault1
             // 
-            this.txtDefault1.Location = new System.Drawing.Point(95, 326);
+            this.txtDefault1.Location = new System.Drawing.Point(95, 357);
             this.txtDefault1.MaxLength = 8;
             this.txtDefault1.Name = "txtDefault1";
             this.txtDefault1.Size = new System.Drawing.Size(81, 20);
@@ -247,7 +254,7 @@
             // 
             // txtDefault4
             // 
-            this.txtDefault4.Location = new System.Drawing.Point(198, 326);
+            this.txtDefault4.Location = new System.Drawing.Point(198, 357);
             this.txtDefault4.MaxLength = 8;
             this.txtDefault4.Name = "txtDefault4";
             this.txtDefault4.Size = new System.Drawing.Size(81, 20);
@@ -255,7 +262,7 @@
             // 
             // txtDefault5
             // 
-            this.txtDefault5.Location = new System.Drawing.Point(198, 352);
+            this.txtDefault5.Location = new System.Drawing.Point(198, 383);
             this.txtDefault5.MaxLength = 8;
             this.txtDefault5.Name = "txtDefault5";
             this.txtDefault5.Size = new System.Drawing.Size(81, 20);
@@ -263,7 +270,7 @@
             // 
             // txtDefault6
             // 
-            this.txtDefault6.Location = new System.Drawing.Point(198, 379);
+            this.txtDefault6.Location = new System.Drawing.Point(198, 410);
             this.txtDefault6.MaxLength = 8;
             this.txtDefault6.Name = "txtDefault6";
             this.txtDefault6.Size = new System.Drawing.Size(81, 20);
@@ -271,7 +278,7 @@
             // 
             // txtDefault7
             // 
-            this.txtDefault7.Location = new System.Drawing.Point(301, 326);
+            this.txtDefault7.Location = new System.Drawing.Point(301, 357);
             this.txtDefault7.MaxLength = 8;
             this.txtDefault7.Name = "txtDefault7";
             this.txtDefault7.Size = new System.Drawing.Size(81, 20);
@@ -279,7 +286,7 @@
             // 
             // txtDefault8
             // 
-            this.txtDefault8.Location = new System.Drawing.Point(301, 352);
+            this.txtDefault8.Location = new System.Drawing.Point(301, 383);
             this.txtDefault8.MaxLength = 8;
             this.txtDefault8.Name = "txtDefault8";
             this.txtDefault8.Size = new System.Drawing.Size(81, 20);
@@ -287,7 +294,7 @@
             // 
             // txtDefault9
             // 
-            this.txtDefault9.Location = new System.Drawing.Point(300, 379);
+            this.txtDefault9.Location = new System.Drawing.Point(300, 410);
             this.txtDefault9.MaxLength = 8;
             this.txtDefault9.Name = "txtDefault9";
             this.txtDefault9.Size = new System.Drawing.Size(81, 20);
@@ -295,7 +302,7 @@
             // 
             // txtDefault12
             // 
-            this.txtDefault12.Location = new System.Drawing.Point(407, 379);
+            this.txtDefault12.Location = new System.Drawing.Point(407, 410);
             this.txtDefault12.MaxLength = 8;
             this.txtDefault12.Name = "txtDefault12";
             this.txtDefault12.Size = new System.Drawing.Size(81, 20);
@@ -303,7 +310,7 @@
             // 
             // txtDefault11
             // 
-            this.txtDefault11.Location = new System.Drawing.Point(407, 352);
+            this.txtDefault11.Location = new System.Drawing.Point(407, 383);
             this.txtDefault11.MaxLength = 8;
             this.txtDefault11.Name = "txtDefault11";
             this.txtDefault11.Size = new System.Drawing.Size(81, 20);
@@ -311,7 +318,7 @@
             // 
             // txtDefault10
             // 
-            this.txtDefault10.Location = new System.Drawing.Point(407, 326);
+            this.txtDefault10.Location = new System.Drawing.Point(407, 357);
             this.txtDefault10.MaxLength = 8;
             this.txtDefault10.Name = "txtDefault10";
             this.txtDefault10.Size = new System.Drawing.Size(81, 20);
@@ -319,7 +326,7 @@
             // 
             // txtDefault3
             // 
-            this.txtDefault3.Location = new System.Drawing.Point(95, 379);
+            this.txtDefault3.Location = new System.Drawing.Point(95, 410);
             this.txtDefault3.MaxLength = 8;
             this.txtDefault3.Name = "txtDefault3";
             this.txtDefault3.Size = new System.Drawing.Size(81, 20);
@@ -327,7 +334,7 @@
             // 
             // txtDefault2
             // 
-            this.txtDefault2.Location = new System.Drawing.Point(95, 352);
+            this.txtDefault2.Location = new System.Drawing.Point(95, 383);
             this.txtDefault2.MaxLength = 8;
             this.txtDefault2.Name = "txtDefault2";
             this.txtDefault2.Size = new System.Drawing.Size(81, 20);
@@ -338,7 +345,7 @@
             this.chkRandStores.AutoSize = true;
             this.chkRandStores.Checked = true;
             this.chkRandStores.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandStores.Location = new System.Drawing.Point(12, 175);
+            this.chkRandStores.Location = new System.Drawing.Point(12, 206);
             this.chkRandStores.Name = "chkRandStores";
             this.chkRandStores.Size = new System.Drawing.Size(123, 17);
             this.chkRandStores.TabIndex = 27;
@@ -350,7 +357,7 @@
             this.chkRandEnemyPatterns.AutoSize = true;
             this.chkRandEnemyPatterns.Checked = true;
             this.chkRandEnemyPatterns.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandEnemyPatterns.Location = new System.Drawing.Point(12, 198);
+            this.chkRandEnemyPatterns.Location = new System.Drawing.Point(12, 229);
             this.chkRandEnemyPatterns.Name = "chkRandEnemyPatterns";
             this.chkRandEnemyPatterns.Size = new System.Drawing.Size(154, 17);
             this.chkRandEnemyPatterns.TabIndex = 28;
@@ -362,7 +369,7 @@
             this.chkRandMonsterZones.AutoSize = true;
             this.chkRandMonsterZones.Checked = true;
             this.chkRandMonsterZones.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandMonsterZones.Location = new System.Drawing.Point(186, 198);
+            this.chkRandMonsterZones.Location = new System.Drawing.Point(186, 229);
             this.chkRandMonsterZones.Name = "chkRandMonsterZones";
             this.chkRandMonsterZones.Size = new System.Drawing.Size(150, 17);
             this.chkRandMonsterZones.TabIndex = 29;
@@ -374,7 +381,7 @@
             this.chkRandEquip.AutoSize = true;
             this.chkRandEquip.Checked = true;
             this.chkRandEquip.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandEquip.Location = new System.Drawing.Point(186, 175);
+            this.chkRandEquip.Location = new System.Drawing.Point(186, 206);
             this.chkRandEquip.Name = "chkRandEquip";
             this.chkRandEquip.Size = new System.Drawing.Size(320, 17);
             this.chkRandEquip.TabIndex = 30;
@@ -386,7 +393,7 @@
             this.chkRandSpellLearning.AutoSize = true;
             this.chkRandSpellLearning.Checked = true;
             this.chkRandSpellLearning.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandSpellLearning.Location = new System.Drawing.Point(12, 221);
+            this.chkRandSpellLearning.Location = new System.Drawing.Point(12, 252);
             this.chkRandSpellLearning.Name = "chkRandSpellLearning";
             this.chkRandSpellLearning.Size = new System.Drawing.Size(143, 17);
             this.chkRandSpellLearning.TabIndex = 31;
@@ -398,7 +405,7 @@
             this.chkRandSpellStrength.AutoSize = true;
             this.chkRandSpellStrength.Checked = true;
             this.chkRandSpellStrength.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandSpellStrength.Location = new System.Drawing.Point(186, 221);
+            this.chkRandSpellStrength.Location = new System.Drawing.Point(186, 252);
             this.chkRandSpellStrength.Name = "chkRandSpellStrength";
             this.chkRandSpellStrength.Size = new System.Drawing.Size(149, 17);
             this.chkRandSpellStrength.TabIndex = 32;
@@ -410,7 +417,7 @@
             this.chkRandTreasures.AutoSize = true;
             this.chkRandTreasures.Checked = true;
             this.chkRandTreasures.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandTreasures.Location = new System.Drawing.Point(12, 267);
+            this.chkRandTreasures.Location = new System.Drawing.Point(12, 298);
             this.chkRandTreasures.Name = "chkRandTreasures";
             this.chkRandTreasures.Size = new System.Drawing.Size(410, 17);
             this.chkRandTreasures.TabIndex = 33;
@@ -422,7 +429,7 @@
             this.chkRandStatGains.AutoSize = true;
             this.chkRandStatGains.Checked = true;
             this.chkRandStatGains.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRandStatGains.Location = new System.Drawing.Point(12, 244);
+            this.chkRandStatGains.Location = new System.Drawing.Point(12, 275);
             this.chkRandStatGains.Name = "chkRandStatGains";
             this.chkRandStatGains.Size = new System.Drawing.Size(127, 17);
             this.chkRandStatGains.TabIndex = 34;
@@ -431,17 +438,82 @@
             // 
             // lblIntensityDesc
             // 
-            this.lblIntensityDesc.Location = new System.Drawing.Point(12, 421);
+            this.lblIntensityDesc.Location = new System.Drawing.Point(12, 452);
             this.lblIntensityDesc.Name = "lblIntensityDesc";
             this.lblIntensityDesc.Size = new System.Drawing.Size(400, 48);
             this.lblIntensityDesc.TabIndex = 35;
             this.lblIntensityDesc.Text = "a867549bad1cba4cd6f6dd51743e78596b982bd8";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(13, 129);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(76, 13);
+            this.label9.TabIndex = 39;
+            this.label9.Text = "Random Level";
+            // 
+            // grpMonsterStat
+            // 
+            this.grpMonsterStat.Controls.Add(this.optMonsterSilly);
+            this.grpMonsterStat.Controls.Add(this.optMonsterHeavy);
+            this.grpMonsterStat.Controls.Add(this.optMonsterMedium);
+            this.grpMonsterStat.Controls.Add(this.optMonsterLight);
+            this.grpMonsterStat.Location = new System.Drawing.Point(122, 118);
+            this.grpMonsterStat.Name = "grpMonsterStat";
+            this.grpMonsterStat.Size = new System.Drawing.Size(271, 30);
+            this.grpMonsterStat.TabIndex = 38;
+            this.grpMonsterStat.TabStop = false;
+            // 
+            // optMonsterSilly
+            // 
+            this.optMonsterSilly.AutoSize = true;
+            this.optMonsterSilly.Location = new System.Drawing.Point(63, 8);
+            this.optMonsterSilly.Name = "optMonsterSilly";
+            this.optMonsterSilly.Size = new System.Drawing.Size(43, 17);
+            this.optMonsterSilly.TabIndex = 20;
+            this.optMonsterSilly.Text = "Silly";
+            this.optMonsterSilly.UseVisualStyleBackColor = true;
+            // 
+            // optMonsterHeavy
+            // 
+            this.optMonsterHeavy.AutoSize = true;
+            this.optMonsterHeavy.Location = new System.Drawing.Point(192, 8);
+            this.optMonsterHeavy.Name = "optMonsterHeavy";
+            this.optMonsterHeavy.Size = new System.Drawing.Size(71, 17);
+            this.optMonsterHeavy.TabIndex = 19;
+            this.optMonsterHeavy.Text = "Ludicrous";
+            this.optMonsterHeavy.UseVisualStyleBackColor = true;
+            // 
+            // optMonsterMedium
+            // 
+            this.optMonsterMedium.AutoSize = true;
+            this.optMonsterMedium.Location = new System.Drawing.Point(112, 8);
+            this.optMonsterMedium.Name = "optMonsterMedium";
+            this.optMonsterMedium.Size = new System.Drawing.Size(74, 17);
+            this.optMonsterMedium.TabIndex = 18;
+            this.optMonsterMedium.Text = "Ridiculous";
+            this.optMonsterMedium.UseVisualStyleBackColor = true;
+            // 
+            // optMonsterLight
+            // 
+            this.optMonsterLight.AutoSize = true;
+            this.optMonsterLight.Checked = true;
+            this.optMonsterLight.Location = new System.Drawing.Point(9, 8);
+            this.optMonsterLight.Name = "optMonsterLight";
+            this.optMonsterLight.Size = new System.Drawing.Size(48, 17);
+            this.optMonsterLight.TabIndex = 17;
+            this.optMonsterLight.TabStop = true;
+            this.optMonsterLight.Text = "Light";
+            this.optMonsterLight.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(537, 478);
+            this.ClientSize = new System.Drawing.Size(537, 507);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.grpMonsterStat);
             this.Controls.Add(this.lblIntensityDesc);
             this.Controls.Add(this.chkRandStatGains);
             this.Controls.Add(this.chkRandTreasures);
@@ -485,6 +557,8 @@
             this.Text = "Dragon Warrior 3 Randomizer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.grpMonsterStat.ResumeLayout(false);
+            this.grpMonsterStat.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -531,6 +605,12 @@
         private System.Windows.Forms.CheckBox chkRandTreasures;
         private System.Windows.Forms.CheckBox chkRandStatGains;
         private System.Windows.Forms.Label lblIntensityDesc;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox grpMonsterStat;
+        private System.Windows.Forms.RadioButton optMonsterSilly;
+        private System.Windows.Forms.RadioButton optMonsterHeavy;
+        private System.Windows.Forms.RadioButton optMonsterMedium;
+        private System.Windows.Forms.RadioButton optMonsterLight;
     }
 }
 

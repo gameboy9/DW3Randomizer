@@ -164,6 +164,28 @@ namespace DW3Randomizer
             romData[0x9882] = 2; // instead of 12 - Frames of shaking when YOU are hit... saving 10 frames / hit
             romData[0x9957] = 1; // Instead of 4 enemy flashes, saving at least 6 frames / hit... probably 12 or even 24 frames / hit.
 
+            // Implement DW4 RNG so any currently known manipulations won't work.
+            //romData[0x3ff93] = 0xe6;
+            //romData[0x3ff94] = 0x1c;
+            //romData[0x3ff95] = 0xcd;
+            //romData[0x3ff96] = 0xd2;
+            //romData[0x3ff97] = 0x06;
+            //romData[0x3ff98] = 0xf0;
+            //romData[0x3ff99] = 0xf9;
+            //romData[0x3ff9a] = 0x60;
+
+            //romData[0x3c354] = 0x20;
+            //romData[0x3c355] = 0x83;
+            //romData[0x3c356] = 0xff;
+            //romData[0x3c357] = 0xea;
+            //romData[0x3c358] = 0xea;
+
+            //romData[0x3c35f] = 0x20;
+            //romData[0x3c360] = 0x83;
+            //romData[0x3c361] = 0xff;
+            //romData[0x3c362] = 0xea;
+            //romData[0x3c363] = 0xea;
+
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
             byte[] codData1 = { 0xa0, 0x00, // Make sure Y is 0 first.
@@ -580,7 +602,8 @@ namespace DW3Randomizer
                         if (lnJ > 3)
                             enemyStats[lnJ + 14] = (byte)(enemyStats[lnJ + 14] - (enemyStats[lnJ + 14] % 4) + (totalAtk / 256));
                     }
-                    enemyStats[8] = 255; // Always make sure the monster has MP
+                    if (enemyStats[8] <= 16 && r1.Next() % 2 == 1) enemyStats[8] = (byte)(r1.Next() % 32);
+                    //enemyStats[8] = 255; // Always make sure the monster has MP
 
                     // Needs to be a "legal treasure..."
                     byte[] legalMonsterTreasures = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -702,9 +725,9 @@ namespace DW3Randomizer
                         case 4:
                             for (int lnJ = 0; lnJ < 8; lnJ++)
                             {
-                                byte[] attackPattern = { 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 6, 6, 8, 11, 12, 14, 15, 18, 20, 21, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 40, 40, 42, 44, 47, 48, 51, 53, 56, 58, 60 };
+                                byte[] attackPattern = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 6, 6, 8, 11, 12, 14, 15, 18, 20, 21, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 40, 40, 42, 44, 47, 48, 51, 53, 56, 58, 60 };
                                 byte random = (attackPattern[r1.Next() % attackPattern.Length]);
-                                if (random >= 1 && random <= 31) // 0 would be fine, but it's already set.
+                                if (random != 2 && random < 64)
                                     enemyPatterns[lnJ] = random;
                             }
                             break;
@@ -722,50 +745,50 @@ namespace DW3Randomizer
                             enemyPatterns[5] = 7; // run away
                         }
                     }
-                    if (lnI == 0x05 || lnI == 0x28)
-                    { // Healer, Curer
-                        byte[] attackPattern = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
-                        enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    }
-                    if (lnI == 0x0c || lnI == 0x14)
-                    { // Poison Toad, Poison Silkworm
-                        byte[] attackPattern = { 5, 17 };
-                        enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
-                        enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    }
-                    if (lnI == 0x07 || lnI == 0x22 || lnI == 0x25 || lnI == 0x28 || lnI == 0x2e || lnI == 0x34 || lnI == 0x35 || // Magician, Lumpus, Mage Toadstool, Nev, Evil Mage, Demonite, Deranger
-                        lnI == 0x3c || lnI == 0x4f || lnI == 0x50 || lnI == 0x59 || lnI == 0x5f || lnI == 0x6b || lnI == 0x77 || lnI == 0x78) // Witch, Witch Doctor, Old Hag, Voodoo Shaman, Minidemon, Voodoo Warlock, Archmage, Magiwyvern
-                    {
-                        for (int lnJ = 0; lnJ <= 3; lnJ++)
-                        {
-                            enemyPatterns[lnJ] = (byte)((r1.Next() % 38) + 19); // Any magic spell
-                            if (enemyPatterns[lnJ] == 0x2b)
-                                lnJ--;
-                        }                        
-                    }
-                    if (lnI == 0x12) // Gas clouds
-                    {
-                        enemyPatterns[0] = (byte)((r1.Next() % 3) + 16); // breathe something
-                        enemyPatterns[1] = (byte)((r1.Next() % 3) + 16); // breathe something
-                    }
-                    // Flamapede, Heat Cloud, Sky Dragon, Lava Basher, Orochi, Salamander, Hydra, Green Dragon, King Hydra
-                    if (lnI == 0x23 || lnI == 0x29 || lnI == 0x3a || lnI == 0x4e || lnI == 0x65 || lnI == 0x67 || lnI == 0x7a || lnI == 0x7c || lnI == 0x81)
-                    {
-                        enemyPatterns[0] = (byte)((r1.Next() % 3) + 10); // breathe fire
-                        enemyPatterns[1] = (byte)((r1.Next() % 3) + 10); // breathe fire
-                    }
-                    if (lnI == 0x52 || lnI == 0x5b || lnI == 0x5d) // Glacier Basher, Snow Dragon, Frost Cloud
-                    {
-                        enemyPatterns[0] = (byte)((r1.Next() % 3) + 13); // breathe ice
-                        enemyPatterns[1] = (byte)((r1.Next() % 3) + 13); // breathe ice
-                    }
-                    if (lnI == 0x57) // Bomb Crag
-                        enemyPatterns[0] = 21; // Sacrifice!  :)
+                    //if (lnI == 0x05 || lnI == 0x28)
+                    //{ // Healer, Curer
+                    //    byte[] attackPattern = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
+                    //    enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //}
+                    //if (lnI == 0x0c || lnI == 0x14)
+                    //{ // Poison Toad, Poison Silkworm
+                    //    byte[] attackPattern = { 5, 17 };
+                    //    enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //    enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
+                    //}
+                    //if (lnI == 0x07 || lnI == 0x22 || lnI == 0x25 || lnI == 0x28 || lnI == 0x2e || lnI == 0x34 || lnI == 0x35 || // Magician, Lumpus, Mage Toadstool, Nev, Evil Mage, Demonite, Deranger
+                    //    lnI == 0x3c || lnI == 0x4f || lnI == 0x50 || lnI == 0x59 || lnI == 0x5f || lnI == 0x6b || lnI == 0x77 || lnI == 0x78) // Witch, Witch Doctor, Old Hag, Voodoo Shaman, Minidemon, Voodoo Warlock, Archmage, Magiwyvern
+                    //{
+                    //    for (int lnJ = 0; lnJ <= 3; lnJ++)
+                    //    {
+                    //        enemyPatterns[lnJ] = (byte)((r1.Next() % 38) + 19); // Any magic spell
+                    //        if (enemyPatterns[lnJ] == 0x2b)
+                    //            lnJ--;
+                    //    }                        
+                    //}
+                    //if (lnI == 0x12) // Gas clouds
+                    //{
+                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 16); // breathe something
+                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 16); // breathe something
+                    //}
+                    //// Flamapede, Heat Cloud, Sky Dragon, Lava Basher, Orochi, Salamander, Hydra, Green Dragon, King Hydra
+                    //if (lnI == 0x23 || lnI == 0x29 || lnI == 0x3a || lnI == 0x4e || lnI == 0x65 || lnI == 0x67 || lnI == 0x7a || lnI == 0x7c || lnI == 0x81)
+                    //{
+                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 10); // breathe fire
+                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 10); // breathe fire
+                    //}
+                    //if (lnI == 0x52 || lnI == 0x5b || lnI == 0x5d) // Glacier Basher, Snow Dragon, Frost Cloud
+                    //{
+                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 13); // breathe ice
+                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 13); // breathe ice
+                    //}
+                    //if (lnI == 0x57) // Bomb Crag
+                    //    enemyPatterns[0] = 21; // Sacrifice!  :)
 
                     // Both bits set = 2 attacks guaranteed.  2nd bit set = up to 3 attacks.  1st bit set = up to 2 attacks.
                     int badChance = (3 * lnI > 300 ? 300 : 3 * lnI);
@@ -779,6 +802,7 @@ namespace DW3Randomizer
                     else if (r1.Next() % 1000 < badChance)
                         enemyPatterns[4] += 128;
 
+                    // Repeat for regeneration.  Both bits = 100 HP / round, 2nd bit = 50 HP / round, 3rd bit = 25 HP / round
                     if (r1.Next() % 1000 < badChance / 3)
                     {
                         enemyPatterns[6] += 128;
@@ -1476,96 +1500,214 @@ namespace DW3Randomizer
                 romData[0x2482] = 0x7d;
                 romData[0x2483] = 0xa4;
 
-                //romData[0x2480] = 0xea;
+                // TRY TWO
+                // Max array:  [7, 5]
+                // ORDER:  Hero, Wizard, Pilgrim, Sage, Soldier, Merchant, Fighter, Goof-off
+                int[,] heroL41Gains = new int[,] {
+                               { 134, 77, 166, 121, 69 },
+                               { 33, 125, 106, 143, 108 },
+                               { 55, 79, 110, 120, 107 },
+                               { 80, 90, 127, 79, 97 },
+                               { 149, 37, 191, 32, 33 },
+                               { 96, 75, 122, 54, 60 },
+                               { 188, 191, 143, 145, 43 },
+                               { 36, 47, 84, 210, 52 }
+                               }; 
 
-                // Randomize stat gains.
-                // First, we'll randomize the multipliers.  They will range from 4 to 20, in multiples of 4.
-
-                for (int lnI = 0; lnI < 10; lnI++)
-                    romData[0x281b + lnI] = (byte)(((r1.Next() % 5) + 1) * 4);
-
-                // ORDER:  Strength, agility, vitality, luck, intelligence - set max for each class.  Strength, agility, vitality, luck, intelligence
-                int[] statAdjust = { 160, 120, 215, 155, 115, // Hero
-                               60, 185, 135, 180, 135, // Wizard
-                               95, 110, 130, 165, 135, // Pilgrim
-                               125, 130, 120, 125, 130, // Sage
-                               175, 70, 220, 45, 50, // Soldier
-                               125, 115, 145, 105, 85, // Merchant
-                               235, 220, 183, 185, 52, // Fighter
-                               70, 85, 110, 255, 90}; // Goof-off
-
-                for (int lnI = 0; lnI < 40; lnI++)
-                {
-                    int[] levels = { (r1.Next() % 50), (r1.Next() % 50), (r1.Next() % 50), (r1.Next() % 50) };
-                    for (int lnJ = 0; lnJ < 3; lnJ++)
-                        for (int lnK = lnJ; lnK < 4; lnK++)
-                            if (levels[lnJ] > levels[lnK])
-                            {
-                                int temp = levels[lnJ];
-                                levels[lnJ] = levels[lnK];
-                                levels[lnK] = temp;
-                            }
-
-                    bool multA = (r1.Next() % 2 == 1);
-                    // Determine maximum base stat for the stats in mind.  Remember... average gain = base * mult / 13.75
-                    double attribute = 0;
-
-                    for (int lnJ = 0; lnJ < 50; lnJ++)
-                    {
-                        int levelToUse = (multA ? 0 : 5) + (lnJ < levels[0] ? 0 : lnJ < levels[1] ? 1 : lnJ < levels[2] ? 2 : lnJ < levels[3] ? 3 : 4);
-                        attribute += (romData[0x281b + levelToUse] / 13.75);
-                    }
-                    // This final attribute is if base = 1.  Calculate the base on the stats above.  Adjust -50% to +100%
-                    int maxStat = statAdjust[lnI];
-                    int statRandom = (r1.Next() % 3);
-                    if (statRandom == 0)
-                    {
-                        maxStat -= (r1.Next() % (maxStat / 2));
-                    } else if (statRandom == 2)
-                    {
-                        maxStat += (r1.Next() % (maxStat * 2));
-                    }
-
-                    int newBase = (int)Math.Round(maxStat / attribute);
-
-                    if (newBase < 1)
-                        newBase = 1;
-                    if (newBase > 15)
-                        newBase = 15;
-
-                    //if (lnI >= 16 && lnI < 24 && newBase < (int)Math.Ceiling((double)maxBase / 3))
-                    //    newBase = (int)Math.Ceiling((double)maxBase / 3); // Vitality base REALLY needs to be 1/3 max or greater or you'll never survive.
-                    //if (lnI >= 32 && lnI < 36 && newBase < (int)Math.Ceiling((double)maxBase / 3))
-                    //    newBase = (int)Math.Ceiling((double)maxBase / 3); // Intelligence base REALLY needs to be 1/3 max or greater or you'll never get MP.
-                    if (lnI >= 36 && lnI < 40)
-                        newBase = 0; // Give out no intelligence to non-MP users.
-                                     //int charLevel = 0;
+                //heroL41Gains[8, 0] = 0;
+                // Randomize the four multipliers from 8 to 32.  Each multiplier has six bytes.
+                for (int lnI = 0; lnI < 2; lnI++)
                     for (int lnJ = 0; lnJ < 5; lnJ++)
                     {
-                        if (lnJ == 0) // Determine Multiplier path A or B with byte 0.
-                            romData[0x290e + (lnI * 5) + lnJ] = (byte)(!multA ? 128 : 0); // (byte)(lnI >= 16 && lnI < 24 ? 128 : 0);
-                        if (lnJ == 1)
-                            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase >= 8 ? 128 : 0);
-                        if (lnJ == 2)
-                            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 8 >= 4 ? 128 : 0);
-                        if (lnJ == 3)
-                            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 4 >= 2 ? 128 : 0);
-                        if (lnJ == 4)
-                            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 2 == 1 ? 255 : 127);
+                        int byteToUse2 = 0x281b + (lnI * 5) + lnJ;
+                        romData[byteToUse2] = (byte)(((r1.Next() % 4) + 1) * 8);
+                    }
 
-                        if (lnJ <= 3)
+                // Randomize the levels to the next multiplier from 0 to 24.(First 4 bytes)  Always make the 5th byte "99" (63 hex).
+                // Calculate the base gain based on the four multipliers.  Try to get as close to the target gain for each stat as possible.
+                // Char byteToUse - 0x4a15b, 0x4a17f, 0x4a1a3, 0x4a1c7, 0x4a1eb, 0x4a20f, 0x4a22d, 0x4a24b
+                int byteToUse = 0x290e;
+                // 40 bytes for strength, 40 bytes for agility, 40 bytes for vitality, 40 bytes for luck, 40 bytes for intelligence, in that order.  NOT in character order, statistic order!
+                for (int lnJ = 0; lnJ < 5; lnJ++)
+                {
+                    for (int lnI = 0; lnI < 8; lnI++)
+                    {
+                        if (optMonsterSilly.Checked || optMonsterMedium.Checked)
                         {
-                            int prevLevel = (lnJ == 0 ? 0 : levels[lnJ - 1]);
-                            int lvlsToNext = 0;
-                            if (lnJ == 0)
-                                lvlsToNext = levels[lnJ];
-                            else
-                                lvlsToNext = levels[lnJ] - levels[lnJ - 1];
-
-                            romData[0x290e + (lnI * 5) + lnJ] += (byte)(lvlsToNext);
+                            int randomDir = (r1.Next() % 3);
+                            int difference = heroL41Gains[lnI, lnJ] / (optMonsterSilly.Checked ? 4 : 2);
+                            if (randomDir == 0)
+                                heroL41Gains[lnI, lnJ] -= (r1.Next() % difference);
+                            if (randomDir == 1)
+                                heroL41Gains[lnI, lnJ] += (r1.Next() % difference);
                         }
+                        if (optMonsterHeavy.Checked)
+                            heroL41Gains[lnI, lnJ] = (r1.Next() % (lnJ == 2 ? 170 : 220)) + (lnJ == 2 ? 80 : 32);
+
+                        int[] levels = { 0, 0, 0, 0, 99 };
+                        for (int lnK = 0; lnK < 4; lnK++)
+                            levels[lnK] = (byte)(r1.Next() % 50);
+                        Array.Sort(levels);
+                        //for (int lnK = 0; lnK < 4; lnK++)
+                        //{
+                        //    if ((lnK == 0 && baseStat % 2 == 1) || (lnK == 1 && baseStat % 4 >= 2) || (lnK == 2 && baseStat % 8 >= 4) || (lnK == 3 && baseStat % 16 >= 8))
+                        //        romData[byteToUse + lnK] = (byte)(128 + levels[lnK]);
+                        //    else
+                        //        romData[byteToUse + lnK] = (byte)(levels[lnK]);
+                        //}
+
+                        //if (baseStat >= 16)
+                        //    romData[byteToUse + 4] = 99 + 128;
+                        //else
+                        //    romData[byteToUse + 4] = 99;
+
+                        // Averages:  8-16 = .6/level, 24-32 = 1.6/level, 40-48 = 2.6/level, 56-64 = 3.6/level, 72-80 = 4.6/level, 88-96 = 5.6/level, 104-112 = 6.6/level
+                        // Maximize base stat at 12 (5.6/level at 8 multiplier)
+                        // Now to figure out the multiplier to use (+ 0) and the base multiplier (+ 5)
+                        double[] diffs = { 0.0, 0.0, 0.0, 0.0 };
+                        int[] baseMult = { 0, 0, 0, 0 };
+                        for (int lnK = 0; lnK < 2; lnK++)
+                        {
+                            for (baseMult[lnK] = 1; baseMult[lnK] <= 12; baseMult[lnK]++)
+                            {
+                                int byteToUse2 = 0x281b + (lnK * 5); // multipliers
+                                double stat = 0.0;
+                                int multLevel = 0;
+
+                                for (int lnL = 2; lnL <= 40; lnL++)
+                                {
+                                    int multLevelToUse = (levels[multLevel]);
+                                    if (lnL > multLevelToUse)
+                                        multLevel++;
+                                    stat += Math.Floor((((double)baseMult[lnK] * romData[byteToUse2 + multLevel]) - 8) / 16) + 0.85;
+                                }
+                                //baseMult[lnK] = (int)Math.Round(heroL41Gains[lnI, lnJ] / stat);
+                                diffs[lnK] = Math.Abs(stat - heroL41Gains[lnI, lnJ]);
+                                if (stat > heroL41Gains[lnI, lnJ]) break;
+                            }
+                        }
+
+                        double lowDiff = 9999;
+                        int lowMult = 0;
+                        int ultiBaseMult = 0;
+                        for (int lnK = 0; lnK < 2; lnK++)
+                        {
+                            if (diffs[lnK] < lowDiff)
+                            {
+                                lowDiff = diffs[lnK];
+                                lowMult = lnK;
+                                ultiBaseMult = baseMult[lnK];
+                            }
+                        }
+
+                        romData[byteToUse] = (byte)((lowMult == 0 ? 0 : 128) + levels[0]);
+                        romData[byteToUse + 1] = (byte)((ultiBaseMult >= 8 ? 128 : 0) + (levels[1] - levels[0]));
+                        romData[byteToUse + 2] = (byte)((ultiBaseMult % 8 >= 4 ? 128 : 0) + (levels[2] - levels[1]));
+                        romData[byteToUse + 3] = (byte)((ultiBaseMult % 4 >= 2 ? 128 : 0) + (levels[3] - levels[2]));
+                        romData[byteToUse + 4] = (byte)((ultiBaseMult % 2 >= 1 ? 128 : 0) + 127);
+
+                        //romData[byteToUse] += (byte)(32 * lowMult);
+                        //romData[byteToUse + 5] = (byte)ultiBaseMult;
+
+                        byteToUse += 5;
                     }
                 }
+                //int asdf = 1234;
+                //overrideStats();
+
+
+                //romData[0x2480] = 0xea;
+
+                // TRY ONE
+
+                //// Randomize stat gains.
+                //// First, we'll randomize the multipliers.  They will range from 4 to 20, in multiples of 4.
+
+                //for (int lnI = 0; lnI < 10; lnI++)
+                //    romData[0x281b + lnI] = (byte)(((r1.Next() % 5) + 1) * 4);
+
+                //// ORDER:  Strength, agility, vitality, luck, intelligence - set max for each class.  Strength, agility, vitality, luck, intelligence
+                //int[] statAdjust = { 160, 120, 215, 155, 115, // Hero
+                //               60, 185, 135, 180, 135, // Wizard
+                //               95, 110, 130, 165, 135, // Pilgrim
+                //               125, 130, 120, 125, 130, // Sage
+                //               175, 70, 220, 45, 50, // Soldier
+                //               125, 115, 145, 105, 85, // Merchant
+                //               235, 220, 183, 185, 52, // Fighter
+                //               70, 85, 110, 255, 90}; // Goof-off
+
+                //for (int lnI = 0; lnI < 40; lnI++)
+                //{
+                //    int[] levels = { (r1.Next() % 50), (r1.Next() % 50), (r1.Next() % 50), (r1.Next() % 50) };
+                //    for (int lnJ = 0; lnJ < 3; lnJ++)
+                //        for (int lnK = lnJ; lnK < 4; lnK++)
+                //            if (levels[lnJ] > levels[lnK])
+                //            {
+                //                int temp = levels[lnJ];
+                //                levels[lnJ] = levels[lnK];
+                //                levels[lnK] = temp;
+                //            }
+
+                //    bool multA = (r1.Next() % 2 == 1);
+                //    // Determine maximum base stat for the stats in mind.  Remember... average gain = base * mult / 13.75
+                //    double attribute = 0;
+
+                //    for (int lnJ = 0; lnJ < 50; lnJ++)
+                //    {
+                //        int levelToUse = (multA ? 0 : 5) + (lnJ < levels[0] ? 0 : lnJ < levels[1] ? 1 : lnJ < levels[2] ? 2 : lnJ < levels[3] ? 3 : 4);
+                //        attribute += (romData[0x281b + levelToUse] / 13.75);
+                //    }
+                //    // This final attribute is if base = 1.  Calculate the base on the stats above.  Adjust -50% to +100%
+                //    int maxStat = statAdjust[lnI];
+                //    int statRandom = (r1.Next() % 3);
+                //    if (statRandom == 0)
+                //    {
+                //        maxStat -= (r1.Next() % (maxStat / 2));
+                //    } else if (statRandom == 2)
+                //    {
+                //        maxStat += (r1.Next() % (maxStat * 2));
+                //    }
+
+                //    int newBase = (int)Math.Round(maxStat / attribute);
+
+                //    if (newBase < 1)
+                //        newBase = 1;
+                //    if (newBase > 15)
+                //        newBase = 15;
+
+                //    //if (lnI >= 16 && lnI < 24 && newBase < (int)Math.Ceiling((double)maxBase / 3))
+                //    //    newBase = (int)Math.Ceiling((double)maxBase / 3); // Vitality base REALLY needs to be 1/3 max or greater or you'll never survive.
+                //    //if (lnI >= 32 && lnI < 36 && newBase < (int)Math.Ceiling((double)maxBase / 3))
+                //    //    newBase = (int)Math.Ceiling((double)maxBase / 3); // Intelligence base REALLY needs to be 1/3 max or greater or you'll never get MP.
+                //    if (lnI >= 36 && lnI < 40)
+                //        newBase = 0; // Give out no intelligence to non-MP users.
+                //                     //int charLevel = 0;
+                //    for (int lnJ = 0; lnJ < 5; lnJ++)
+                //    {
+                //        if (lnJ == 0) // Determine Multiplier path A or B with byte 0.
+                //            romData[0x290e + (lnI * 5) + lnJ] = (byte)(!multA ? 128 : 0); // (byte)(lnI >= 16 && lnI < 24 ? 128 : 0);
+                //        if (lnJ == 1)
+                //            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase >= 8 ? 128 : 0);
+                //        if (lnJ == 2)
+                //            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 8 >= 4 ? 128 : 0);
+                //        if (lnJ == 3)
+                //            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 4 >= 2 ? 128 : 0);
+                //        if (lnJ == 4)
+                //            romData[0x290e + (lnI * 5) + lnJ] = (byte)(newBase % 2 == 1 ? 255 : 127);
+
+                //        if (lnJ <= 3)
+                //        {
+                //            int prevLevel = (lnJ == 0 ? 0 : levels[lnJ - 1]);
+                //            int lvlsToNext = 0;
+                //            if (lnJ == 0)
+                //                lvlsToNext = levels[lnJ];
+                //            else
+                //                lvlsToNext = levels[lnJ] - levels[lnJ - 1];
+
+                //            romData[0x290e + (lnI * 5) + lnJ] += (byte)(lvlsToNext);
+                //        }
+                //    }
+                //}
             }
         }
 
