@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DW3Randomizer
 {
@@ -19,6 +20,12 @@ namespace DW3Randomizer
                                 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x66, 0x67, 0x53, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f,
                                 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
                                 0x80, 0x88, 0x89, 0x65, 0x84, 0x81, 0x82, 0x83 }; // 129 normal monsters, 7 bosses.  Skip Zoma, "frozen" Zoma, Ortega
+        int[,] map = new int[256, 256];
+        int[,] map2 = new int[132, 156];
+        int[,] island = new int[256, 256];
+        int[,] zone = new int[16, 16];
+        int[] maxIsland = new int[4];
+        List<int> islands = new List<int>();
 
         public Form1()
         {
@@ -339,6 +346,1274 @@ namespace DW3Randomizer
             File.WriteAllBytes(finalFile, romData);
             lblIntensityDesc.Text = "ROM hacking complete!  (" + finalFile + ")";
             txtCompare.Text = finalFile;
+        }
+
+        private bool randomizeMapv5(Random r1)
+        {
+            for (int lnI = 0; lnI < 256; lnI++)
+                for (int lnJ = 0; lnJ < 256; lnJ++)
+                {
+                    if (chkSmallMap.Checked && (lnI >= 128 || lnJ >= 128))
+                    {
+                        map[lnI, lnJ] = 0x06;
+                        island[lnI, lnJ] = 200;
+                    }
+                    else
+                    {
+                        map[lnI, lnJ] = 0x00;
+                        island[lnI, lnJ] = -1;
+                    }
+                }
+
+            for (int lnI = 0; lnI < 132; lnI++)
+                for (int lnJ = 0; lnJ < 156; lnJ++)
+                    map2[lnI, lnJ] = 0x00;
+
+
+            int islandSize = (r1.Next() % 20000) + 30000; // (lnI == 0 ? 1500 : lnI == 1 ? 2500 : lnI == 2 ? 1500 : lnI == 3 ? 1500 : lnI == 4 ? 5000 : 5000);
+            int islandSize2 = islandSize * 3 / 10; // For Tantegel
+            islandSize /= (chkSmallMap.Checked ? 4 : 1);
+
+            // Set up three special zones.  Zone 1000 = 25 squares and has Cannock stuff.  Zone 2000 = 30 squares and has Moonbrooke stuff.  
+            // Zone 3000 = 48 squares and has Hargon stuff.  It will be surrounded by eight tiles of mountains.
+            // This takes up 94 / 256 of the total squares available.
+
+            bool zonesCreated = false;
+            while (!zonesCreated)
+            {
+                zone = new int[16, 16];
+                if (createZone(3000, 1, false, r1) && createZone(1000, 20, false, r1) && createZone(2000, 40, false, r1))
+                    zonesCreated = true;
+            }
+
+            markZoneSides();
+            generateZoneMap(1000, false, islandSize * 20 / 256, r1);
+            generateZoneMap(2000, false, islandSize * 40 / 256, r1);
+            generateZoneMap(0, false, islandSize * 195 / 256, r1);
+            generateZoneMap(-1000, false, islandSize2, r1); // About 31% of the regular map
+            createBridges(r1);
+            resetIslands();
+            
+            // We should mark islands and inaccessible land...
+            int lakeNumber = 256;
+
+            int maxPlots = 0;
+            int maxLake = 0;
+            for (int lnI = 0; lnI < 256; lnI++)
+                for (int lnJ = 0; lnJ < 256; lnJ++)
+                {
+                    if (island[lnI, lnJ] == -1)
+                    {
+                        int plots = lakePlot(lakeNumber, lnI, lnJ);
+                        if (plots > maxPlots)
+                        {
+                            maxPlots = plots;
+                            maxLake = lakeNumber;
+                        }
+                        lakeNumber++;
+                    }
+                }
+
+            // Establish Aliahan location
+            bool midenOK = false;
+            int[] midenX = new int[4];
+            int[] midenY = new int[4];
+            while (!midenOK)
+            {
+                midenX[1] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                midenY[1] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                if (validPlot(midenY[1], midenX[1], 2, 2, new int[] { maxIsland[1] }))
+                    midenOK = true;
+            }
+
+            // Shrine South Of Romaly
+            midenOK = false;
+            while (!midenOK)
+            {
+                midenX[2] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                midenY[2] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                if (validPlot(midenY[2], midenX[2], 1, 1, new int[] { maxIsland[2] }))
+                    midenOK = true;
+            }
+
+            // Norud Cave (East)
+            midenOK = false;
+            while (!midenOK)
+            {
+                midenX[0] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                midenY[0] = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                if (validPlot(midenY[0], midenX[0], 1, 1, new int[] { maxIsland[0] }))
+                    midenOK = true;
+            }
+
+            // Tantegel
+            midenOK = false;
+            while (!midenOK)
+            {
+                midenX[3] = r1.Next() % 156;
+                midenY[3] = r1.Next() % 132;
+                if (validPlot(midenY[3], midenX[3], 1, 1, new int[] { -1000 }))
+                    midenOK = true;
+            }
+
+
+            islands.Remove(maxIsland[1]);
+            islands.Remove(maxIsland[2]);
+            islands.Remove(maxIsland[3]);
+
+            string[] locTypes = { "C", "C", "C", "C", "S", "X", "T", "C", "C", "V", "T", "T", "T", "X", "T", "T",
+                                  "T", "T", "T", "V", "V", "V", "V", "V", "V", "V", "V", "S", "S", "S", "S", "S",
+                                  "S", "S", "S", "C", "S", "S", "S", "S", "S", "S", "S", "S", "S", "V", "V", "V",
+                                  "V", "V", "V", "C", "V", "V", "V", "V", "V", "V", "V", "P", "W", "W", "W", "W", "W",
+                                  "?", "?", "X", "X", "X", "X", "X", "X", "?", "X", "?", "?", "?", "?", "?", "?" };
+
+            int[] locIslands = { 1, 2, 4, 3, 4, -100, 4, -1, -2, 1, 0, 2, 2, -100, 0, 4,
+                                 -1, -1, -1, 4, 2, 4, 4, 4, 4, 4, -1, 1, 4, 4, -100, 4,
+                                 10, 4, 4, 4, 4, 4, 4, 4, -1, -1, -1, 4, 4, 1, 2, 2,
+                                 0, 4, 10, 4, 0, 4, 4, 4, -1, -1, -1, 2, 11, 4, 4, 2, -1,
+                                 4, 2, -100, -100, -100, -100, -100, -100, 2, -100, 4, 2, 1, 1, -1, 4 };
+
+            for (int lnI = 0; lnI < locTypes.Length; lnI++)
+            {
+                int x = 300;
+                int y = 300;
+                if (lnI == 0) { x = midenX[1]; y = midenY[1]; }
+                else if (lnI == 48) { x = midenX[0]; y = midenY[0]; }
+                else if (lnI == 77) { x = midenX[2]; y = midenY[2]; }
+                else if (lnI == 7) { x = midenX[3]; y = midenY[3]; }
+                else if (locIslands[lnI] == -1 || locIslands[lnI] == -2)
+                {
+                    // Subtract 3 for room
+                    x = r1.Next() % 153;
+                    y = r1.Next() % 129;
+                } else if (locIslands[lnI] == -100)
+                {
+                    continue;
+                } else
+                {
+                    // Subtract 3 for room
+                    x = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                    y = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                }
+
+                // TODO:  Ship return points, human return points, bird return points
+                // If branches on locTypes, possibly a case.
+                switch(locTypes[lnI])
+                {
+                    case "C":
+                        if (validPlot(y, x, 2, 2, (lnI == 0 || lnI == 1 ? new int[] { maxIsland[1] } : lnI == 6 ? new int[] { maxIsland[3] } : islands.ToArray())) && reachable(y, x, (lnI != 0 && lnI != 1),
+                            lnI == 6 ? midenX[3] : midenX[1], lnI == 6 ? midenY[3] : midenY[1], maxLake))
+                        {
+                            map[y + 0, x + 0] = 0x00;
+                            map[y + 0, x + 1] = 0x12;
+                            map[y + 1, x + 0] = 0x10;
+                            map[y + 1, x + 1] = 0x11;
+
+                            int byteToUse = (lnI == 0 ? 0xa28f : lnI == 1 ? 0xa295 : lnI == 2 ? 0xa29b : lnI == 3 ? 0xa2a1 : lnI == 4 ? 0xa2a4 : lnI == 5 ? 0xa2e9 : 0xa2b3);
+                            romData[byteToUse] = (byte)(x + 1);
+                            romData[byteToUse + 1] = (byte)(y + 1);
+                            if (lnI == 5) // Charlock castle, out of order as far as byte sequence is concerned.
+                            {
+                                romData[0xa334] = (byte)(x);
+                                romData[0xa335] = (byte)(y + 1);
+                            }
+                            else
+                            {
+                                romData[byteToUse + 0x7e] = (byte)(x);
+                                romData[byteToUse + 1 + 0x7e] = (byte)(y + 1);
+                            }
+                            if (lnI == 3)
+                            {
+                                // Replace Tantegel music with the zone surrounding Tantegel.
+                                romData[0x3e356] = (byte)((x / 8) * 8);
+                                romData[0x3e35a] = (byte)(((x / 8) + 1) * 8);
+                                romData[0x3e360] = (byte)((y / 8) * 8);
+                                romData[0x3e364] = (byte)(((y / 8) + 1) * 8);
+                            }
+
+                            // Return points
+                            if (lnI == 0 || lnI == 1 || lnI == 3 || lnI == 4)
+                            {
+                                int byteMultiplier = lnI - (lnI >= 3 ? 1 : 0);
+                                romData[0xa27a + (3 * byteMultiplier)] = (byte)x;
+                                if (map[y + 2, x] == 0x04)
+                                    romData[0xa27a + (3 * byteMultiplier) + 1] = (byte)(y + 2);
+                                else
+                                    romData[0xa27a + (3 * byteMultiplier) + 1] = (byte)(y + 1);
+                                shipPlacement(0x1bf84 + (2 * byteMultiplier), y, x, maxLake);
+                            }
+                        }
+
+                        break;
+                    case "T":
+                        break;
+                    case "S":
+                        break;
+                    case "V":
+                        break;
+                    case "P":
+                        break;
+                    case "W":
+                        break;
+                    case "X":
+                        continue;
+                        break;
+                }
+            }
+
+            // We'll place all of the castles now.
+            // Midenhall can go anywhere.  But Cannock has to be 15-30 squares or less away from there.
+            // Don't place Hargon's Castle for now.  OK, place it for now.  But I may change my mind later.
+            for (int lnI = 0; lnI < 7; lnI++)
+            {
+                int x = 300;
+                int y = 300;
+                if (lnI == 0) { x = midenX[1]; y = midenY[1]; }
+                else
+                {
+                    x = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                    y = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                }
+
+                if (validPlot(y, x, 2, 2, (lnI == 0 || lnI == 1 ? new int[] { maxIsland[1] } : lnI == 6 ? new int[] { maxIsland[3] } : islands.ToArray())) && reachable(y, x, (lnI != 0 && lnI != 1),
+                    lnI == 6 ? midenX[3] : midenX[1], lnI == 6 ? midenY[3] : midenY[1], maxLake))
+                {
+                    map[y + 0, x + 0] = 0x00;
+                    map[y + 0, x + 1] = 0x12;
+                    map[y + 1, x + 0] = 0x10;
+                    map[y + 1, x + 1] = 0x11;
+
+                    int byteToUse = (lnI == 0 ? 0xa28f : lnI == 1 ? 0xa295 : lnI == 2 ? 0xa29b : lnI == 3 ? 0xa2a1 : lnI == 4 ? 0xa2a4 : lnI == 5 ? 0xa2e9 : 0xa2b3);
+                    romData[byteToUse] = (byte)(x + 1);
+                    romData[byteToUse + 1] = (byte)(y + 1);
+                    if (lnI == 5) // Charlock castle, out of order as far as byte sequence is concerned.
+                    {
+                        romData[0xa334] = (byte)(x);
+                        romData[0xa335] = (byte)(y + 1);
+                    }
+                    else
+                    {
+                        romData[byteToUse + 0x7e] = (byte)(x);
+                        romData[byteToUse + 1 + 0x7e] = (byte)(y + 1);
+                    }
+                    if (lnI == 3)
+                    {
+                        // Replace Tantegel music with the zone surrounding Tantegel.
+                        romData[0x3e356] = (byte)((x / 8) * 8);
+                        romData[0x3e35a] = (byte)(((x / 8) + 1) * 8);
+                        romData[0x3e360] = (byte)((y / 8) * 8);
+                        romData[0x3e364] = (byte)(((y / 8) + 1) * 8);
+                    }
+                    //if (lnI == 6)
+                    //{
+                    //    romData[0xa301] = (byte)(x);
+                    //    romData[0xa302] = (byte)(y + 1);
+                    //    romData[0xfd95] = 0x80;
+                    //    romData[0xfd96] = 0x0d;
+                    //    romData[0xfd97] = 0x18;
+                    //}
+
+                    // Return points
+                    if (lnI == 0 || lnI == 1 || lnI == 3 || lnI == 4)
+                    {
+                        int byteMultiplier = lnI - (lnI >= 3 ? 1 : 0);
+                        romData[0xa27a + (3 * byteMultiplier)] = (byte)x;
+                        if (map[y + 2, x] == 0x04)
+                            romData[0xa27a + (3 * byteMultiplier) + 1] = (byte)(y + 2);
+                        else
+                            romData[0xa27a + (3 * byteMultiplier) + 1] = (byte)(y + 1);
+                        shipPlacement(0x1bf84 + (2 * byteMultiplier), y, x, maxLake);
+                    }
+                }
+                else
+                    lnI--;
+            }
+
+            // Now we'll place all of the towns now.
+            // Leftwyne must be 15/30 squares or less away from Midenhall.  Hamlin has to be 30/60 squares or less away from Midenhall.
+            for (int lnI = 0; lnI < 7; lnI++)
+            {
+                //if (lnI == 6) lnI = lnI;
+                int x = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                int y = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+
+                if (validPlot(y, x, 1, 2, (lnI == 0 ? new int[] { maxIsland[1] } : lnI == 1 ? new int[] { maxIsland[2] } : lnI == 2 ? new int[] { maxIsland[0] } : islands.ToArray()))
+                    && reachable(y, x, (lnI != 0 && lnI != 1 && lnI != 2), (lnI == 1 ? midenX[2] : lnI == 2 ? midenX[0] : midenX[1]), (lnI == 1 ? midenY[2] : lnI == 2 ? midenY[0] : midenY[1]), maxLake))
+                {
+                    map[y, x + 0] = 0x0e;
+                    map[y, x + 1] = 0x0f;
+
+                    int byteToUse2 = (lnI == 0 ? 0xa292 : lnI == 1 ? 0xa298 : lnI == 2 ? 0xa29e : lnI == 3 ? 0xa2a7 : lnI == 4 ? 0xa2aa : lnI == 5 ? 0xa2ad : 0xa2b0);
+                    romData[byteToUse2] = (byte)(x + 1);
+                    romData[byteToUse2 + 1] = (byte)(y);
+                    romData[byteToUse2 + 0x7e] = (byte)(x);
+                    romData[byteToUse2 + 1 + 0x7e] = (byte)(y);
+
+                    // Return points
+                    if (lnI == 2)
+                        shipPlacement(0x3d6be, y, x, maxLake);
+                    // Return points
+                    else if (lnI == 1)
+                    {
+                        romData[0xa27a + 18] = (byte)(x);
+                        if (map[y + 1, x] == 0x04)
+                            romData[0xa27a + 19] = (byte)(y);
+                        else
+                            romData[0xa27a + 19] = (byte)(y + 1);
+                        shipPlacement(0x1bf84 + 12, y, x, maxLake);
+                    }
+                    else if (lnI == 6)
+                    {
+                        romData[0xa27a + 12] = (byte)(x);
+                        if (map[y + 1, x] == 0x04)
+                            romData[0xa27a + 13] = (byte)(y);
+                        else
+                            romData[0xa27a + 13] = (byte)(y + 1);
+                        // We are placing the ship in both Beran and the Rhone Shrine at the same time.
+                        shipPlacement(0x1bf84 + 8, y, x, maxLake);
+                        shipPlacement(0x1bf84 + 10, y, x, maxLake);
+                    }
+                }
+                else
+                    lnI--;
+            }
+
+            // Then the monoliths.
+            // All of these can go anywhere.
+            for (int lnI = 0; lnI < 13; lnI++)
+            {
+                if ((lnI == 0) && chkSmallMap.Checked) continue; // Remove the Midenhall Island shrine which is of no importance.
+                // lnI == 1 is probably the Cannock shrine... want to put that in Zone 1...
+
+                int x = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                int y = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                if (lnI == 6)
+                {
+                    x = midenX[3];
+                    y = midenY[3];
+                }
+                else if (lnI == 7)
+                {
+                    x = midenX[0];
+                    y = midenY[0];
+                }
+
+                if (validPlot(y, x, 1, 1, (lnI == 1 || lnI == 12 ? new int[] { maxIsland[1] } : lnI == 6 ? new int[] { maxIsland[3] } : lnI == 7 ? new int[] { maxIsland[0] } : lnI == 8 ? new int[] { maxIsland[2] } : islands.ToArray()))
+                    && reachable(y, x, (lnI != 1 && lnI != 12 && lnI != 7 && lnI != 6), lnI == 6 ? midenX[3] : lnI == 7 ? midenX[0] : lnI == 8 ? midenX[2] : midenX[1],
+                    lnI == 6 ? midenY[3] : lnI == 7 ? midenY[0] : lnI == 8 ? midenY[2] : midenY[1], maxLake))
+                {
+                    map[y, x] = 0x0b;
+
+                    int byteToUse2 = 0xa2b6 + (lnI * 3); // (lnI < 11 ? 0xa2b6 + (lnI * 3) : 0xa2da);
+                    romData[byteToUse2] = (byte)(x);
+                    romData[byteToUse2 + 1] = (byte)(y);
+
+                    // Return points
+                    if (lnI == 6)
+                    {
+                        romData[0xa27a + 15] = (byte)(x);
+                        if (map[y + 1, x] == 0x04)
+                            romData[0xa27a + 16] = (byte)(y);
+                        else
+                            romData[0xa27a + 16] = (byte)(y + 1);
+                    }
+                }
+                else
+                    lnI--;
+            }
+
+            // Then the caves.
+            // Make sure the lake and spring cave is no more than 16/32 squares outside of Midenhall
+            for (int lnI = 0; lnI < 9; lnI++)
+            {
+                int x = 300;
+                int y = 300;
+                if (lnI == 6)
+                {
+                    x = midenX[2];
+                    y = midenY[2];
+                }
+                else
+                {
+                    x = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                    y = r1.Next() % (chkSmallMap.Checked ? 125 : 253);
+                }
+
+                if (validPlot(y, x, 1, 1, (lnI == 0 || lnI == 6 ? new int[] { maxIsland[2] } : lnI == 1 || lnI == 5 ? new int[] { maxIsland[1] } : lnI == 7 ? new int[] { maxIsland[3] } : islands.ToArray()))
+                    && reachable(y, x, (lnI != 0 && lnI != 1 && lnI != 5 && lnI != 6 && lnI != 7),
+                    lnI == 0 || lnI == 6 ? midenX[2] : lnI == 7 ? midenX[3] : midenX[1], lnI == 0 || lnI == 6 ? midenY[2] : lnI == 7 ? midenY[3] : midenY[1], maxLake))
+                {
+                    map[y, x] = 0x0c;
+
+                    int byteToUse2 = (lnI == 0 ? 0xa2dd : lnI == 1 ? 0xa2e0 : lnI == 2 ? 0xa2e3 : lnI == 3 ? 0xa2ef : lnI == 4 ? 0xa2fb : lnI == 5 ? 0xa2fe : lnI == 6 ? 0xa304 : lnI == 7 ? 0xa307 : 0xa30a);
+                    romData[byteToUse2] = (byte)x;
+                    romData[byteToUse2 + 1] = (byte)(y);
+                }
+                else
+                    lnI--;
+            }
+
+            // Finally the towers
+            // Need to make sure the wind tower is no more than 14/28 squares outside of Midenhall
+            for (int lnI = 0; lnI < 5; lnI++)
+            {
+                if ((lnI == 3 || lnI == 4) && chkSmallMap.Checked) continue; // Remove the Dragon's Horns from the small map
+                int x = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+                int y = r1.Next() % (chkSmallMap.Checked ? 122 : 250);
+
+                // Need to make sure it's a valid 7x7 plot due to dropping with the Cloak of wind...
+                if (validPlot(y, x, 3, 3, (lnI == 0 ? new int[] { maxIsland[2] } : islands.ToArray()))
+                    && reachable(y, x, (lnI != 0), lnI == 0 ? midenX[2] : midenX[1], lnI == 0 ? midenY[2] : midenY[1], maxLake))
+                {
+                    map[y + 3, x + 3] = 0x0a;
+
+                    int byteToUse2 = (lnI == 0 ? 0xa2e6 : lnI == 1 ? 0xa2ec : lnI == 2 ? 0xa2f2 : lnI == 3 ? 0xa2f5 : 0xa2f8);
+                    romData[byteToUse2] = (byte)(x + 3);
+                    romData[byteToUse2 + 1] = (byte)(y + 3);
+                }
+                else
+                    lnI--;
+            }
+
+            int[,] monsterZones = new int[16, 16];
+            for (int lnI = 0; lnI < 16; lnI++)
+                for (int lnJ = 0; lnJ < 16; lnJ++)
+                    monsterZones[lnI, lnJ] = 0xff;
+
+            int midenMZX = midenX[1] / 8;
+            int midenMZY = midenY[1] / 8;
+
+            for (int mzX = 0; mzX < 16; mzX++)
+                for (int mzY = 0; mzY < 16; mzY++)
+                {
+                    if (zone[mzX, mzY] / 1000 == 1)
+                    {
+                        if (Math.Abs(midenMZX - mzX) == 0 && Math.Abs(midenMZY - mzY) == 0)
+                            monsterZones[mzY, mzX] = 0;
+                        else if (Math.Abs(midenMZX - mzX) <= 1 && Math.Abs(midenMZY - mzY) <= 1)
+                            monsterZones[mzY, mzX] = 2;
+                        else if (Math.Abs(midenMZX - mzX) <= 1 || Math.Abs(midenMZY - mzY) <= 1)
+                            monsterZones[mzY, mzX] = 1;
+                        else if (Math.Abs(midenMZX - mzX) <= 2 || Math.Abs(midenMZY - mzY) <= 2)
+                            monsterZones[mzY, mzX] = r1.Next() % 9;
+                        else
+                            monsterZones[mzY, mzX] = r1.Next() % 18;
+                    }
+                    else if (zone[mzX, mzY] / 1000 == 2)
+                        monsterZones[mzY, mzX] = r1.Next() % 5 + 0x0d;
+                    else if (zone[mzX, mzY] / 1000 == 3)
+                        monsterZones[mzY, mzX] = r1.Next() % 2 + 0x32;
+                    else
+                    {
+                        while (monsterZones[mzY, mzX] > 0x27 || (monsterZones[mzY, mzX] >= 0x1c && monsterZones[mzY, mzX] <= 0x1f))
+                            monsterZones[mzY, mzX] = r1.Next() % 19 + 0x15;
+                        if (monsterZones[mzY, mzX] == 0x26) monsterZones[mzY, mzX] = 0x39;
+                        if (monsterZones[mzY, mzX] == 0x27) monsterZones[mzY, mzX] = 0x3b;
+                    }
+
+                    monsterZones[mzY, mzX] += (64 * (r1.Next() % 4));
+                }
+
+            // Now let's enter all of this into the ROM...
+            int lnPointer = 0x9f97;
+
+            for (int lnI = 0; lnI <= 256; lnI++) // <---- There is a final pointer for lnI = 256, probably indicating the conclusion of the map.
+            {
+                romData[0xdda5 + (lnI * 2)] = (byte)(lnPointer % 256);
+                romData[0xdda6 + (lnI * 2)] = (byte)(lnPointer / 256);
+
+                int lnJ = 0;
+                while (lnI < 256 && lnJ < 256)
+                {
+                    if (map[lnI, lnJ] >= 1 && map[lnI, lnJ] <= 7)
+                    {
+                        int tileNumber = 0;
+                        int numberToMatch = map[lnI, lnJ];
+                        while (lnJ < 256 && tileNumber < 32 && map[lnI, lnJ] == numberToMatch && tileNumber < 32)
+                        {
+                            tileNumber++;
+                            lnJ++;
+                        }
+                        romData[lnPointer + 0x4010] = (byte)((0x20 * numberToMatch) + (tileNumber - 1));
+                        lnPointer++;
+                    }
+                    else
+                    {
+                        romData[lnPointer + 0x4010] = (byte)map[lnI, lnJ];
+                        lnPointer++;
+                        lnJ++;
+                    }
+                }
+            }
+            //lnPointer = lnPointer;
+            if (lnPointer >= 0xb8f7)
+            {
+                MessageBox.Show("WARNING:  The map might have taken too much ROM space...");
+                // Might have to compress further to remove one byte stuff
+                // Must compress the map by getting rid of further 1 byte lakes
+            }
+
+            // Ensure monster zones are 8x8
+            if (chkSmallMap.Checked)
+            {
+                romData[0x10083] = 0x85;
+                romData[0x10084] = 0xd5;
+                romData[0x10085] = 0xa5;
+                romData[0x10086] = 0x17;
+                romData[0x10087] = 0x29;
+                romData[0x10088] = 0x78;
+                romData[0x10089] = 0x0a;
+            }
+
+            // Enter monster zones
+            for (int lnI = 0; lnI < 16; lnI++)
+                for (int lnJ = 0; lnJ < 16; lnJ++)
+                {
+                    if (monsterZones[lnI, lnJ] == 0xff)
+                        monsterZones[lnI, lnJ] = (r1.Next() % 60) + ((r1.Next() % 4) * 64);
+                    romData[0x103d6 + (lnI * 16) + lnJ] = (byte)monsterZones[lnI, lnJ];
+                }
+
+            return true;
+        }
+
+        private void markZoneSides()
+        {
+            for (int x = 0; x < 16; x++)
+                for (int y = 0; y < 16; y++)
+                {
+                    // 1 = north, 2 = east, 4 = south, 8 = west
+                    if (y == 0) zone[x, y] += 1;
+                    else if (zone[x, y - 1] / 1000 != zone[x, y] / 1000) zone[x, y] += 1;
+
+                    if (x == 15) zone[x, y] += 2;
+                    else if (zone[x + 1, y] / 1000 != zone[x, y] / 1000) zone[x, y] += 2;
+
+                    if (y == 15) zone[x, y] += 4;
+                    else if (zone[x, y + 1] / 1000 != zone[x, y] / 1000) zone[x, y] += 4;
+
+                    if (x == 0) zone[x, y] += 8;
+                    else if (zone[x - 1, y] / 1000 != zone[x, y] / 1000) zone[x, y] += 8;
+                }
+        }
+
+        private void generateZoneMap(int zoneToUse, bool mountains, int islandSize, Random r1)
+        {
+            int xMax = (zoneToUse != -1000 ? 128 : 156) - 4;
+            int yMax = (zoneToUse != -1000 ? 128 : 132) - 4;
+
+            if (mountains)
+                for (int x = 0; x < 16; x++)
+                    for (int y = 0; y < 16; y++)
+                        if (zone[x, y] / 1000 == zoneToUse / 1000 && zone[x, y] % 1000 > 0)
+                            for (int x2 = x * 8; x2 < (x * 8) + 8; x2++)
+                                for (int y2 = y * 8; y2 < (y * 8) + 8; y2++)
+                                    map[y2, x2] = 0x06;
+
+            int[] terrainTypes = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7 };
+
+            for (int lnI = 0; lnI < 100; lnI++)
+            {
+                int swapper1 = r1.Next() % terrainTypes.Length;
+                int swapper2 = r1.Next() % terrainTypes.Length;
+                int temp = terrainTypes[swapper1];
+                terrainTypes[swapper1] = terrainTypes[swapper2];
+                terrainTypes[swapper2] = temp;
+            }
+
+            int lnMarker = -1;
+            int totalLand = 0;
+
+            while (totalLand < islandSize)
+            {
+                lnMarker++;
+                lnMarker = (lnMarker >= terrainTypes.Length ? 0 : lnMarker);
+                int sizeToUse = (r1.Next() % 400) + 150;
+                //if (terrainTypes[lnMarker] == 5) sizeToUse /= 2;
+
+                List<int> points = new List<int> { (r1.Next() % xMax) + 2, (r1.Next() % yMax) + 2 };
+                if (validPoint(points[0], points[1], zoneToUse, mountains))
+                {
+                    while (sizeToUse > 0)
+                    {
+                        List<int> newPoints = new List<int>();
+                        for (int lnI = 0; lnI < points.Count; lnI += 2)
+                        {
+                            int lnX = points[lnI];
+                            int lnY = points[lnI + 1];
+
+                            //if (lnX <= 1 || lnY <= 1 || lnY >= 126 || lnY >= 126) continue;
+
+                            int direction = (r1.Next() % 16);
+                            if (zoneToUse != -1000)
+                                map[lnY, lnX] = terrainTypes[lnMarker];
+                            else
+                                map2[lnY, lnX] = terrainTypes[lnMarker];
+                            island[lnY, lnX] = zoneToUse;
+                            // 1 = North, 2 = east, 4 = south, 8 = west
+                            if (direction % 8 >= 4 && lnY <= 125)
+                            {
+                                if (validPoint(lnX, lnY + 1, zoneToUse, mountains))
+                                {
+                                    if (zoneToUse == -1000)
+                                    {
+                                        if (map2[lnY + 1, lnX] == 4)
+                                            totalLand++;
+                                        map2[lnY + 1, lnX] = terrainTypes[lnMarker];
+                                    }
+                                    else
+                                    {
+                                        if (map[lnY + 1, lnX] == 4)
+                                            totalLand++;
+                                        map[lnY + 1, lnX] = terrainTypes[lnMarker];
+                                        island[lnY + 1, lnX] = zoneToUse;
+                                    }
+
+                                    newPoints.Add(lnX);
+                                    newPoints.Add(lnY + 1);
+                                }
+                            }
+                            if (direction % 2 >= 1 && lnY >= 2)
+                            {
+                                if (validPoint(lnX, lnY - 1, zoneToUse, mountains))
+                                {
+                                    if (zoneToUse == -1000)
+                                    {
+                                        if (map2[lnY - 1, lnX] == 4)
+                                            totalLand++;
+                                        map2[lnY - 1, lnX] = terrainTypes[lnMarker];
+                                    }
+                                    else
+                                    {
+                                        if (map[lnY - 1, lnX] == 4)
+                                            totalLand++;
+                                        map[lnY - 1, lnX] = terrainTypes[lnMarker];
+                                        island[lnY - 1, lnX] = zoneToUse;
+                                    }
+                                    newPoints.Add(lnX);
+                                    newPoints.Add(lnY - 1);
+                                }
+                            }
+                            if (direction % 4 >= 2 && lnX <= 125)
+                            {
+                                if (validPoint(lnX + 1, lnY, zoneToUse, mountains))
+                                {
+                                    if (zoneToUse == -1000)
+                                    {
+                                        if (map2[lnY, lnX + 1] == 4)
+                                            totalLand++;
+                                        map2[lnY, lnX + 1] = terrainTypes[lnMarker];
+                                    }
+                                    else
+                                    {
+                                        if (map[lnY, lnX + 1] == 4)
+                                            totalLand++;
+                                        map[lnY, lnX + 1] = terrainTypes[lnMarker];
+                                        island[lnY, lnX + 1] = zoneToUse;
+                                    }
+                                    newPoints.Add(lnX + 1);
+                                    newPoints.Add(lnY);
+                                }
+                            }
+                            if (direction % 16 >= 8 && lnX >= 2)
+                            {
+                                if (validPoint(lnX - 1, lnY, zoneToUse, mountains))
+                                {
+                                    if (zoneToUse == -1000)
+                                    {
+                                        if (map2[lnY, lnX - 1] == 4)
+                                            totalLand++;
+                                        map2[lnY, lnX - 1] = terrainTypes[lnMarker];
+                                    } else
+                                    {
+                                        if (map[lnY, lnX - 1] == 4)
+                                            totalLand++;
+                                        map[lnY, lnX - 1] = terrainTypes[lnMarker];
+                                        island[lnY, lnX - 1] = zoneToUse;
+                                    }
+                                    newPoints.Add(lnX - 1);
+                                    newPoints.Add(lnY);
+                                }
+                            }
+
+                            int takeaway = 1 + (direction > 8 ? 1 : 0) + (direction % 8 > 4 ? 1 : 0) + (direction % 4 > 2 ? 1 : 0) + (direction % 2 > 1 ? 1 : 0);
+                            sizeToUse--;
+                        }
+                        if (sizeToUse <= 0) break;
+                        if (newPoints.Count != 0)
+                            points = newPoints;
+                    }
+                }
+            }
+
+            // Fill in water...
+            List<int> land = new List<int> { 1, 2, 3, 4, 5, 6, 7 };
+            if (zoneToUse != -1000)
+            {
+                for (int lnY = 0; lnY < 128; lnY++)
+                    for (int lnX = 0; lnX < 125; lnX++)
+                    {
+                        if (island[lnY, lnX] == zoneToUse && island[lnY, lnX + 1] == zoneToUse && island[lnY, lnX + 2] == zoneToUse && island[lnY, lnX + 3] == zoneToUse)
+                        {
+                            if (map[lnY, lnX] == map[lnY, lnX + 2] && map[lnY, lnX] != map[lnY, lnX + 1]) { map[lnY, lnX + 1] = map[lnY, lnX]; island[lnY, lnX + 1] = island[lnY, lnX]; }
+                            if (lnX < 124 && land.Contains(map[lnY, lnX]) && !land.Contains(map[lnY, lnX + 1]) && !land.Contains(map[lnY, lnX + 2]) && land.Contains(map[lnY, lnX + 3]))
+                            {
+                                map[lnY, lnX + 1] = map[lnY, lnX];
+                                map[lnY, lnX + 2] = map[lnY, lnX + 3];
+                                island[lnY, lnX + 1] = island[lnY, lnX];
+                                island[lnY, lnX + 2] = island[lnY, lnX + 3];
+                            }
+                        }
+                    }
+            } else
+            {
+                for (int lnY = 0; lnY < 132; lnY++)
+                    for (int lnX = 0; lnX < 153; lnX++)
+                    {
+                        if (map2[lnY, lnX] == map2[lnY, lnX + 2] && map2[lnY, lnX] != map2[lnY, lnX + 1]) { map2[lnY, lnX + 1] = map2[lnY, lnX]; }
+                        if (lnX < 124 && land.Contains(map2[lnY, lnX]) && !land.Contains(map2[lnY, lnX + 1]) && !land.Contains(map2[lnY, lnX + 2]) && land.Contains(map2[lnY, lnX + 3]))
+                        {
+                            map2[lnY, lnX + 1] = map2[lnY, lnX];
+                            map2[lnY, lnX + 2] = map2[lnY, lnX + 3];
+                        }
+                    }
+            }
+
+
+            markIslands(zoneToUse);
+        }
+
+        private bool validPoint(int x, int y, int zoneToUse, bool mountains = false)
+        {
+            // Establish zone
+            int zoneX = x / 8;
+            int zoneY = y / 8;
+            int zoneSides = zone[zoneX, zoneY] % 1000;
+            if (zone[zoneX, zoneY] % 1000 != 0 && mountains) return false;
+            if (zone[zoneX, zoneY] / 1000 != zoneToUse / 1000) return false;
+            // 1 = north, 2 = east, 4 = south, 8 = west
+            if (y % 8 == 0 && zoneSides % 2 == 1) return false;
+            if (x % 8 == 7 && zoneSides % 4 >= 2) return false;
+            if (y % 8 == 7 && zoneSides % 8 >= 4) return false;
+            if (x % 8 == 0 && zoneSides % 16 >= 8) return false;
+
+            return true;
+        }
+
+        private void markIslands(int zoneToUse)
+        {
+            // We should mark islands and inaccessible land...
+            int landNumber = zoneToUse + 1;
+            int maxLand = -2;
+
+            int maxLandPlots = 0;
+            int lastIsland = 0;
+            for (int lnI = 0; lnI < 256; lnI++)
+                for (int lnJ = 0; lnJ < 256; lnJ++)
+                {
+                    if (island[lnI, lnJ] == zoneToUse && map[lnI, lnJ] != 0x05)
+                    {
+                        int plots = landPlot(landNumber, lnI, lnJ, zoneToUse);
+                        if (plots > maxLandPlots)
+                        {
+                            maxLandPlots = plots;
+                            maxLand = landNumber;
+
+                        }
+                        islands.Add(landNumber);
+                        landNumber++;
+
+                        lastIsland = island[lnI, lnJ];
+                    }
+                }
+
+            maxIsland[zoneToUse / 1000] = maxLand;
+        }
+
+        private void resetIslands()
+        {
+            for (int y = 0; y < 256; y++)
+                for (int x = 0; x < 256; x++)
+                {
+                    if (island[y, x] != 200 && island[y, x] != -1)
+                    {
+                        island[y, x] /= 1000;
+                        island[y, x] *= 1000;
+                    }
+                }
+
+            islands.Clear();
+
+            markIslands(3000);
+            markIslands(1000);
+            markIslands(2000);
+            markIslands(0);
+        }
+
+        private void createBridges(Random r1)
+        {
+            List<BridgeList> bridgePossible = new List<BridgeList>();
+            List<islandLinks> islandPossible = new List<islandLinks>();
+            // Create bridges for points two spaces or less from two distinctly numbered islands.  Extend islands if there is interference.
+            for (int y = 1; y < 252; y++)
+                for (int x = 1; x < 252; x++)
+                {
+                    if (y == 78 && x == 3) map[y, x] = map[y, x];
+                    if (map[y, x] == 0x05 || map[y, x] == 0x04) continue;
+
+                    for (int lnI = 2; lnI <= 4; lnI++)
+                    {
+                        if (island[y, x] != island[y + lnI, x] && island[y, x] / 1000 == island[y + lnI, x] / 1000 && map[y + lnI, x] != 0x04 && map[y + lnI, x] != 0x05)
+                        {
+                            bool fail = false;
+                            for (int lnJ = 1; lnJ < lnI; lnJ++)
+                            {
+                                if (map[y + lnJ, x] == 0x04)
+                                {
+                                    map[y + lnJ, x - 1] = 0x04; map[y + lnJ, x + 1] = 0x04;
+                                    island[y + lnJ, x - 1] = 0x04; island[y + lnJ, x + 1] = 0x04;
+                                }
+                                else
+                                {
+                                    fail = true;
+                                }
+                                //if (map[y + lnJ, x] != 0x04 || map[y + lnJ, x + 1] != 0x04 || map[y + lnJ, x - 1] != 0x04) fail = true;
+                            }
+                            if (!fail)
+                            {
+                                bridgePossible.Add(new BridgeList(x, y, true, lnI, island[y, x], island[y + lnI, x]));
+                                if (islandPossible.Where(c => c.island1 == island[y, x] && c.island2 == island[y + lnI, x]).Count() == 0)
+                                    islandPossible.Add(new islandLinks(island[y, x], island[y + lnI, x]));
+                            }
+                        }
+
+                        if (island[y, x] != island[y, x + lnI] && island[y, x] / 1000 == island[y, x + lnI] / 1000 && map[y, x + lnI] != 0x04 && map[y, x + lnI] != 0x05)
+                        {
+                            bool fail = false;
+                            for (int lnJ = 1; lnJ < lnI; lnJ++)
+                            {
+                                if (map[y, x + lnJ] == 0x04)
+                                {
+                                    map[y - 1, x + lnJ] = 0x04; map[y + 1, x + lnJ] = 0x04;
+                                    island[y - 1, x + lnJ] = 200; island[y + 1, x + lnJ] = 200;
+                                }
+                                else
+                                {
+                                    fail = true;
+                                }
+
+                                //if (map[y, x + lnJ] != 0x04 || map[y + 1, x + lnJ] != 0x04 || map[y - 1, x + lnJ] != 0x04) fail = true;
+                            }
+                            if (!fail)
+                            {
+                                bridgePossible.Add(new BridgeList(x, y, false, lnI, island[y, x], island[y, x + lnI]));
+                                if (islandPossible.Where(c => c.island1 == island[y, x] && c.island2 == island[y, x + lnI]).Count() == 0)
+                                    islandPossible.Add(new islandLinks(island[y, x], island[y, x + lnI]));
+                            }
+                        }
+                    }
+                }
+
+            foreach (islandLinks islandLink in islandPossible)
+            {
+                List<BridgeList> test = bridgePossible.Where(c => c.island1 == islandLink.island1 && c.island2 == islandLink.island2).ToList();
+                // Choose one bridge out of the possibilities
+                BridgeList bridgeToBuild = test[r1.Next() % test.Count];
+                for (int lnI = 1; lnI <= bridgeToBuild.distance - 1; lnI++)
+                {
+                    if (bridgeToBuild.south)
+                    {
+                        map[bridgeToBuild.y + lnI, bridgeToBuild.x] = 0x0d;
+                        island[bridgeToBuild.y + lnI, bridgeToBuild.x] = bridgeToBuild.island1;
+                    }
+                    else
+                    {
+                        map[bridgeToBuild.y, bridgeToBuild.x + lnI] = 0x09;
+                        island[bridgeToBuild.y, bridgeToBuild.x + lnI] = bridgeToBuild.island1;
+                    }
+                }
+            }
+        }
+
+        private class islandLinks
+        {
+            public int island1;
+            public int island2;
+
+            public islandLinks(int pI1, int pI2)
+            {
+                island1 = pI1; island2 = pI2;
+            }
+        }
+
+        private class BridgeList
+        {
+            public int x;
+            public int y;
+            public bool south;
+            public int distance;
+            public int island1;
+            public int island2;
+
+            public BridgeList(int pX, int pY, bool pS, int pDist, int pI1, int pI2)
+            {
+                x = pX; y = pY; south = pS; distance = pDist; island1 = pI1; island2 = pI2;
+            }
+        }
+
+        private bool createZone(int zoneNumber, int size, bool rectangle, Random r1)
+        {
+            int tries = 1000;
+            bool firstZone = true;
+
+            if (!rectangle)
+            {
+                while (size > 0 && tries > 0)
+                {
+                    int x = r1.Next() % 16;
+                    int y = r1.Next() % 16;
+                    int minX = x, maxX = x, minY = y, maxY = y;
+                    if (!firstZone && zone[x, y] != zoneNumber)
+                    {
+                        continue;
+                    }
+                    if (firstZone)
+                    {
+                        firstZone = false;
+                        zone[x, y] = zoneNumber;
+                    }
+
+                    tries--;
+                    int direction = r1.Next() % 16;
+                    int totalDirections = 0;
+                    if (direction % 16 >= 8) totalDirections++;
+                    if (direction % 8 >= 4) totalDirections++;
+                    if (direction % 4 >= 2) totalDirections++;
+                    if (direction % 2 >= 1) totalDirections++;
+                    if (totalDirections > size) continue;
+
+                    // 1 = north, 2 = east, 4 = south, 8 = west
+                    if (direction % 16 >= 8 && x != 0 && zone[x - 1, y] == 0 && (minX <= (x - 1) || maxX - minX <= 11))
+                    {
+                        zone[x - 1, y] = zoneNumber;
+                        minX = (x - 1 < minX ? x - 1 : minX);
+                        size--;
+                        tries = 100;
+                    }
+                    if (direction % 8 >= 4 && y != 15 && zone[x, y + 1] == 0 && (maxY >= (y + 1) || maxY - minY <= 11))
+                    {
+                        zone[x, y + 1] = zoneNumber;
+                        maxY = (y + 1 > maxY ? y + 1 : maxY);
+                        size--;
+                        tries = 100;
+                    }
+                    if (direction % 4 >= 2 && x != 15 && zone[x + 1, y] == 0 && (minX >= (x + 1) || maxX - minX <= 11))
+                    {
+                        zone[x + 1, y] = zoneNumber;
+                        maxX = (x + 1 > maxX ? x + 1 : maxX);
+                        size--;
+                        tries = 100;
+                    }
+                    if (direction % 2 >= 1 && y != 0 && zone[x, y - 1] == 0 && (minY <= (y - 1) || maxY - minY <= 11))
+                    {
+                        zone[x, y - 1] = zoneNumber;
+                        minY = (y - 1 < minY ? y - 1 : minY);
+                        size--;
+                        tries = 100;
+                    }
+                }
+                return (size <= 0);
+            }
+            else
+            {
+                int minMeasurement = (int)Math.Ceiling((double)size / 12);
+                int maxMeasurement = (int)Math.Ceiling((double)size / minMeasurement);
+
+                int length = ((r1.Next() % (maxMeasurement - minMeasurement)) + minMeasurement);
+                int width = size / length;
+
+                int x = (r1.Next() % (16 - length));
+                int y = (r1.Next() % (16 - width));
+
+                for (int i = x; i < x + length; i++)
+                    for (int j = y; j < y + width; j++)
+                        zone[i, j] = zoneNumber;
+
+                // Snow definition
+                romData[0x3e2b6] = (byte)(y * 8);
+                romData[0x3e2ba] = (byte)((y + width) * 8);
+                romData[0x3e2ac] = (byte)(x * 8);
+                romData[0x3e2b0] = (byte)((x + length) * 8);
+
+                // Tantegel definition - TODO:  Find romData location, then change so it's on an 8x8 grid around Tantegel
+                //romData[0x3e2b6] = (byte)(y * 8);
+                //romData[0x3e2ba] = (byte)((y + width) * 8);
+                //romData[0x3e2ac] = (byte)(x * 8);
+                //romData[0x3e2b0] = (byte)((x + length) * 8);
+
+                return true;
+            }
+        }
+
+        private bool reachable(int startY, int startX, bool water, int finishX, int finishY, int maxLake)
+        {
+            int x = startX;
+            int y = startY;
+
+            List<int> validPlots = new List<int> { 0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+            if (water) validPlots.Add(4);
+
+            bool first = true;
+            List<int> toPlot = new List<int>();
+            bool[,] plotted = new bool[256, 256];
+
+            while (first || toPlot.Count != 0)
+            {
+                if (!first)
+                {
+                    y = toPlot[0];
+                    toPlot.RemoveAt(0);
+                    x = toPlot[0];
+                    toPlot.RemoveAt(0);
+                }
+                else
+                {
+                    first = false;
+                }
+
+                for (int dir = 0; dir < 5; dir++)
+                {
+                    int dirX = (dir == 4 ? x - 1 : dir == 2 ? x + 1 : x);
+                    dirX = (dirX == 256 ? 0 : dirX == -1 ? 255 : dirX);
+                    int dirY = (dir == 1 ? y - 1 : dir == 3 ? y + 1 : y);
+                    dirY = (dirY == 256 ? 0 : dirY == -1 ? 255 : dirY);
+
+                    if (validPlots.Contains(map[dirY, dirX]) && (map[dirY, dirX] != 4 || island[dirY, dirX] == maxLake))
+                    {
+                        if (dir != 0 && plotted[dirY, dirX] == false)
+                        {
+                            if (finishX == dirX && finishY == dirY)
+                                return true;
+                            toPlot.Add(dirY);
+                            toPlot.Add(dirX);
+                            plotted[dirY, dirX] = true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private int landPlot(int landNumber, int y, int x, int zoneToUse = 0)
+        {
+            bool first = true;
+            List<int> toPlot = new List<int>();
+            int plots = 1;
+            while (first || toPlot.Count != 0)
+            {
+                if (!first)
+                {
+                    y = toPlot[0];
+                    toPlot.RemoveAt(0);
+                    x = toPlot[0];
+                    toPlot.RemoveAt(0);
+                }
+                else
+                {
+                    first = false;
+                }
+
+                for (int dir = 0; dir < 5; dir++)
+                {
+                    int dirX = (dir == 4 ? x - 1 : dir == 2 ? x + 1 : x);
+                    dirX = (dirX == 256 ? 0 : dirX == -1 ? 255 : dirX);
+                    int dirY = (dir == 1 ? y - 1 : dir == 3 ? y + 1 : y);
+                    dirY = (dirY == 256 ? 0 : dirY == -1 ? 255 : dirY);
+
+                    if (island[dirY, dirX] == zoneToUse)
+                    {
+                        plots++;
+                        island[dirY, dirX] = landNumber;
+
+                        if (dir != 0)
+                        {
+                            toPlot.Add(dirY);
+                            toPlot.Add(dirX);
+                        }
+                    }
+                }
+            }
+
+            return plots;
+        }
+
+        private bool validPlot(int y, int x, int height, int width, int[] legalIsland)
+        {
+            //y++;
+            //x++;
+            for (int lnI = 0; lnI < height; lnI++)
+                for (int lnJ = 0; lnJ < width; lnJ++)
+                {
+                    if (y + lnI >= (chkSmallMap.Checked ? 128 : 256) || x + lnJ >= (chkSmallMap.Checked ? 128 : 256)) return false;
+
+                    int legalY = (y + lnI >= 256 ? y - 256 + lnI : y + lnI);
+                    int legalX = (x + lnJ >= 256 ? x - 256 + lnJ : x + lnJ);
+
+                    bool ok = false;
+                    for (int lnK = 0; lnK < legalIsland.Length; lnK++)
+                        if (island[legalY, legalX] == legalIsland[lnK])
+                            ok = true;
+                    if (!ok) return false;
+                    // map[legalY, legalX] == 0x04 || 
+                    if (map[legalY, legalX] == 0x00 || map[legalY, legalX] == 0x05 || map[legalY, legalX] == 0x0a || map[legalY, legalX] == 0x0b || map[legalY, legalX] == 0x0c ||
+                        map[legalY, legalX] == 0x0e || map[legalY, legalX] == 0x0f || map[legalY, legalX] == 0x10 || map[legalY, legalX] == 0x11 || map[legalY, legalX] == 0x12 || map[legalY, legalX] == 0x13)
+                        return false;
+                }
+            return true;
+        }
+
+        private int lakePlot(int lakeNumber, int y, int x, bool fill = false, int islandNumber = -1)
+        {
+            bool first = true;
+            List<int> toPlot = new List<int>();
+            int plots = 1;
+            //if (islandNumber >= 0) plots = 1;
+            while (first || toPlot.Count != 0)
+            {
+                if (!first)
+                {
+                    y = toPlot[0];
+                    toPlot.RemoveAt(0);
+                    x = toPlot[0];
+                    toPlot.RemoveAt(0);
+                }
+                else
+                {
+                    if (fill)
+                        map[y, x] = (islandNumber == 0 ? 0x01 : islandNumber == 1 ? 0x06 : islandNumber == 2 ? 0x03 : islandNumber == 3 ? 0x02 : islandNumber == 4 ? 0x07 : 0x05);
+                    first = false;
+                }
+
+                for (int dir = 0; dir < 5; dir++)
+                {
+                    int dirX = (dir == 4 ? x - 1 : dir == 2 ? x + 1 : x);
+                    dirX = (dirX == 256 ? 0 : dirX == -1 ? 255 : dirX);
+                    int dirY = (dir == 1 ? y - 1 : dir == 3 ? y + 1 : y);
+                    dirY = (dirY == 256 ? 0 : dirY == -1 ? 255 : dirY);
+
+                    if (island[dirY, dirX] == -1 || (island[dirY, dirX] == lakeNumber && fill))
+                    {
+                        plots++;
+                        island[dirY, dirX] = (fill ? islandNumber : lakeNumber);
+                        if (fill)
+                            map[dirY, dirX] = (islandNumber == 0 ? 0x01 : islandNumber == 1 ? 0x06 : islandNumber == 2 ? 0x03 : islandNumber == 3 ? 0x02 : islandNumber == 4 ? 0x07 : 0x05);
+
+                        if (dir != 0)
+                        {
+                            toPlot.Add(dirY);
+                            toPlot.Add(dirX);
+                        }
+                        //plots += lakePlot(lakeNumber, y, x, fill);
+                    }
+                }
+            }
+
+            return plots;
+        }
+
+        private void shipPlacement(int byteToUse, int top, int left, int maxLake = 0)
+        {
+            int minDirection = -99;
+            int minDistance = 999;
+            int finalX = 0;
+            int finalY = 0;
+            int distance = 0;
+            int lnJ = top;
+            int lnK = left;
+            for (int lnI = 0; lnI < 4; lnI++)
+            {
+                lnJ = top;
+                lnK = left;
+                if (lnI == 0)
+                {
+                    while (island[lnJ, lnK] != maxLake && distance < 200)
+                    {
+                        distance++;
+                        lnJ = (lnJ == 0 ? 255 : lnJ - 1);
+                    }
+                }
+                else if (lnI == 1)
+                {
+                    while (island[lnJ, lnK] != maxLake && distance < 200)
+                    {
+                        distance++;
+                        lnJ = (lnJ == 255 ? 0 : lnJ + 1);
+                    }
+                }
+                else if (lnI == 2)
+                {
+                    while (island[lnJ, lnK] != maxLake && distance < 200)
+                    {
+                        distance++;
+                        lnK = (lnK == 255 ? 0 : lnK + 1);
+                    }
+                }
+                else
+                {
+                    while (island[lnJ, lnK] != maxLake && distance < 200)
+                    {
+                        distance++;
+                        lnK = (lnK == 0 ? 255 : lnK - 1);
+                    }
+                }
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    minDirection = lnI;
+                    finalX = lnK;
+                    finalY = lnJ;
+                }
+                distance = 0;
+            }
+            romData[byteToUse] = (byte)(finalX);
+            romData[byteToUse + 1] = (byte)(finalY);
+            if (minDirection == 0)
+            {
+                lnJ = (finalY == 255 ? 0 : finalY + 1);
+                while (map[lnJ, finalX] == 0x05)
+                {
+                    map[lnJ, finalX] = 0x07;
+                    lnJ = (lnJ == 255 ? 0 : lnJ + 1);
+                }
+            }
+            else if (minDirection == 1)
+            {
+                lnJ = (finalY == 0 ? 255 : finalY - 1);
+                while (map[lnJ, finalX] == 0x05)
+                {
+                    map[lnJ, finalX] = 0x07;
+                    lnJ = (lnJ == 0 ? 255 : lnJ - 1);
+                }
+            }
+            else if (minDirection == 2)
+            {
+                lnK = (finalX == 0 ? 255 : finalX - 1);
+                while (map[finalY, lnK] == 0x05)
+                {
+                    map[finalY, lnK] = 0x07;
+                    lnK = (lnK == 0 ? 255 : lnK - 1);
+                }
+            }
+            else
+            {
+                lnK = (finalX == 255 ? 0 : finalX + 1);
+                while (map[finalY, lnK] == 0x05)
+                {
+                    map[finalY, lnK] = 0x07;
+                    lnK = (lnK == 255 ? 0 : lnK + 1);
+                }
+            }
         }
 
         private void doubleExp()
@@ -1542,7 +2817,14 @@ namespace DW3Randomizer
                                 heroL41Gains[lnI, lnJ] += (r1.Next() % difference);
                         }
                         if (optMonsterHeavy.Checked)
-                            heroL41Gains[lnI, lnJ] = (r1.Next() % (lnJ == 2 ? 170 : 220)) + (lnJ == 2 ? 80 : 32);
+                        {
+                            if (lnJ == 2)
+                                heroL41Gains[lnI, lnJ] = (r1.Next() % (lnI == 0 || lnI >= 4 ? 140 : 170)) + (lnI == 0 || lnI >= 4 ? 110 : 80);
+                            else if (lnJ == 0)
+                                heroL41Gains[lnI, lnJ] = (r1.Next() % (lnI == 0 || lnI >= 4 ? 180 : 220)) + (lnI == 0 || lnI >= 4 ? 70 : 30);
+                            else
+                                heroL41Gains[lnI, lnJ] = (r1.Next() % (lnJ == 4 && lnI <= 3 ? 180 : 210) + (lnJ == 4 && lnI <= 3 ? 70 : 40));
+                        }
 
                         int[] levels = { 0, 0, 0, 0, 99 };
                         for (int lnK = 0; lnK < 4; lnK++)

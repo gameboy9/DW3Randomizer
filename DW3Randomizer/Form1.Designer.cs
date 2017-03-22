@@ -73,6 +73,7 @@
             this.optMonsterHeavy = new System.Windows.Forms.RadioButton();
             this.optMonsterMedium = new System.Windows.Forms.RadioButton();
             this.optMonsterLight = new System.Windows.Forms.RadioButton();
+            this.chkSmallMap = new System.Windows.Forms.CheckBox();
             this.grpMonsterStat.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -507,11 +508,25 @@
             this.optMonsterLight.Text = "Light";
             this.optMonsterLight.UseVisualStyleBackColor = true;
             // 
+            // chkSmallMap
+            // 
+            this.chkSmallMap.AutoSize = true;
+            this.chkSmallMap.Checked = true;
+            this.chkSmallMap.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSmallMap.Enabled = false;
+            this.chkSmallMap.Location = new System.Drawing.Point(186, 275);
+            this.chkSmallMap.Name = "chkSmallMap";
+            this.chkSmallMap.Size = new System.Drawing.Size(125, 17);
+            this.chkSmallMap.TabIndex = 40;
+            this.chkSmallMap.Text = "Small Map (128x128)";
+            this.chkSmallMap.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 507);
+            this.Controls.Add(this.chkSmallMap);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.grpMonsterStat);
             this.Controls.Add(this.lblIntensityDesc);
@@ -611,6 +626,7 @@
         private System.Windows.Forms.RadioButton optMonsterHeavy;
         private System.Windows.Forms.RadioButton optMonsterMedium;
         private System.Windows.Forms.RadioButton optMonsterLight;
+        private System.Windows.Forms.CheckBox chkSmallMap;
     }
 }
 
