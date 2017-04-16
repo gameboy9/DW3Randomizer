@@ -1,0 +1,9 @@
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\bin\Debug\DW3Randomizer.exe.config
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\bin\Debug\DW3Randomizer.exe
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\bin\Debug\DW3Randomizer.pdb
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.csprojResolveAssemblyReference.cache
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.Form1.resources
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.Properties.Resources.resources
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.csproj.GenerateResource.Cache
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.exe
+C:\Users\Pete10th\Source\Repos\DW3Randomizer\DW3Randomizer\obj\Debug\DW3Randomizer.pdb

@@ -9,6 +9,7 @@ namespace DW3Randomizer
 {
     public partial class Form1 : Form
     {
+        bool loading = true;
         byte[] romData;
         byte[] romData2;
         byte[] monsterOrder = { 0x00, 0x01, 0x68, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
@@ -74,7 +75,8 @@ namespace DW3Randomizer
                 using (TextReader reader = File.OpenText("lastFile.txt"))
                 {
                     txtFileName.Text = reader.ReadLine();
-                    txtCompare.Text = reader.ReadLine();
+                    txtFlags.Text = reader.ReadLine();
+                    determineChecks();
                     txtDefault1.Text = reader.ReadLine();
                     txtDefault2.Text = reader.ReadLine();
                     txtDefault3.Text = reader.ReadLine();
@@ -105,18 +107,13 @@ namespace DW3Randomizer
                 txtDefault10.Text = "Petrus";
                 txtDefault11.Text = "Hiram";
                 txtDefault12.Text = "Viron";
+                cboEncounterRate.SelectedIndex = 4;
+                cboExpGains.SelectedIndex = 5;
+                cboGoldReq.SelectedIndex = 0;
             }
-
-            //radInsaneIntensity_CheckedChanged(null, null);
-            // Lower case letters start at 0x0b, Upper case letters start at 0x25.
-            // Is Q being skipped?!
-            // bcdef01234
-            // 567890abcd
-            // ef01234
-            // 56789abcde
-            // f012345678
-            // 9abcde
-
+            btnNewSeed_Click(null, null);
+            loading = false;
+            determineFlags(null, null);
         }
 
         private void btnNewSeed_Click(object sender, EventArgs e)
@@ -134,9 +131,7 @@ namespace DW3Randomizer
 
             if (!loadRom())
                 return;
-            if (txtSeed.Text == "test1")
-                halfExpAndGoldReq(true);
-            else if (txtSeed.Text == "output")
+            if (txtSeed.Text == "output")
             {
                 textOutput();
                 return;
@@ -149,49 +144,49 @@ namespace DW3Randomizer
             else
             {
                 if (chkRandStores.Checked) forceItemSell();
-                if (chkHalfExpGoldReq.Checked) halfExpAndGoldReq();
+                boostGP();
                 superRandomize();
-                if (chkDoubleXP.Checked) doubleExp();
+
+                boostXP();
+                adjustEncounters();
+
+                if (chkSpeedText.Checked) speedText();
+                if (chkFasterBattles.Checked) battleSpeed();
             }
 
-            // ALL ROM Hacks will have greatly increased battle speeds.
-            romData[0x13a65] = 0x01;
-            romData[0x13a66] = 0x04;
-            romData[0x13a67] = 0x08;
-            romData[0x13a68] = 0x0c;
-            romData[0x13a69] = 0x10;
-            romData[0x13a6a] = 0x18;
-            romData[0x13a6b] = 0x20;
-            romData[0x852] = 2; // instead of 16 - animation of transition into battle removed, saving 14 frames / start of battle.
-            romData[0x8ce] = 1; // instead of 12 - flashes to start a battle, saving 11 frames / start of battle.
-            romData[0x980d] = 1; // instead of 8 - Magic spell flashing, saving 7 or 14 frames / spell casted
-            romData[0x9827] = 0xea; // NEXT 3 LINES:  1 flash -> 0 flashes
-            romData[0x9828] = 0xea;
-            romData[0x9829] = 0xea;
-            romData[0x9882] = 2; // instead of 12 - Frames of shaking when YOU are hit... saving 10 frames / hit
-            romData[0x9957] = 1; // Instead of 4 enemy flashes, saving at least 6 frames / hit... probably 12 or even 24 frames / hit.
-
             // Implement DW4 RNG so any currently known manipulations won't work.
-            //romData[0x3ff93] = 0xe6;
-            //romData[0x3ff94] = 0x1c;
-            //romData[0x3ff95] = 0xcd;
-            //romData[0x3ff96] = 0xd2;
-            //romData[0x3ff97] = 0x06;
-            //romData[0x3ff98] = 0xf0;
-            //romData[0x3ff99] = 0xf9;
-            //romData[0x3ff9a] = 0x60;
+            romData[0x3c351] = romData[0x7c351] = 0xAD;
+            romData[0x3c352] = romData[0x7c352] = 0xd2;
+            romData[0x3c353] = romData[0x7c353] = 0x06;
+            romData[0x3c354] = romData[0x7c354] = 0x4c;
+            romData[0x3c355] = romData[0x7c355] = 0x53;
+            romData[0x3c356] = romData[0x7c356] = 0xc3;
+            romData[0x3c357] = romData[0x7c357] = 0xf0;
+            romData[0x3c358] = romData[0x7c358] = 0xfb;
+            romData[0x3c359] = romData[0x7c359] = 0x4c;
+            romData[0x3c35a] = romData[0x7c35a] = 0x0a;
+            romData[0x3c35b] = romData[0x7c35b] = 0xc9;
+            romData[0x3c35c] = romData[0x7c35c] = 0x20;
+            romData[0x3c35d] = romData[0x7c35d] = 0x41;
+            romData[0x3c35e] = romData[0x7c35e] = 0xc3;
+            romData[0x3c35f] = romData[0x7c35f] = 0xca;
+            romData[0x3c360] = romData[0x7c360] = 0xd0;
+            romData[0x3c361] = romData[0x7c361] = 0xfa;
+            romData[0x3c362] = romData[0x7c362] = 0x60;
+            romData[0x3c363] = romData[0x7c363] = 0xe6;
+            romData[0x3c364] = romData[0x7c364] = 0x1c;
+            romData[0x3c365] = romData[0x7c365] = 0xcd;
+            romData[0x3c366] = romData[0x7c366] = 0xd2;
+            romData[0x3c367] = romData[0x7c367] = 0x06;
+            romData[0x3c368] = romData[0x7c368] = 0x4c;
+            romData[0x3c369] = romData[0x7c369] = 0x47;
+            romData[0x3c36a] = romData[0x7c36a] = 0xc3;
 
-            //romData[0x3c354] = 0x20;
-            //romData[0x3c355] = 0x83;
-            //romData[0x3c356] = 0xff;
-            //romData[0x3c357] = 0xea;
-            //romData[0x3c358] = 0xea;
-
-            //romData[0x3c35f] = 0x20;
-            //romData[0x3c360] = 0x83;
-            //romData[0x3c361] = 0xff;
-            //romData[0x3c362] = 0xea;
-            //romData[0x3c363] = 0xea;
+            // Speed up item menu loading
+            romData[0x2b0d] = 0x00;
+            romData[0x2b0e] = 0xf0;
+            romData[0x2b0f] = 0x01;
+            romData[0x2b10] = 0x00;
 
             // All ROM hacks will revive ALL characters on a ColdAsACod.
             // There will be a temporary graphical error if you use less than four characters, but I'm going to leave it be.
@@ -278,6 +273,43 @@ namespace DW3Randomizer
             saveRom();
         }
 
+        private void battleSpeed()
+        {
+            romData[0x13a65] = 0x01;
+            romData[0x13a66] = 0x04;
+            romData[0x13a67] = 0x08;
+            romData[0x13a68] = 0x0c;
+            romData[0x13a69] = 0x10;
+            romData[0x13a6a] = 0x18;
+            romData[0x13a6b] = 0x20;
+            romData[0x852] = 2; // instead of 16 - animation of transition into battle removed, saving 14 frames / start of battle.
+            romData[0x8ce] = 1; // instead of 12 - flashes to start a battle, saving 11 frames / start of battle.
+            romData[0x980d] = 1; // instead of 8 - Magic spell flashing, saving 7 or 14 frames / spell casted
+            romData[0x9827] = 0xea; // NEXT 3 LINES:  1 flash -> 0 flashes
+            romData[0x9828] = 0xea;
+            romData[0x9829] = 0xea;
+            romData[0x9882] = 2; // instead of 12 - Frames of shaking when YOU are hit... saving 10 frames / hit
+            romData[0x9957] = 1; // Instead of 4 enemy flashes, saving at least 6 frames / hit... probably 12 or even 24 frames / hit.
+        }
+
+        private void speedText()
+        {
+            romData[0x3a783] = 0x20;
+            romData[0x3a784] = 0xbd;
+            romData[0x3a785] = 0xbf;
+
+            romData[0x3a9c7] = 0x90;
+            romData[0x3a9c8] = 0x1d;
+            romData[0x3a9c9] = 0xa6;
+            romData[0x3a9ca] = 0x78;
+            romData[0x3a9cb] = 0xf0;
+            romData[0x3a9cc] = 0x06;
+
+            byte[] speedText = { 0xad, 0xd0, 0x6a, 0xf0, 0x03, 0x00, 0x96, 0x2f, 0x20, 0xba, 0xc2, 0xa9, 0x02, 0x8d, 0xd6, 0x06, 0x20, 0x41, 0xc3, 0xa9, 0x00, 0x8d, 0xd6, 0x06, 0x4c, 0x5f, 0xaa };
+            for (int i = 0; i < speedText.Length; i++)
+                romData[0x3bfcd + i] = speedText[i];
+        }
+
         private void textGet()
         {
             List<string> txtStrings = new List<string>();
@@ -322,7 +354,7 @@ namespace DW3Randomizer
                 if (extra)
                     romData2 = File.ReadAllBytes(txtCompare.Text);
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show("Empty file name(s) or unable to open files.  Please verify the files exist.");
                 return false;
@@ -332,17 +364,7 @@ namespace DW3Randomizer
 
         private void saveRom()
         {
-            string options = (chkHalfExpGoldReq.Checked ? "_half" : "");
-            options += (chkDoubleXP.Checked ? "_2xp" : "");
-            options += (chkRandStores.Checked ? "_sto" : "");
-            options += (chkRandEnemyPatterns.Checked ? "_pat" : "");
-            options += (chkRandSpellLearning.Checked ? "_lrn" : "");
-            options += (chkRandStatGains.Checked ? "_stat" : "");
-            options += (chkRandTreasures.Checked ? "_tres" : "");
-            options += (chkRandEquip.Checked ? "_eq" : "");
-            options += (chkRandMonsterZones.Checked ? "_zon" : "");
-            options += (chkRandSpellStrength.Checked ? "_sstr" : "");
-            string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + options + ".nes");
+            string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + "_" + txtFlags.Text + ".nes");
             File.WriteAllBytes(finalFile, romData);
             lblIntensityDesc.Text = "ROM hacking complete!  (" + finalFile + ")";
             txtCompare.Text = finalFile;
@@ -557,7 +579,6 @@ namespace DW3Randomizer
                         break;
                     case "X":
                         continue;
-                        break;
                 }
             }
 
@@ -1616,41 +1637,106 @@ namespace DW3Randomizer
             }
         }
 
-        private void doubleExp()
+        private void boostGP()
         {
-            //// Divide encounter rates by three, rounding as needed.
-            romData[0x944] = 2; // was 4
-            romData[0x945] = 5; // was 15
-            romData[0x946] = 4; // was 10
-            romData[0x947] = 5; // was 15
-            romData[0x948] = 6; // was 18
-            romData[0x949] = 8; // was 25
-            romData[0x94a] = 28; // was 84
-            romData[0x94b] = 6; // was 18
-            romData[0x94c] = 4; // was 10
-            romData[0x94d] = 2; // was 5
-            romData[0x94e] = 6; // was 19
-            romData[0x94f] = 4; // was 13
-            romData[0x950] = 6; // was 19
-            romData[0x951] = 7; // was 22
-            romData[0x952] = 10; // was 31 
-            romData[0x953] = 28; // was 84
-            romData[0x954] = 7; // was 22
-            romData[0x955] = 3; // was 10
+            // Replace monster data
+            for (int lnI = 0; lnI < 125; lnI++)
+            {
+                int byteValStart = 0x32e3 + (23 * lnI);
 
+                int gp = romData[byteValStart + 4] + ((romData[byteValStart + 18] % 2) * 256);
+                switch (cboExpGains.SelectedIndex)
+                {
+                    case 0:
+                        gp *= 2;
+                        break;
+                    case 1:
+                        gp = gp * 3 / 2;
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        gp /= 2;
+                        break;
+                }
+                gp = (gp > 1000 ? 1000 : gp);
+
+                romData[byteValStart + 4] = (byte)(gp % 256);
+                romData[byteValStart + 18] = (byte)(romData[byteValStart + 18] - (romData[byteValStart + 18] % 4) + (gp / 256));
+            }
+        }
+
+        private void boostXP()
+        {
             // Replace monster data
             for (int lnI = 0; lnI < 125; lnI++)
             {
                 int byteValStart = 0x32e3 + (23 * lnI);
 
                 int xp = romData[byteValStart + 1] + (romData[byteValStart + 2] * 256);
-                if (lnI != 0x31 && lnI != 0x6c)
-                    xp = xp * 3 / 2;
-
-                xp = (xp > 64000 ? 64000 : xp);
+                switch (cboExpGains.SelectedIndex)
+                {
+                    case 0:
+                        xp *= 5;
+                        break;
+                    case 1:
+                        xp *= 4;
+                        break;
+                    case 2:
+                        xp *= 3;
+                        break;
+                    case 3:
+                        xp *= 2;
+                        break;
+                    case 4:
+                        xp = xp * 3 / 2;
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        xp /= 2;
+                        break;
+                    case 7:
+                        xp /= 4;
+                        break;
+                }
+                xp = (xp > 65500 ? 65500 : xp);
 
                 romData[byteValStart + 1] = (byte)(xp % 256);
                 romData[byteValStart + 2] = (byte)(xp / 256);
+            }
+        }
+
+        private void adjustEncounters()
+        {
+            for (int i = 0x944; i <= 0x955; i++)
+            {
+                switch (cboEncounterRate.SelectedIndex)
+                {
+                    case 0:
+                        romData[i] *= 4;
+                        break;
+                    case 1:
+                        romData[i] *= 3;
+                        break;
+                    case 2:
+                        romData[i] *= 2;
+                        break;
+                    case 3:
+                        romData[i] = (byte)(romData[i] * 3 / 2);
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        romData[i] = (byte)(romData[i] * 3 / 4);
+                        break;
+                    case 6:
+                        romData[i] /= 2;
+                        break;
+                    case 7:
+                        romData[i] /= 4;
+                        break;
+                }
             }
         }
 
@@ -1691,99 +1777,6 @@ namespace DW3Randomizer
                 {
                     romData[0x123b + itemstoAdjust[lnI]] = (byte)(romData[0x123b + itemstoAdjust[lnI]] >= 128 ? itemPriceAdjust[lnI] + 128 : itemPriceAdjust[lnI]);
                 }
-            }
-        }
-
-        private void halfExpAndGoldReq(bool special = false)
-        {
-            romData[0x282fd] = 25; // instead of 24 -> This will raise the exp earned by 133%
-
-            // 0x11be for the multiplier.  Maintain two bits except for various key items that I want sold.
-            // Sword Of Illusion - 5000G
-            // Sword Of Kings - 35000G
-            // Armor Of Radiance - 15000G
-            // Magic Bikini - 10000G
-            // Armor of Terrafirma - 8000G
-            // Swordedge Armor - 12000G
-            // Shield Of Heroes - 10000G
-            // Golden Crown - 800G
-            // Unlucky Helmet - 10G
-            // Ring of Life - 5000G
-            // Meteorite Armband - 5000G
-            // Book of Satori - 8000G
-            // Sage's Stone - 20000G
-            // Vase Of Draught - 1000G
-            // Lamp of Darkness - 1000G
-            // Thief's Key - 500G
-            // Magic Key - 2000G
-            // Final Key - 5000G (not sold)
-            // Echoing Flute - 500G
-            // Fairy Flute - 2000G
-            // Silver Harp - 500G
-
-            // Change costs of various items because they might be sold from now on:
-            // Strength seed:  5000G
-            // Agility seed:  3000G
-            // Luck seed:  2500G
-            // Acorns Of Life:  5000G
-            // Magic Ball:  800G
-            // Stone of Sunlight:  10000G
-            // Staff of change:  3000G
-            // Stone of Life:  2000G
-            // Wizard's Ring:  10000G
-            // Black Pepper:  5000G
-            // Shoes of Happiness:  5000G
-
-            for (int lnI = 0; lnI < 125; lnI++)
-            {
-                // Need to determine original price...
-                int priceMultiplier = (romData[0x11be + lnI] % 4 == 0 ? 1 : romData[0x11be + lnI] % 4 == 1 ? 10 : romData[0x11be + lnI] % 4 == 2 ? 100 : 1000);
-                int priceMultiplier2 = (romData[0x123b + lnI] >= 128 ? romData[0x123b + lnI] - 128 : romData[0x123b + lnI]);
-                // Don't bother reducing the price if it's 0 or 1 piece of gold.
-                int price = priceMultiplier * priceMultiplier2;
-                if (price == 0 || price == 1)
-                    continue;
-
-                price /= 2;
-
-                // Remove any price adjustment first.
-                romData[0x11be + lnI] -= (byte)(romData[0x11be + lnI] % 4);
-                if (price >= 10000)
-                {
-                    romData[0x11be + lnI] += 3; // Now multiply by 1000
-                    price /= 1000;
-                }
-                else if (price >= 1000)
-                {
-                    romData[0x11be + lnI] += 2; // Now multiply by 100
-                    price /= 100;
-                }
-                else if (price >= 100)
-                {
-                    romData[0x11be + lnI] += 1; // Now multiply by 10
-                    price /= 10;
-                }
-                else
-                {
-                    romData[0x11be + lnI] += 0;
-                }
-
-                // Must keep special effects if romData is >= 128
-                if (romData[0x123b + lnI] > 128)
-                    romData[0x123b + lnI] = (byte)(128 + price);
-                else
-                    romData[0x123b + lnI] = (byte)(price);
-            }
-
-            //// House of healing cost halved
-            //romData[0x18659] = (20 / 2);
-
-            // Inn prices halved
-            for (int lnI = 0; lnI < 26; lnI++)
-            {
-                int innPrice = romData[0x367c1 + lnI] / 2;
-                romData[0x367c1 + lnI] -= (byte)(romData[0x367c1 + lnI] % 32);
-                romData[0x367c1 + lnI] += (byte)innPrice;
             }
         }
 
@@ -2150,115 +2143,91 @@ namespace DW3Randomizer
                 romData[0x909] = 0x18; // was 0x20 - Mummy Men
                                        // We could randomize the Granite Titan and Boss Troll fights too...
                                        // Maybe remove two of the Kandar Henchmen in the first fight and place two "bonus monsters" in other fights...
-
-                //// Randomize the first 12 boss fights, but make sure the last four of those involve Atlas, Bazuzu, Zarlox, and Hargon.
-                //// The 13th and final fight cannot be manipulated:  Malroth, and Malroth alone.
-                //for (int lnI = 0; lnI < 18; lnI++)
-                //{
-                //    int byteToUse = 0x8ee + (lnI * 2);
-                //    int byteToUse2 = 0x919 + (lnI * 2);
-                //    int boss1 = (lnI >= 8 ? 78 + (lnI - 8) : ((r1.Next() % 77) + 1));
-                //    boss1 = (lnI == 0 ? (r1.Next() % 40) + 1 : boss1);
-                //    int quantity1 = (boss1 >= 80 ? 1 : (r1.Next() % monsterSize[boss1]) + 1);
-                //    int boss2 = (lnI == 0 ? (r1.Next() % 40) + 1 : (r1.Next() % 78) + 1);
-                //    romData[byteToUse + 0] = (byte)boss1;
-                //    romData[byteToUse + 1] = (byte)quantity1;
-                //    romData[byteToUse + 2] = (byte)boss2;
-                //    romData[byteToUse + 3] = 8; // It's too many monsters, but the width of the screen will trim the rest of the monsters off.
-                //}
             }
 
-            if (chkRandEquip.Checked)
-            {
-                string[] weaponText = { "Cypress stick", "Club", "Copper sword", "Magic Knife", "Iron Spear", "Battle Axe", "Broad Sword", "Wizard's Wand",
-                "Poison Needle", "Iron Claw", "Thorn Whip", "Giant Shears", "Chain Sickle", "Thor's Sword", "Snowblast Sword", "Demon Axe",
-                "Staff of Rain", "Sword of Gaia", "Staff of Reflection", "Sword of Destruction", "Multi - Edge Sword", "Staff of Force", "Sword of Illusion", "Zombie Slasher",
-                "Falcon Sword", "Sledge Hammer", "Thunder Sword", "Staff of Thunder", "Sword of Kings", "Orochi Sword", "Dragon Killer", "Staff of Judgement",
-                "Clothes", "Training Suit", "Leather Armor", "Flashy Clothes", "Half Plate Armor", "Full Plate Armor", "Magic Armor", "Cloak of Evasion",
-                "Armor of Radiance", "Iron Apron", "Animal Suit", "Fightting Suit", "Sacred Robe", "Armor of Hades", "Water Flying Cloth", "Chain Mail",
-                "Wayfarers Clothes", "Revealing Swimsuit", "Magic Bikini", "Shell Armor", "Armor of Terrafirma", "Dragon Mail", "Swordedge Armor", "Angel's Robe",
-                "Leather Shield", "Iron Shield", "Shield of Strength", "Shield of Heroes", "Shield of Sorrow", "Bronze Shield", "Silver Shield", "Golden Crown",
-                "Iron Helmet", "Mysterious Hat", "Unlucky Helmet", "Turban", "Noh Mask", "Leather Helmet", "Iron Mask", "Golden Claw" };
+            //if (chkRandItemEffects.Checked)
+            //{
+            //    // Randomize which items equate to which effects
+            //    // Select 21 items randomly from a set defined as follows:
+            //    int[] legalEffectItems = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+            //                          0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+            //                          0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+            //                          0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+            //                          0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46 };
 
-                // Randomize which items equate to which effects
-                // Select 21 items randomly from a set defined as follows:
-                int[] legalEffectItems = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                                      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
-                                      0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46 };
+            //    List<int> keyEffectItems = new List<int> { 0x10, 0x11 };
 
-                List<int> keyEffectItems = new List<int> { 0x10, 0x11 };
+            //    // Wipe out the use byte by totally resetting the price.
+            //    for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
+            //    {
+            //        int oldVal = romData[0x11be + legalEffectItems[lnI]];
+            //        romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32);
+            //        //romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32 >= 16 ? 0x10 : 0x00);
+            //        //romData[0x11be + legalEffectItems[lnI]] += (byte)(oldVal % 16 >= 8 ? 0x08 : 0x00);
+            //    }
+            //    int oldVal1 = romData[0x11be + 0x4a];
+            //    romData[0x11be + 0x4a] = (byte)(oldVal1 % 32);
+            //    int oldVal2 = romData[0x11be + 0x5b];
+            //    romData[0x11be + 0x5b] = (byte)(oldVal2 % 32);
 
-                // Wipe out the use byte by totally resetting the price.
-                for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
-                {
-                    int oldVal = romData[0x11be + legalEffectItems[lnI]];
-                    romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32);
-                    //romData[0x11be + legalEffectItems[lnI]] = (byte)(oldVal % 32 >= 16 ? 0x10 : 0x00);
-                    //romData[0x11be + legalEffectItems[lnI]] += (byte)(oldVal % 16 >= 8 ? 0x08 : 0x00);
-                }
-                int oldVal1 = romData[0x11be + 0x4a];
-                romData[0x11be + 0x4a] = (byte)(oldVal1 % 32);
-                int oldVal2 = romData[0x11be + 0x5b];
-                romData[0x11be + 0x5b] = (byte)(oldVal2 % 32);
+            //    int[] legalItemSpells = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+            //                          0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+            //                          0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e,
+            //                          0x30, 0x31, 0x32, 0x34,
+            //                          0x38, 0x39, 0x3a }; // restore MP, everyone sneezes, self numb - 54 spells total
 
-                int[] legalItemSpells = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                                      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-                                      0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e,
-                                      0x30, 0x31, 0x32, 0x34,
-                                      0x38, 0x39, 0x3a }; // restore MP, everyone sneezes, self numb - 54 spells total
+            //    List<int> enemyGroupSpells = new List<int> { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f,
+            //                           0x10, 0x12, 0x13, 0x15, 0x16, 0x17, 0x18, 0x22, 0x24, 0x25, 0x27, 0x2b, 0x2c }; // 25
+            //    List<int> enemyAllSpells = new List<int> { 0x06, 0x07, 0x08, 0x0c, 0x11, 0x14, 0x39 }; // 7
+            //    List<int> allySelfSpells = new List<int> { 0x1a, 0x1b, 0x1c, 0x23, 0x29, 0x2d, 0x30, 0x32, 0x34, 0x38, 0x3a }; // 11
+            //    List<int> allySelectSpells = new List<int> { 0x20, 0x21, 0x28 }; // 3
+            //    List<int> allyAllSpells = new List<int> { 0x19, 0x1d, 0x1e, 0x1f, 0x26, 0x2a, 0x2e, 0x31 }; // 8
 
-                List<int> enemyGroupSpells = new List<int> { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f,
-                                       0x10, 0x12, 0x13, 0x15, 0x16, 0x17, 0x18, 0x22, 0x24, 0x25, 0x27, 0x2b, 0x2c }; // 25
-                List<int> enemyAllSpells = new List<int> { 0x06, 0x07, 0x08, 0x0c, 0x11, 0x14, 0x39 }; // 7
-                List<int> allySelfSpells = new List<int> { 0x1a, 0x1b, 0x1c, 0x23, 0x29, 0x2d, 0x30, 0x32, 0x34, 0x38, 0x3a }; // 11
-                List<int> allySelectSpells = new List<int> { 0x20, 0x21, 0x28 }; // 3
-                List<int> allyAllSpells = new List<int> { 0x19, 0x1d, 0x1e, 0x1f, 0x26, 0x2a, 0x2e, 0x31 }; // 8
+            //    for (int lnI = 0; lnI < 21; lnI++)
+            //    {
+            //        int effectItem = legalEffectItems[r1.Next() % legalEffectItems.Length];
+            //        if (romData[0x11be + effectItem] >= 0x80) // If it's already been selected...
+            //        {
+            //            lnI--;
+            //        }
+            //        else
+            //        {
+            //            romData[0x11be + effectItem] += 0x80;
+            //        }
+            //    }
 
-                for (int lnI = 0; lnI < 21; lnI++)
-                {
-                    int effectItem = legalEffectItems[r1.Next() % legalEffectItems.Length];
-                    if (romData[0x11be + effectItem] >= 0x80) // If it's already been selected...
-                    {
-                        lnI--;
-                    }
-                    else
-                    {
-                        romData[0x11be + effectItem] += 0x80;
-                    }
-                }
+            //    int iSpell = -1;
+            //    for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
+            //    {
+            //        // Otherwise, randomize the spell it will be using.
+            //        if (romData[0x11be + legalEffectItems[lnI]] < 0x80)
+            //            continue;
 
-                int iSpell = -1;
-                for (int lnI = 0; lnI < legalEffectItems.Length; lnI++)
-                {
-                    // Otherwise, randomize the spell it will be using.
-                    if (romData[0x11be + legalEffectItems[lnI]] < 0x80)
-                        continue;
+            //        int effectSpell = legalItemSpells[r1.Next() % legalItemSpells.Length];
+            //        if (effectSpell == 0x38 && keyEffectItems.Contains(effectSpell)) // Can't let a key item potentially crumble!  Redo that randomization.
+            //        {
+            //            lnI--;
+            //            continue;
+            //        }
 
-                    int effectSpell = legalItemSpells[r1.Next() % legalItemSpells.Length];
-                    if (effectSpell == 0x38 && keyEffectItems.Contains(effectSpell)) // Can't let a key item potentially crumble!  Redo that randomization.
-                    {
-                        lnI--;
-                        continue;
-                    }
+            //        iSpell++;
+            //        // Now determine what spell it is... that will determine whether to "attack" yourself, a group of monsters, a selected ally, or all monsters/allies.
+            //        if (enemyGroupSpells.Contains(effectSpell))
+            //            romData[0x11be + legalEffectItems[lnI]] += 0x60;
+            //        else if (enemyAllSpells.Contains(effectSpell))
+            //            romData[0x11be + legalEffectItems[lnI]] += 0x20;
+            //        else if (allySelfSpells.Contains(effectSpell)) // 50/50 chance of targetting for self or an ally.
+            //            romData[0x11be + legalEffectItems[lnI]] += (byte)(r1.Next() % 2 == 1 ? 0x00 : 0x40);
+            //        else if (allySelectSpells.Contains(effectSpell))
+            //            romData[0x11be + legalEffectItems[lnI]] += 0x40;
+            //        else if (allyAllSpells.Contains(effectSpell))
+            //            romData[0x11be + legalEffectItems[lnI]] += 0x00;
 
-                    iSpell++;
-                    // Now determine what spell it is... that will determine whether to "attack" yourself, a group of monsters, a selected ally, or all monsters/allies.
-                    if (enemyGroupSpells.Contains(effectSpell))
-                        romData[0x11be + legalEffectItems[lnI]] += 0x60;
-                    else if (enemyAllSpells.Contains(effectSpell))
-                        romData[0x11be + legalEffectItems[lnI]] += 0x20;
-                    else if (allySelfSpells.Contains(effectSpell)) // 50/50 chance of targetting for self or an ally.
-                        romData[0x11be + legalEffectItems[lnI]] += (byte)(r1.Next() % 2 == 1 ? 0x00 : 0x40);
-                    else if (allySelectSpells.Contains(effectSpell))
-                        romData[0x11be + legalEffectItems[lnI]] += 0x40;
-                    else if (allyAllSpells.Contains(effectSpell))
-                        romData[0x11be + legalEffectItems[lnI]] += 0x00;
+            //        romData[0x13280 + iSpell] = (byte)effectSpell;
+            //    }
+            //}
 
-                    romData[0x13280 + iSpell] = (byte)effectSpell;
-                }
-
+            if (chkRandEquip.Checked) {
                 // Totally randomize weapons, armor, shields, helmets (13efb-13f1d, 1a00e-1a08b for pricing)
                 for (int lnI = 0; lnI <= 70; lnI++)
                 {
@@ -2319,24 +2288,36 @@ namespace DW3Randomizer
                         }
                     }
                 }
+            }
 
-                string options = (chkHalfExpGoldReq.Checked ? "h" : "");
-                options += (chkDoubleXP.Checked ? "d" : "");
-                //options += (optNoIntensity.Checked ? "_none" : radSlightIntensity.Checked ? "_slight" : radModerateIntensity.Checked ? "_moderate" : radHeavyIntensity.Checked ? "_heavy" : "_insane");
-                string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + options + "_guide.txt");
+            if (chkRandEquip.Checked || chkRandItemEffects.Checked || chkRandWhoCanEquip.Checked) {
+                string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + "_" + txtFlags.Text + "_guide.txt");
 
                 // Totally randomize who can equip (1a3ce-1a3f0).  At least one person can equip something...
                 using (StreamWriter writer = File.CreateText(finalFile))
                 {
+                    string[] weaponText = { "Cypress stick", "Club", "Copper sword", "Magic Knife", "Iron Spear", "Battle Axe", "Broad Sword", "Wizard's Wand",
+                        "Poison Needle", "Iron Claw", "Thorn Whip", "Giant Shears", "Chain Sickle", "Thor's Sword", "Snowblast Sword", "Demon Axe",
+                        "Staff of Rain", "Sword of Gaia", "Staff of Reflection", "Sword of Destruction", "Multi - Edge Sword", "Staff of Force", "Sword of Illusion", "Zombie Slasher",
+                        "Falcon Sword", "Sledge Hammer", "Thunder Sword", "Staff of Thunder", "Sword of Kings", "Orochi Sword", "Dragon Killer", "Staff of Judgement",
+                        "Clothes", "Training Suit", "Leather Armor", "Flashy Clothes", "Half Plate Armor", "Full Plate Armor", "Magic Armor", "Cloak of Evasion",
+                        "Armor of Radiance", "Iron Apron", "Animal Suit", "Fightting Suit", "Sacred Robe", "Armor of Hades", "Water Flying Cloth", "Chain Mail",
+                        "Wayfarers Clothes", "Revealing Swimsuit", "Magic Bikini", "Shell Armor", "Armor of Terrafirma", "Dragon Mail", "Swordedge Armor", "Angel's Robe",
+                        "Leather Shield", "Iron Shield", "Shield of Strength", "Shield of Heroes", "Shield of Sorrow", "Bronze Shield", "Silver Shield", "Golden Crown",
+                        "Iron Helmet", "Mysterious Hat", "Unlucky Helmet", "Turban", "Noh Mask", "Leather Helmet", "Iron Mask", "Golden Claw" };
+
                     for (int lnI = 0; lnI <= 70; lnI++)
                     {
-                        // Maintain equipment requirements for the starting equipment
-                        if (!(lnI == 0x00 || lnI == 0x01 || lnI == 0x02 || lnI == 0x20 || lnI == 0x22 || lnI == 0x30))
-                            romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
+                        if (chkRandWhoCanEquip.Checked)
+                        {
+                            // Maintain equipment requirements for the starting equipment
+                            if (!(lnI == 0x00 || lnI == 0x01 || lnI == 0x02 || lnI == 0x20 || lnI == 0x22 || lnI == 0x30))
+                                romData[0x1147 + lnI] = (byte)(r1.Next() % 255 + 1);
 
-                        // EXCEPT those that are "FF", update the "who can use the item" to the people who are allowed to equip the item
-                        if (romData[0x1196 + lnI] != 255 && romData[0x1196 + lnI] != 0 && lnI < 32)
-                            romData[0x1196 + lnI] = romData[0x1147 + lnI];
+                            // EXCEPT those that are "FF", update the "who can use the item" to the people who are allowed to equip the item
+                            if (romData[0x1196 + lnI] != 255 && romData[0x1196 + lnI] != 0 && lnI < 32)
+                                romData[0x1196 + lnI] = romData[0x1147 + lnI];
+                        }
 
                         string equipOut = "";
                         equipOut += (romData[0x1147 + lnI] % 2 >= 1 ? "Hr  " : "--  ");
@@ -2382,6 +2363,13 @@ namespace DW3Randomizer
                 int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
                 int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
 
+                int[] heroFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
+                int[] pilgrimFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
+                int[] wizardFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
+                int[] heroCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
+                int[] pilgrimCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
+                int[] wizardCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
+
                 bool legal = false;
                 while (!legal)
                 {
@@ -2423,9 +2411,9 @@ namespace DW3Randomizer
 
                 for (int lnI = 0; lnI < 8; lnI++)
                 {
-                    romData[0x29d6 + heroCommand[lnI]] = (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a15 + pilgrimCommand[lnI]] = (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a54 + wizardCommand[lnI]] = (byte)(r1.Next() % 35 + 1);
+                    romData[0x29d6 + heroCommand[lnI]] = (byte)heroCommandLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a15 + pilgrimCommand[lnI]] = (byte)pilgrimCommandLevels[lnI]; // (r1.Next() % 35 + 1);
+                    romData[0x2a54 + wizardCommand[lnI]] = (byte)wizardCommandLevels[lnI]; // (r1.Next() % 35 + 1);
                     romData[0x2a93 + pilgrimCommand[lnI]] = romData[0x2a15 + pilgrimCommand[lnI]];
                     romData[0x2a93 + wizardCommand[lnI]] = romData[0x2a54 + wizardCommand[lnI]];
                     romData[0x22e7 + 24 + lnI] = (byte)heroCommand[lnI];
@@ -2433,13 +2421,13 @@ namespace DW3Randomizer
                     romData[0x22e7 + 64 + 24 + lnI] = (byte)wizardCommand[lnI];
                 }
                 romData[0x22e7 + 24] = 38; // Hero learns Return first.
-                romData[0x29d6 + romData[0x22e7 + 24]] = 2;
+                romData[0x29d6 + romData[0x22e7 + 24]] = (byte)heroCommandLevels[0];
                 romData[0x22e7 + 24 + 1] = 59; // ... and Outside
-                romData[0x29d6 + romData[0x22e7 + 24 + 1]] = 2;
+                romData[0x29d6 + romData[0x22e7 + 24 + 1]] = (byte)heroCommandLevels[1];
                 romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
-                romData[0x29d6 + romData[0x22e7 + 32 + 24]] = 2;
+                romData[0x29d6 + romData[0x22e7 + 32 + 24]] = (byte)wizardCommandLevels[0];
                 romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
-                romData[0x29d6 + romData[0x22e7 + 64 + 24]] = 2;
+                romData[0x29d6 + romData[0x22e7 + 64 + 24]] = (byte)pilgrimCommandLevels[0];
 
                 romData[0x29d6 + 63 + romData[0x22e7 + 32 + 24]] = 1;
                 romData[0x29d6 + 126 + romData[0x22e7 + 64 + 24]] = 1;
@@ -2447,9 +2435,9 @@ namespace DW3Randomizer
                 for (int lnI = 0; lnI < 24; lnI++)
                 {
                     if (lnI < 16)
-                        romData[0x29d6 + heroFight[lnI]] = (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a15 + pilgrimFight[lnI]] = (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a54 + wizardFight[lnI]] = (byte)(r1.Next() % 35 + 1);
+                        romData[0x29d6 + heroFight[lnI]] = (byte)heroFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a15 + pilgrimFight[lnI]] = (byte)pilgrimFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a54 + wizardFight[lnI]] = (byte)wizardFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
                     romData[0x2a93 + pilgrimFight[lnI]] = romData[0x2a15 + pilgrimFight[lnI]];
                     romData[0x2a93 + wizardFight[lnI]] = romData[0x2a54 + wizardFight[lnI]];
                     if (lnI < 16)
@@ -2491,6 +2479,9 @@ namespace DW3Randomizer
 
             if (chkRandTreasures.Checked)
             {
+                // If the yellow orb is at a searchable spot, it won't be found unless you change this byte from 0x79 to 0x80+.  SUPER WEIRD!
+                romData[0x31828] = 0xff;
+
                 bool legal = false;
 
                 // Totally randomize treasures... but make sure key items exist before they are needed!
@@ -2565,13 +2556,13 @@ namespace DW3Randomizer
 
                 List<byte> treasureList = new List<byte>();
                 byte[] legalTreasures = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                                      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+                                      0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4b, 0x4c, 0x4e, 0x4f,
-                                      0x50, 0x51, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5c, 0x5d, 0x5f,
+                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
+                                      0x53, 0x55, 0x56, 0x5c, 0x5f,
                                       0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
-                                      0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x78, 0x79, 0x7a, 0x7b,
+                                      0x70, 0x71, 0x73, 0x74,
                                       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8,
                                       0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff};
                 for (int lnI = 0; lnI < allTreasureList.Count; lnI++)
@@ -2591,31 +2582,9 @@ namespace DW3Randomizer
                         //byte[] keyTreasure = { 37, 116, 124, 130, 133, 133, 133, 133, 165, 165 };
 
                         // We need to make sure key items doesn't exceed a certain point in the story.
-                        if ((treasure == 0x58 && lnI >= 6) ||
-                            (treasure == 0x57 && lnI >= 8) ||
-                            (treasure == 0x59 && lnI >= 36) ||
-                            (treasure == 0x5d && lnI >= 56) ||
-                            (treasure == 0x4f && lnI >= 74) ||
-                            (treasure == 0x5a && lnI >= 88) ||
-                            (treasure == 0x51 && lnI >= 119) ||
-                            (treasure == 0x54 && lnI >= 120) ||
-                            (treasure == 0x11 && lnI >= 126) ||
-                            (treasure == 0x77 && lnI >= 129) ||
-                            (treasure == 0x78 && lnI >= 129) ||
-                            (treasure == 0x79 && lnI >= 129) ||
-                            (treasure == 0x7a && lnI >= 129) ||
-                            (treasure == 0x7b && lnI >= 129) ||
-                            (treasure == 0x7c && lnI >= 129) ||
-                            (treasure == 0x72 && !(lnI >= 130 && lnI <= 166)) ||
-                            (treasure == 0x10 && !(lnI >= 130 && lnI <= 159)) ||
-                            (treasure == 0x75 && !(lnI >= 130 && lnI <= 159)))
-                            continue;
 
                         // Verify that only one location exists for key items
-                        if (!(treasureList.Contains(treasure) && (treasure == 0x58 || treasure == 0x57 || treasure == 0x59 || treasure == 0x5d || treasure == 0x4f
-                            || treasure == 0x5a || treasure == 0x51 || treasure == 0x54 || treasure == 0x11 || treasure == 0x4f || treasure == 0x53
-                            || treasure == 0x77 || treasure == 0x78 || treasure == 0x79 || treasure == 0x7a || treasure == 0x7b || treasure == 0x7c
-                            || treasure == 0x5c || treasure == 0x70 || treasure == 0x71 || treasure == 0x72 || treasure == 0x10 || treasure == 0x75)))
+                        if (!(treasureList.Contains(treasure) && (treasure == 0x53 || treasure == 0x5c || treasure == 0x70 || treasure == 0x71)))
                         {
                             legal = true;
                             treasureList.Add(treasure);
@@ -2628,118 +2597,234 @@ namespace DW3Randomizer
                 byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x5a, 0x51, 0x54, 0x11, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x10, 0x75, 0x72, 0x50 };
                 byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130, 130, 130, 0 };
                 byte[] keyTreasure = { 6, 8, 36, 56, 74, 88, 119, 120, 126, 129, 129, 129, 129, 129, 129, 159, 159, 166, 166 };
-                for (int lnI = 0; lnI < keyItems.Length; lnI++)
+
+                int echoingFluteMarker = 0;
+                for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
                 {
-                    legal = false;
-                    for (int lnJ = minKeyTreasure[lnI]; lnJ < keyTreasure[lnI]; lnJ++)
+                    int treasureLocation = allTreasure[minKeyTreasure[lnJ] + (r1.Next() % (keyTreasure[lnJ] - minKeyTreasure[lnJ]))];
+                    if (keyItems.Contains(romData[treasureLocation]))
                     {
-                        if (romData[allTreasure[lnJ]] == keyItems[lnI])
-                            legal = true;
+                        lnJ--;
+                        continue;
                     }
+                    romData[treasureLocation] = keyItems[lnJ];
 
-                    // If legal = false, then the item was not found, so we'll have to place it in a treasure somewhere...
-                    while (!legal)
+                    // Echoing Flute business.  01 = Silver, 02 = Red, 04 = Yellow, 08 = Purple, 10 = Blue, 20 = Green
+                    if (keyItems[lnJ] >= 0x77 && keyItems[lnJ] <= 0x7c)
                     {
-                        byte tRand = (byte)((r1.Next() % (keyTreasure[lnI] - minKeyTreasure[lnI] + 1)) + minKeyTreasure[lnI]);
+                        bool finished = false;
+                        byte[] echoLocations;
+                        byte orbNumber = (byte)(Math.Pow(2, Math.Abs(0x77 - keyItems[lnJ])));
 
-                        bool dupCheck = false;
-                        // Make sure we're not replacing a item that also happens to be key!
-                        for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
+                        if (new int[] { 0x29237, 0x29238, 0x29239 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x2d };
+                        else if (new int[] { 0x2927b, 0x292C4, 0x292C5, 0x292c6, 0x2927c, 0x2927d }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x9f, 0x3c, 0xed, 0xd6, 0xd7, 0xd8 };
+                        else if (new int[] { 0x2927e, 0x2927f }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x98, 0xa0, 0xa1, 0xa2 };
+                        else if (new int[] { 0x29234, 0x29235 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x14 };
+                        else if (new int[] { 0x2923a, 0x2923b, 0x29280, 0x29281, 0x29282, 0x29283, 0x29284, 0x29285, 0x29286, 0x29287 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x2e, 0xa3, 0xa4, 0xa5 };
+                        else if (new int[] { 0x2925c, 0x31b9c, 0x2925d, 0x2925e, 0x2925f, 0x29260, 0x29261, 0x29262, 0x29263, 0x29264 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x96, 0x50, 0x51, 0x52, 0x87, 0x55, 0x54, 0x53, 0x56, 0x57 };
+                        else if (new int[] { 0x29255, 0x29256, 0x29257, 0x29258, 0x29249, 0x2924a }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x00, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47 };
+                        else if (new int[] { 0x29249, 0x2924a, 0x2924b, 0x2924c, 0x2924d, 0x2924e, 0x2924f, 0x292b4, 0x292b5, 0x292b6, 0x292c3, 0x317f4 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x3b, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5 };
+                        else if (new int[] { 0x2923c, 0x2923d }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x2f };
+                        else if (new int[] { 0x29251, 0x292c7, 0x292c8, 0x292c9, 0x292ca, 0x292b7 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x3d, 0xdb, 0xdc, 0xdd, 0xde };
+                        else if (new int[] { 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x3f, 0xb2 };
+                        else if (new int[] { 0x31b94, 0x29270 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x15, 0x85, 0x86 };
+                        else if (new int[] { 0x292e4, 0x292e7 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x24, 0x8a };
+                        else if (new int[] { 0x29272, 0x29271, 0x29273 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x18, 0x8b, 0x8c };
+                        else if (new int[] { 0x292d1, 0x292d0, 0x292cf, 0x292cd, 0x292ce, 0x292cc, 0x292cb }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x3e, 0xe4, 0xe5, 0xe6, 0xe7 };
+                        else if (new int[] { 0x29299, 0x2929c, 0x2929b, 0x2929d, 0x2929a, 0x29298, 0x29293, 0x29294, 0x29295, 0x29291, 0x29292, 0x29296, 0x29297, 0x292a3, 0x292a4, 0x292a2, 0x2929f, 0x2929e, 0x292a0, 0x292a5, 0x292a6, 0x292a1, 0x292a7, 0x29296}.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x37, 0xbe, 0xbf };
+                        else if (new int[] { 0x29246, 0x29248, 0x29247, 0x29245, 0x29244, 0x29290, 0x2928f }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x36, 0xbc, 0xbd };
+                        else if (new int[] { 0x292e5 }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x06, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x99 };
+                        else if (new int[] { 0x29277, 0x29276, 0x29275, 0x29278, 0x29279, 0x2927a }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x9c, 0x9d };
+                        else if (new int[] { 0x29288, 0x29289, 0x2928a }.Contains(treasureLocation))
+                            echoLocations = new byte[] { 0x32, 0xa8, 0xa9, 0xaa, 0x31 };
+                        else
+                            echoLocations = new byte[] { };
+
+                        for (int i = 0; i < echoLocations.Length; i++)
                         {
-                            if (romData[allTreasure[tRand]] == keyItems[lnJ])
-                                dupCheck = true;
+                            romData[0x33c51 + echoingFluteMarker] = orbNumber;
+                            echoingFluteMarker++;
+
+                            romData[0x33c51 + echoingFluteMarker] = echoLocations[i];
+                            echoingFluteMarker++;
                         }
-                        if (dupCheck == false)
+                        while (!finished)
                         {
-                            romData[allTreasure[tRand]] = keyItems[lnI];
-                            legal = true;
                         }
                     }
                 }
+
+                // Echoing Flute business...
+                byte[] echoingFlute = { 0xA5, 0x2F, 0xD0, 0x0E, 0x00, 0x1E, 0x2F, 0x00, 0x44, 0x17, 0x00, 0x0D, 0x77, 0x20, 0x33, 0xCB,
+                    0x38, 0x60, 0xA2, 0x00, 0xBD, 0x41, 0xBC, 0xF0, 0xEB, 0xE8, 0xBC, 0x41, 0xBC, 0xE8, 0x2D, 0xCE,
+                    0x60, 0xD0, 0xF1, 0xC4, 0x8B, 0xD0, 0xED, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA,
+                    0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0x4C, 0x59, 0xA2 }; // 0xC9, 0x04, 0xD0, 0x0B, 0xAD, 0xCD, 0x60, 0xC8, 0xD0, 0xE0, 
+
+                for (int i = 0; i < echoingFlute.Length; i++)
+                {
+                    romData[0x32228 + i] = echoingFlute[i];
+                }
+
+                // The Golden Claw location has a trigger that needs to be set so it can only be retrieved once instead of an infinite amount of times.
+                romData[0x319a0] = romData[0x317f4];
             }
 
             if (chkRandStores.Checked)
             {
                 // Totally randomize stores (19 weapon stores, 24 item stores, 248 items total)  No store can have more than 12 items.
                 // I would just create random values for 248 items, then determine weapon and item stores out of that!
-                int[] legalStoreItems = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                byte[] legalStoreWeapons = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
                                       0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46,
-                                      0x48, 0x49, 0x4b, 0x4c, 0x4e,
+                                      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46
+                };
+                byte[] legalStoreItems = { 0x48, 0x49, 0x4b, 0x4c, 0x4e,
                                       0x53, 0x55, 0x56, 0x5f,
-                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
+                                      0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6f,
                                       0x70, 0x71, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74
-            };
+                };
 
-                int[] storeItems = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                List<int> itemStore = new List<int>();
-                List<int> weaponStore = new List<int>();
-                for (int lnI = 0; lnI < 248; lnI++)
-                    romData[0x36838 + lnI] = (byte)(legalStoreItems[(r1.Next() % legalStoreItems.Length)]);
+                int[] weaponStores = { 0x36838, 0x3683f, 0x36846, 0x3684d, 0x36854, 0x3685b, 0x36862, 0x36869, 0x3686e, 0x36874, 0x3687a, 0x36880, 0x36887, 0x3688d, 0x36893, 0x3689a, 0x368a1, 0x368a7, 0x368ae }; // 42
+                int[] itemStores = { 0x368b4, 0x368b7, 0x368be, 0x368c4, 0x368ca, 0x368d0, 0x368d6, 0x368db, 0x368e0, 0x368e2, 0x368e6, 0x368ec, 0x368f2, 0x368f4, 0x368fa, 0x368ff, 0x36905, 0x36908, 0x3690e, 0x36914, 0x3691a, 0x36920, 0x36927, 0x3692b }; // 22
 
-                int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247 };
-
-                int lnMarker = -1;
-                // Need to make sure this doesn't exceed 11
-                int average = 248 / weaponStoreLocations.Length;
-                for (int lnI = 0; lnI < weaponStoreLocations.Length - 1; lnI++)
+                for (int lnI = 0; lnI < weaponStores.Length; lnI++)
                 {
-                    int storeSize = average;
-                    storeSize += (-3 + (r1.Next() % 7));
-                    if (storeSize > 12 || average >= 10)
-                        storeSize = 12;
-                    lnMarker += storeSize;
-                    weaponStoreLocations[lnI] = lnMarker;
-                    int avgPart1 = 248 - lnMarker + 1;
-                    int avgPart2 = weaponStoreLocations.Length - lnI - 1;
-                    average = ((248 - lnMarker + 1) / (weaponStoreLocations.Length - lnI - 1));
+                    List<int> store = new List<int> { };
+                    bool lastItem = false;
+                    int byteToUse = weaponStores[lnI];
+                    int lnJ = 0;
+                    do
+                    {
+                        if (romData[byteToUse + lnJ] >= 128)
+                            lastItem = true;
+                        romData[byteToUse + lnJ] = legalStoreWeapons[r1.Next() % legalStoreWeapons.Length];
+                        bool failure = false;
+                        for (int lnK = 0; lnK < lnJ; lnK++)
+                            if (romData[byteToUse + lnJ] == romData[byteToUse + lnK])
+                                failure = true;
+                        if (lastItem)
+                            romData[byteToUse + lnJ] += 128;
+                        if (failure)
+                        {
+                            lastItem = false;
+                            continue;
+                        }
+                        lnJ++;
+                    } while (!lastItem);
+                }
+                for (int lnI = 0; lnI < itemStores.Length; lnI++)
+                {
+                    List<int> store = new List<int> { };
+                    bool lastItem = false;
+                    int byteToUse = itemStores[lnI];
+                    int lnJ = 0;
+                    do
+                    {
+                        if (romData[byteToUse + lnJ] >= 128)
+                            lastItem = true;
+                        romData[byteToUse + lnJ] = legalStoreItems[r1.Next() % legalStoreItems.Length];
+                        bool failure = false;
+                        for (int lnK = 0; lnK < lnJ; lnK++)
+                            if (romData[byteToUse + lnJ] == romData[byteToUse + lnK])
+                                failure = true;
+                        if (lastItem)
+                            romData[byteToUse + lnJ] += 128;
+                        if (failure)
+                        {
+                            lastItem = false;
+                            continue;
+                        }
+                        lnJ++;
+                    } while (!lastItem);
                 }
 
-                // Now we can plug in the numbers...
-                for (int lnI = 0; lnI < weaponStoreLocations.Length; lnI++)
-                    romData[0x36838 + weaponStoreLocations[lnI]] += 128;
+                //int[] storeItems = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                //                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                //List<int> itemStore = new List<int>();
+                //List<int> weaponStore = new List<int>();
+                //for (int lnI = 0; lnI < 248; lnI++)
+                //    romData[0x36838 + lnI] = (byte)(legalStoreItems[(r1.Next() % legalStoreItems.Length)]);
 
-                // Go through each of the stores and check for duplicates.
-                int startStore = 0;
-                List<int> storeContents = new List<int> { };
-                for (int lnI = 0; lnI < 248; lnI++)
-                {
-                    bool lastItem = (romData[0x36838 + lnI] >= 128);
-                    int itemToCompare = (romData[0x36838 + lnI] >= 128 ? romData[0x36838 + lnI] - 128 : romData[0x36838 + lnI]);
-                    if (storeContents.Contains(itemToCompare))
-                    {
-                        romData[0x36838 + lnI] = (byte)((lastItem ? 128 : 0) + legalStoreItems[r1.Next() % legalStoreItems.Length]);
-                        lnI = startStore - 1;
-                        storeContents.Clear();
-                        continue;
-                    }
-                    storeContents.Add(itemToCompare);
-                    if (lastItem)
-                    {
-                        storeContents.Clear();
-                        startStore = lnI + 1;
-                    }
-                }
+                //int[] weaponStoreLocations = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247 };
+
+                //int lnMarker = -1;
+                //// Need to make sure this doesn't exceed 11
+                //int average = 248 / weaponStoreLocations.Length;
+                //for (int lnI = 0; lnI < weaponStoreLocations.Length - 1; lnI++)
+                //{
+                //    int storeSize = average;
+                //    storeSize += (-3 + (r1.Next() % 7));
+                //    if (storeSize > 12 || average >= 10)
+                //        storeSize = 12;
+                //    lnMarker += storeSize;
+                //    weaponStoreLocations[lnI] = lnMarker;
+                //    int avgPart1 = 248 - lnMarker + 1;
+                //    int avgPart2 = weaponStoreLocations.Length - lnI - 1;
+                //    average = ((248 - lnMarker + 1) / (weaponStoreLocations.Length - lnI - 1));
+                //}
+
+                //// Now we can plug in the numbers...
+                //for (int lnI = 0; lnI < weaponStoreLocations.Length; lnI++)
+                //    romData[0x36838 + weaponStoreLocations[lnI]] += 128;
+
+                //// Go through each of the stores and check for duplicates.
+                //int startStore = 0;
+                //List<int> storeContents = new List<int> { };
+                //for (int lnI = 0; lnI < 248; lnI++)
+                //{
+                //    bool lastItem = (romData[0x36838 + lnI] >= 128);
+                //    int itemToCompare = (romData[0x36838 + lnI] >= 128 ? romData[0x36838 + lnI] - 128 : romData[0x36838 + lnI]);
+                //    if (storeContents.Contains(itemToCompare))
+                //    {
+                //        romData[0x36838 + lnI] = (byte)((lastItem ? 128 : 0) + legalStoreItems[r1.Next() % legalStoreItems.Length]);
+                //        lnI = startStore - 1;
+                //        storeContents.Clear();
+                //        continue;
+                //    }
+                //    storeContents.Add(itemToCompare);
+                //    if (lastItem)
+                //    {
+                //        storeContents.Clear();
+                //        startStore = lnI + 1;
+                //    }
+                //}
 
                 // Inn prices randomized
                 for (int lnI = 0; lnI < 26; lnI++)
@@ -2993,6 +3078,20 @@ namespace DW3Randomizer
             }
         }
 
+        private int[] inverted_power_curve(int min, int max, int arraySize, double powToUse, Random r1)
+        {
+            int range = max - min;
+            double p_range = Math.Pow(range, 1 / powToUse);
+            int[] points = new int[arraySize];
+            for (int i = 0; i < arraySize; i++)
+            {
+                double section = (double)r1.Next() / int.MaxValue;
+                points[i] = (int)Math.Round(max - Math.Pow(section * p_range, powToUse));
+            }
+            Array.Sort(points);
+            return points;
+        }
+
         private List<int> addTreasure(List<int> currentList, int[] treasureData)
         {
             for (int lnI = 0; lnI < treasureData.Length; lnI++)
@@ -3039,25 +3138,6 @@ namespace DW3Randomizer
             array[second] = array[first];
             array[first] = holdAddress;
             return array;
-        }
-
-        // Reserve for another time...
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (!loadRom()) return;
-            halfExpAndGoldReq(true);
-            for (int lnI = 0; lnI < 68; lnI++)
-            {
-                int byteToUse = 0x10519 + (lnI * 6);
-                byte valToUpdate = (byte)(129 + lnI);
-                romData[byteToUse + 0] = valToUpdate;
-                romData[byteToUse + 1] = valToUpdate;
-                romData[byteToUse + 2] = valToUpdate;
-                romData[byteToUse + 3] = valToUpdate;
-                romData[byteToUse + 4] = valToUpdate;
-                romData[byteToUse + 5] = valToUpdate;
-            }
-            saveRom();
         }
 
         private void btnCompare_Click(object sender, EventArgs e)
@@ -3253,7 +3333,7 @@ namespace DW3Randomizer
                 using (StreamWriter writer = File.CreateText("lastFile.txt"))
                 {
                     writer.WriteLine(txtFileName.Text);
-                    writer.WriteLine(txtCompare.Text);
+                    writer.WriteLine(txtFlags.Text);
                     writer.WriteLine(txtDefault1.Text);
                     writer.WriteLine(txtDefault2.Text);
                     writer.WriteLine(txtDefault3.Text);
@@ -3327,6 +3407,83 @@ namespace DW3Randomizer
             writer.WriteLine(final);
             writer.WriteLine();
             return writer;
+        }
+
+        private void determineChecks()
+        {
+            string flags = txtFlags.Text;
+            int number = convertChartoInt(Convert.ToChar(flags.Substring(0, 1)));
+            optMonsterLight.Checked = (number == 0);
+            optMonsterSilly.Checked = (number == 1);
+            optMonsterMedium.Checked = (number == 2);
+            optMonsterHeavy.Checked = (number == 3);
+
+            number = convertChartoInt(Convert.ToChar(flags.Substring(1, 1)));
+            cboExpGains.SelectedIndex = (number % 8);
+            cboEncounterRate.SelectedIndex = (number / 8);
+
+            number = convertChartoInt(Convert.ToChar(flags.Substring(2, 1)));
+            cboGoldReq.SelectedIndex = (number % 4);
+            chkRandomizeXP.Checked = (number % 8 >= 4);
+            chkRandomizeGP.Checked = (number % 16 >= 8);
+            chkFasterBattles.Checked = (number % 32 >= 16);
+            chkSpeedText.Checked = (number >= 32);
+
+            number = convertChartoInt(Convert.ToChar(flags.Substring(3, 1)));
+            chkRandStores.Checked = (number % 2 == 1);
+            chkRandEnemyPatterns.Checked = (number % 4 >= 2);
+            chkRandSpellLearning.Checked = (number % 8 >= 4);
+            chkRandStatGains.Checked = (number % 16 >= 8);
+            chkRandTreasures.Checked = (number % 32 >= 16);
+            chkRandMonsterZones.Checked = (number >= 32);
+
+            number = convertChartoInt(Convert.ToChar(flags.Substring(4, 1)));
+            chkRandEquip.Checked = (number % 2 == 1);
+            //chkRandItemEffects.Checked = (number % 4 >= 2);
+            chkRandItemEffects.Checked = false;
+            chkRandWhoCanEquip.Checked = (number % 8 >= 4);
+            chkRandSpellStrength.Checked = (number % 16 >= 8);
+            chkRandomizeMap.Checked = (number % 32 >= 16);
+            chkSmallMap.Checked = (number >= 32);
+        }
+
+        private void determineFlags(object sender, EventArgs e)
+        {
+            if (loading) return;
+
+            string flags = "";
+            flags += convertIntToChar(optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3);
+            flags += convertIntToChar(cboExpGains.SelectedIndex + (8 * cboEncounterRate.SelectedIndex));
+            flags += convertIntToChar((cboGoldReq.SelectedIndex) + (chkRandomizeXP.Checked ? 4 : 0) + (chkRandomizeGP.Checked ? 8 : 0) + (chkFasterBattles.Checked ? 16 : 0) + (chkSpeedText.Checked ? 32 : 0));
+            flags += convertIntToChar((chkRandStores.Checked ? 1 : 0) + (chkRandEnemyPatterns.Checked ? 2 : 0) + (chkRandSpellLearning.Checked ? 4 : 0) + (chkRandStatGains.Checked ? 8 : 0) + (chkRandTreasures.Checked ? 16 : 0) + (chkRandMonsterZones.Checked ? 32 : 0));
+            flags += convertIntToChar((chkRandEquip.Checked ? 1 : 0) + (chkRandItemEffects.Checked ? 2 : 0) + (chkRandWhoCanEquip.Checked ? 4 : 0) + (chkRandSpellStrength.Checked ? 8 : 0) + (chkRandomizeMap.Checked ? 16 : 0) + (chkSmallMap.Checked ? 32 : 0));
+            txtFlags.Text = flags;
+        }
+
+        private string convertIntToChar(int number)
+        {
+            if (number >= 0 && number <= 9)
+                return number.ToString();
+            if (number >= 10 && number <= 35)
+                return Convert.ToChar(55 + number).ToString();
+            if (number >= 36 && number <= 61)
+                return Convert.ToChar(61 + number).ToString();
+            if (number == 62) return "!";
+            if (number == 63) return "@";
+            return "";
+        }
+
+        private int convertChartoInt(char character)
+        {
+            if (character >= Convert.ToChar("0") && character <= Convert.ToChar("9"))
+                return character - 48;
+            if (character >= Convert.ToChar("A") && character <= Convert.ToChar("Z"))
+                return character - 55;
+            if (character >= Convert.ToChar("a") && character <= Convert.ToChar("z"))
+                return character - 61;
+            if (character == Convert.ToChar("!")) return 62;
+            if (character == Convert.ToChar("@")) return 63;
+            return 0;
         }
     }
 }
