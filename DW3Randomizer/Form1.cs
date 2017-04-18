@@ -2612,7 +2612,6 @@ namespace DW3Randomizer
                     // Echoing Flute business.  01 = Silver, 02 = Red, 04 = Yellow, 08 = Purple, 10 = Blue, 20 = Green
                     if (keyItems[lnJ] >= 0x77 && keyItems[lnJ] <= 0x7c)
                     {
-                        bool finished = false;
                         byte[] echoLocations;
                         byte orbNumber = (byte)(Math.Pow(2, Math.Abs(0x77 - keyItems[lnJ])));
 
@@ -2666,9 +2665,6 @@ namespace DW3Randomizer
 
                             romData[0x33c51 + echoingFluteMarker] = echoLocations[i];
                             echoingFluteMarker++;
-                        }
-                        while (!finished)
-                        {
                         }
                     }
                 }
