@@ -2666,6 +2666,7 @@ namespace DW3Randomizer
                             romData[0x33c51 + echoingFluteMarker] = echoLocations[i];
                             echoingFluteMarker++;
                         }
+                        romData[0x33c51 + echoingFluteMarker] = 0x00;
                     }
                 }
 
