@@ -40,4 +40,5 @@
 
 ## Special Thanks
 - Mcgrew, for his Dragon Warrior 1 Randomizer(https://github.com/mcgrew/dwrandomizer), giving me the inspiration to create this randomizer.  Twitch:  http://www.twitch.tv/mcgrew
-- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), Shoobinator (Twitch:  http://www.twitch.tv/shoobinator), HighSpirits (Twitch:  http://www.twitch.tv/highspirits), DrBlackBarn (Twitch:  http://www.twitch.tv/drblackbarn), Reiska (Twitch:  http://www.twitch.tv/reiska), and Deranged Squirrel Fighter (Twitch: https://www.twitch.tv/deranged_squirrel_fighter) for testing.
+- Vaxherd for his Echoing Flute and Speed Text hacks and fixes.
+- Foggrey (Twitch:  http://www.twitch.tv/foggrey), PJPlusTwo (Twitch:  http://www.twitch.tv/pjplustwo), Shoobinator (Twitch:  http://www.twitch.tv/shoobinator), HighSpirits (Twitch:  http://www.twitch.tv/highspirits), DrBlackBarn (Twitch:  http://www.twitch.tv/drblackbarn), Reiska (Twitch:  http://www.twitch.tv/reiska), AllenSeitz, and Deranged Squirrel Fighter (Twitch: https://www.twitch.tv/deranged_squirrel_fighter) for testing.
