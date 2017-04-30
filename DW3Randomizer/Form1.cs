@@ -2344,24 +2344,121 @@ namespace DW3Randomizer
                 // First, clear out all of the magic bytes...
                 for (int lnI = 0; lnI < 252; lnI++)
                     romData[0x29d6 + lnI] = 0x3f;
-                int[] fightSpells = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-                int[] commandSpells = { 26, 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
-                // Randomize 8 command spells for the hero, pilgrim, and wizard.
-                int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 52, 53, 54, 55, 56, 57, 58, 60, 61 };
-                int[] pilgrimCommand = { 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
-                int[] wizardCommand = { 26, 27, 28, 30, 31, 32, 33, 38, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
 
+                // There are 64 fight spells overall, and 24 command spells overall.  Make sure that each fight spell is in the final list, then scramble after that.  Make sure there are no more than three copies of a spell, 
+                // make sure there are no duplicates in blocks 0-15, 16-39, and 40-63.  Any command spells that duplicate the fight spells should be placed in their respective blocks.
+                int[] finalFight = new int[64];
+                int[] finalCommand = new int[24];
+                for (int i = 0; i < finalFight.Length; i++) finalFight[i] = -1;
+                for (int i = 0; i < finalCommand.Length; i++) finalCommand[i] = -1;
+
+                int[] fightSpells = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 }; // 52 (12-20-20)
+                int[] commandSpells = { 26, 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 }; // 18 (6-6-6)
+                for (int lnI = 0; lnI < fightSpells.Length * 20; lnI++)
+                    swapArray(fightSpells, (r1.Next() % fightSpells.Length), (r1.Next() % fightSpells.Length));
                 for (int lnI = 0; lnI < commandSpells.Length * 20; lnI++)
+                    swapArray(commandSpells, (r1.Next() % commandSpells.Length), (r1.Next() % commandSpells.Length));
+
+                int[] heroFight2 = new int[16];
+                int[] pilgrimFight2 = new int[24];
+                int[] wizardFight2 = new int[24];
+
+                for (int lnI = 0; lnI < 52; lnI++)
                 {
-                    swapArray(heroCommand, (r1.Next() % heroCommand.Length), (r1.Next() % heroCommand.Length));
-                    swapArray(pilgrimCommand, (r1.Next() % pilgrimCommand.Length), (r1.Next() % pilgrimCommand.Length));
-                    swapArray(wizardCommand, (r1.Next() % wizardCommand.Length), (r1.Next() % wizardCommand.Length));
+                    if (lnI < 12) heroFight2[lnI] = fightSpells[lnI];
+                    else if (lnI < 32) pilgrimFight2[lnI - 12] = fightSpells[lnI];
+                    else wizardFight2[lnI - 32] = fightSpells[lnI];
                 }
 
-                // Randomize 16 fight spells for the hero, and 24 spells for the pilgrim, and wizard.
-                int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-                int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-                int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
+                for (int lnI = 12; lnI < 16; lnI++)
+                {
+                    heroFight2[lnI] = fightSpells[r1.Next() % fightSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (heroFight2[lnJ] == heroFight2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+                for (int lnI = 20; lnI < 24; lnI++)
+                {
+                    pilgrimFight2[lnI] = fightSpells[r1.Next() % fightSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (pilgrimFight2[lnJ] == pilgrimFight2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+                for (int lnI = 20; lnI < 24; lnI++)
+                {
+                    wizardFight2[lnI] = fightSpells[r1.Next() % fightSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (wizardFight2[lnJ] == wizardFight2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+
+                int[] heroCommand2 = new int[8];
+                int[] pilgrimCommand2 = new int[8];
+                int[] wizardCommand2 = new int[8];
+
+                for (int lnI = 0; lnI < 18; lnI++)
+                {
+                    if (lnI < 6) heroCommand2[lnI] = commandSpells[lnI];
+                    else if (lnI < 12) pilgrimCommand2[lnI - 6] = commandSpells[lnI];
+                    else wizardCommand2[lnI - 12] = commandSpells[lnI];
+                }
+
+                for (int lnI = 6; lnI < 8; lnI++)
+                {
+                    heroCommand2[lnI] = commandSpells[r1.Next() % commandSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (heroCommand2[lnJ] == heroCommand2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+                for (int lnI = 6; lnI < 8; lnI++)
+                {
+                    pilgrimCommand2[lnI] = commandSpells[r1.Next() % commandSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (pilgrimCommand2[lnJ] == pilgrimCommand2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+                for (int lnI = 6; lnI < 8; lnI++)
+                {
+                    wizardCommand2[lnI] = commandSpells[r1.Next() % commandSpells.Length];
+                    for (int lnJ = 0; lnJ < lnI; lnJ++)
+                        if (wizardCommand2[lnJ] == wizardCommand2[lnI])
+                        {
+                            lnI--;
+                            break;
+                        }
+                }
+
+                //// Randomize 8 command spells for the hero, pilgrim, and wizard.
+                //int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 52, 53, 54, 55, 56, 57, 58, 60, 61 };
+                //int[] pilgrimCommand = { 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
+                //int[] wizardCommand = { 26, 27, 28, 30, 31, 32, 33, 38, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
+
+                //for (int lnI = 0; lnI < commandSpells.Length * 20; lnI++)
+                //{
+                //    swapArray(heroCommand, (r1.Next() % heroCommand.Length), (r1.Next() % heroCommand.Length));
+                //    swapArray(pilgrimCommand, (r1.Next() % pilgrimCommand.Length), (r1.Next() % pilgrimCommand.Length));
+                //    swapArray(wizardCommand, (r1.Next() % wizardCommand.Length), (r1.Next() % wizardCommand.Length));
+                //}
+
+                //// Randomize 16 fight spells for the hero, and 24 spells for the pilgrim, and wizard.
+                //int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
+                //int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
+                //int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
 
                 int[] heroFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
                 int[] pilgrimFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
@@ -2370,64 +2467,64 @@ namespace DW3Randomizer
                 int[] pilgrimCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
                 int[] wizardCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
 
-                bool legal = false;
-                while (!legal)
-                {
-                    for (int lnI = 0; lnI < fightSpells.Length * 20; lnI++)
-                    {
-                        swapArray(heroFight, (r1.Next() % heroFight.Length), (r1.Next() % heroFight.Length));
-                        swapArray(pilgrimFight, (r1.Next() % pilgrimFight.Length), (r1.Next() % pilgrimFight.Length));
-                        swapArray(wizardFight, (r1.Next() % wizardFight.Length), (r1.Next() % wizardFight.Length));
-                    }
+                //bool legal = false;
+                //while (!legal)
+                //{
+                //    for (int lnI = 0; lnI < fightSpells.Length * 20; lnI++)
+                //    {
+                //        swapArray(heroFight, (r1.Next() % heroFight.Length), (r1.Next() % heroFight.Length));
+                //        swapArray(pilgrimFight, (r1.Next() % pilgrimFight.Length), (r1.Next() % pilgrimFight.Length));
+                //        swapArray(wizardFight, (r1.Next() % wizardFight.Length), (r1.Next() % wizardFight.Length));
+                //    }
 
-                    bool healAll = false;
-                    bool healUs = false;
-                    bool healUsAll = false;
-                    // Must have HealAll, HealUs, and HealUsAll somewhere or the Zoma fight isn't going to work well...
-                    for (int lnJ = 0; lnJ < 24; lnJ++)
-                    {
-                        if (lnJ < 16)
-                        {
-                            if (heroFight[lnJ] == 28 || pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
-                                healAll = true;
-                            if (heroFight[lnJ] == 30 || pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
-                                healUs = true;
-                            if (heroFight[lnJ] == 31 || pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
-                                healUsAll = true;
-                        }
-                        else
-                        {
-                            if (pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
-                                healAll = true;
-                            if (pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
-                                healUs = true;
-                            if (pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
-                                healUsAll = true;
-                        }
-                    }
-                    if (healAll && healUs && healUsAll)
-                        legal = true;
-                }
+                //    bool healAll = false;
+                //    bool healUs = false;
+                //    bool healUsAll = false;
+                //    // Must have HealAll, HealUs, and HealUsAll somewhere or the Zoma fight isn't going to work well...
+                //    for (int lnJ = 0; lnJ < 24; lnJ++)
+                //    {
+                //        if (lnJ < 16)
+                //        {
+                //            if (heroFight[lnJ] == 28 || pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
+                //                healAll = true;
+                //            if (heroFight[lnJ] == 30 || pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
+                //                healUs = true;
+                //            if (heroFight[lnJ] == 31 || pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
+                //                healUsAll = true;
+                //        }
+                //        else
+                //        {
+                //            if (pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
+                //                healAll = true;
+                //            if (pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
+                //                healUs = true;
+                //            if (pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
+                //                healUsAll = true;
+                //        }
+                //    }
+                //    if (healAll && healUs && healUsAll)
+                //        legal = true;
+                //}
 
                 for (int lnI = 0; lnI < 8; lnI++)
                 {
-                    romData[0x29d6 + heroCommand[lnI]] = (byte)heroCommandLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a15 + pilgrimCommand[lnI]] = (byte)pilgrimCommandLevels[lnI]; // (r1.Next() % 35 + 1);
-                    romData[0x2a54 + wizardCommand[lnI]] = (byte)wizardCommandLevels[lnI]; // (r1.Next() % 35 + 1);
-                    romData[0x2a93 + pilgrimCommand[lnI]] = romData[0x2a15 + pilgrimCommand[lnI]];
-                    romData[0x2a93 + wizardCommand[lnI]] = romData[0x2a54 + wizardCommand[lnI]];
-                    romData[0x22e7 + 24 + lnI] = (byte)heroCommand[lnI];
-                    romData[0x22e7 + 32 + 24 + lnI] = (byte)pilgrimCommand[lnI];
-                    romData[0x22e7 + 64 + 24 + lnI] = (byte)wizardCommand[lnI];
+                    romData[0x29d6 + heroCommand2[lnI]] = (byte)heroCommandLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a15 + pilgrimCommand2[lnI]] = (byte)pilgrimCommandLevels[lnI]; // (r1.Next() % 35 + 1);
+                    romData[0x2a54 + wizardCommand2[lnI]] = (byte)wizardCommandLevels[lnI]; // (r1.Next() % 35 + 1);
+                    romData[0x2a93 + pilgrimCommand2[lnI]] = romData[0x2a15 + pilgrimCommand2[lnI]];
+                    romData[0x2a93 + wizardCommand2[lnI]] = romData[0x2a54 + wizardCommand2[lnI]];
+                    romData[0x22e7 + 24 + lnI] = (byte)heroCommand2[lnI];
+                    romData[0x22e7 + 32 + 24 + lnI] = (byte)pilgrimCommand2[lnI];
+                    romData[0x22e7 + 64 + 24 + lnI] = (byte)wizardCommand2[lnI];
                 }
-                romData[0x22e7 + 24] = 38; // Hero learns Return first.
-                romData[0x29d6 + romData[0x22e7 + 24]] = (byte)heroCommandLevels[0];
-                romData[0x22e7 + 24 + 1] = 59; // ... and Outside
-                romData[0x29d6 + romData[0x22e7 + 24 + 1]] = (byte)heroCommandLevels[1];
-                romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
-                romData[0x29d6 + romData[0x22e7 + 32 + 24]] = (byte)wizardCommandLevels[0];
-                romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
-                romData[0x29d6 + romData[0x22e7 + 64 + 24]] = (byte)pilgrimCommandLevels[0];
+                //romData[0x22e7 + 24] = 38; // Hero learns Return first.
+                //romData[0x29d6 + romData[0x22e7 + 24]] = (byte)heroCommandLevels[0];
+                //romData[0x22e7 + 24 + 1] = 59; // ... and Outside
+                //romData[0x29d6 + romData[0x22e7 + 24 + 1]] = (byte)heroCommandLevels[1];
+                //romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
+                //romData[0x29d6 + romData[0x22e7 + 32 + 24]] = (byte)wizardCommandLevels[0];
+                //romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
+                //romData[0x29d6 + romData[0x22e7 + 64 + 24]] = (byte)pilgrimCommandLevels[0];
 
                 romData[0x29d6 + 63 + romData[0x22e7 + 32 + 24]] = 1;
                 romData[0x29d6 + 126 + romData[0x22e7 + 64 + 24]] = 1;
@@ -2435,15 +2532,15 @@ namespace DW3Randomizer
                 for (int lnI = 0; lnI < 24; lnI++)
                 {
                     if (lnI < 16)
-                        romData[0x29d6 + heroFight[lnI]] = (byte)heroFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a15 + pilgrimFight[lnI]] = (byte)pilgrimFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a54 + wizardFight[lnI]] = (byte)wizardFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
-                    romData[0x2a93 + pilgrimFight[lnI]] = romData[0x2a15 + pilgrimFight[lnI]];
-                    romData[0x2a93 + wizardFight[lnI]] = romData[0x2a54 + wizardFight[lnI]];
+                        romData[0x29d6 + heroFight2[lnI]] = (byte)heroFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a15 + pilgrimFight2[lnI]] = (byte)pilgrimFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a54 + wizardFight2[lnI]] = (byte)wizardFightLevels[lnI]; // (byte)(r1.Next() % 35 + 1);
+                    romData[0x2a93 + pilgrimFight2[lnI]] = romData[0x2a15 + pilgrimFight2[lnI]];
+                    romData[0x2a93 + wizardFight2[lnI]] = romData[0x2a54 + wizardFight2[lnI]];
                     if (lnI < 16)
-                        romData[0x22e7 + lnI] = (byte)heroFight[lnI];
-                    romData[0x22e7 + 32 + lnI] = (byte)pilgrimFight[lnI];
-                    romData[0x22e7 + 64 + lnI] = (byte)wizardFight[lnI];
+                        romData[0x22e7 + lnI] = (byte)heroFight2[lnI];
+                    romData[0x22e7 + 32 + lnI] = (byte)pilgrimFight2[lnI];
+                    romData[0x22e7 + 64 + lnI] = (byte)wizardFight2[lnI];
                 }
                 romData[0x29d6 + romData[0x22e7]] = 2;
 
@@ -2636,7 +2733,7 @@ namespace DW3Randomizer
                         else if (new int[] { 0x29251, 0x292c7, 0x292c8, 0x292c9, 0x292ca, 0x292b7 }.Contains(treasureLocation))
                             echoLocations = new byte[] { 0x3d, 0xdb, 0xdc, 0xdd, 0xde };
                         else if (new int[] { 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d }.Contains(treasureLocation))
-                            echoLocations = new byte[] { 0x3f, 0xb2 };
+                            echoLocations = new byte[] { 0x34, 0xb2 };
                         else if (new int[] { 0x31b94, 0x29270 }.Contains(treasureLocation))
                             echoLocations = new byte[] { 0x15, 0x85, 0x86 };
                         else if (new int[] { 0x292e4, 0x292e7 }.Contains(treasureLocation))
