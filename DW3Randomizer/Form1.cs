@@ -76,7 +76,7 @@ namespace DW3Randomizer
                 {
                     txtFileName.Text = reader.ReadLine();
                     txtFlags.Text = reader.ReadLine();
-                    determineChecks();
+                    determineChecks(null, null);
                     txtDefault1.Text = reader.ReadLine();
                     txtDefault2.Text = reader.ReadLine();
                     txtDefault3.Text = reader.ReadLine();
@@ -152,6 +152,7 @@ namespace DW3Randomizer
 
                 if (chkSpeedText.Checked) speedText();
                 if (chkFasterBattles.Checked) battleSpeed();
+                if (chkFourJobFiesta.Checked) fourJobFiesta();
             }
 
             // Implement DW4 RNG so any currently known manipulations won't work.
@@ -271,6 +272,25 @@ namespace DW3Randomizer
             //romData[0x185e] = 0x98;
 
             saveRom();
+        }
+
+        private void fourJobFiesta()
+        {
+            // Allow hero to leave the party
+            romData[0x36dcf] = 0x4c;
+            romData[0x36dd0] = 0xd0;
+            romData[0x36dd1] = 0xad;
+
+            // Allow hero to change classes
+            romData[0x36c4c] = 0x4c;
+            romData[0x36c4d] = 0x44;
+            romData[0x36c4e] = 0xac;
+
+            // Allow all heroes to change into a sage
+            romData[0x36ccd] = 0x4c;
+            romData[0x36cce] = 0xd8;
+            romData[0x36ccf] = 0xac;
+
         }
 
         private void battleSpeed()
@@ -2013,50 +2033,6 @@ namespace DW3Randomizer
                             enemyPatterns[5] = 7; // run away
                         }
                     }
-                    //if (lnI == 0x05 || lnI == 0x28)
-                    //{ // Healer, Curer
-                    //    byte[] attackPattern = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
-                    //    enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //}
-                    //if (lnI == 0x0c || lnI == 0x14)
-                    //{ // Poison Toad, Poison Silkworm
-                    //    byte[] attackPattern = { 5, 17 };
-                    //    enemyPatterns[0] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[1] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[2] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //    enemyPatterns[3] = (attackPattern[r1.Next() % attackPattern.Length]);
-                    //}
-                    //if (lnI == 0x07 || lnI == 0x22 || lnI == 0x25 || lnI == 0x28 || lnI == 0x2e || lnI == 0x34 || lnI == 0x35 || // Magician, Lumpus, Mage Toadstool, Nev, Evil Mage, Demonite, Deranger
-                    //    lnI == 0x3c || lnI == 0x4f || lnI == 0x50 || lnI == 0x59 || lnI == 0x5f || lnI == 0x6b || lnI == 0x77 || lnI == 0x78) // Witch, Witch Doctor, Old Hag, Voodoo Shaman, Minidemon, Voodoo Warlock, Archmage, Magiwyvern
-                    //{
-                    //    for (int lnJ = 0; lnJ <= 3; lnJ++)
-                    //    {
-                    //        enemyPatterns[lnJ] = (byte)((r1.Next() % 38) + 19); // Any magic spell
-                    //        if (enemyPatterns[lnJ] == 0x2b)
-                    //            lnJ--;
-                    //    }                        
-                    //}
-                    //if (lnI == 0x12) // Gas clouds
-                    //{
-                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 16); // breathe something
-                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 16); // breathe something
-                    //}
-                    //// Flamapede, Heat Cloud, Sky Dragon, Lava Basher, Orochi, Salamander, Hydra, Green Dragon, King Hydra
-                    //if (lnI == 0x23 || lnI == 0x29 || lnI == 0x3a || lnI == 0x4e || lnI == 0x65 || lnI == 0x67 || lnI == 0x7a || lnI == 0x7c || lnI == 0x81)
-                    //{
-                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 10); // breathe fire
-                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 10); // breathe fire
-                    //}
-                    //if (lnI == 0x52 || lnI == 0x5b || lnI == 0x5d) // Glacier Basher, Snow Dragon, Frost Cloud
-                    //{
-                    //    enemyPatterns[0] = (byte)((r1.Next() % 3) + 13); // breathe ice
-                    //    enemyPatterns[1] = (byte)((r1.Next() % 3) + 13); // breathe ice
-                    //}
-                    //if (lnI == 0x57) // Bomb Crag
-                    //    enemyPatterns[0] = 21; // Sacrifice!  :)
 
                     // Both bits set = 2 attacks guaranteed.  2nd bit set = up to 3 attacks.  1st bit set = up to 2 attacks.
                     int badChance = (3 * lnI > 300 ? 300 : 3 * lnI);
@@ -2443,68 +2419,12 @@ namespace DW3Randomizer
                         }
                 }
 
-                //// Randomize 8 command spells for the hero, pilgrim, and wizard.
-                //int[] heroCommand = { 26, 27, 28, 30, 31, 32, 33, 52, 53, 54, 55, 56, 57, 58, 60, 61 };
-                //int[] pilgrimCommand = { 27, 28, 30, 31, 32, 33, 38, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
-                //int[] wizardCommand = { 26, 27, 28, 30, 31, 32, 33, 38, 53, 54, 55, 56, 57, 58, 59, 60, 61 };
-
-                //for (int lnI = 0; lnI < commandSpells.Length * 20; lnI++)
-                //{
-                //    swapArray(heroCommand, (r1.Next() % heroCommand.Length), (r1.Next() % heroCommand.Length));
-                //    swapArray(pilgrimCommand, (r1.Next() % pilgrimCommand.Length), (r1.Next() % pilgrimCommand.Length));
-                //    swapArray(wizardCommand, (r1.Next() % wizardCommand.Length), (r1.Next() % wizardCommand.Length));
-                //}
-
-                //// Randomize 16 fight spells for the hero, and 24 spells for the pilgrim, and wizard.
-                //int[] heroFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-                //int[] pilgrimFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53 };
-                //int[] wizardFight = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48, 49, 50, 51, 53 };
-
                 int[] heroFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
                 int[] pilgrimFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
                 int[] wizardFightLevels = inverted_power_curve(1, 35, 24, 1, r1);
                 int[] heroCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
                 int[] pilgrimCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
                 int[] wizardCommandLevels = inverted_power_curve(1, 35, 8, 1, r1);
-
-                //bool legal = false;
-                //while (!legal)
-                //{
-                //    for (int lnI = 0; lnI < fightSpells.Length * 20; lnI++)
-                //    {
-                //        swapArray(heroFight, (r1.Next() % heroFight.Length), (r1.Next() % heroFight.Length));
-                //        swapArray(pilgrimFight, (r1.Next() % pilgrimFight.Length), (r1.Next() % pilgrimFight.Length));
-                //        swapArray(wizardFight, (r1.Next() % wizardFight.Length), (r1.Next() % wizardFight.Length));
-                //    }
-
-                //    bool healAll = false;
-                //    bool healUs = false;
-                //    bool healUsAll = false;
-                //    // Must have HealAll, HealUs, and HealUsAll somewhere or the Zoma fight isn't going to work well...
-                //    for (int lnJ = 0; lnJ < 24; lnJ++)
-                //    {
-                //        if (lnJ < 16)
-                //        {
-                //            if (heroFight[lnJ] == 28 || pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
-                //                healAll = true;
-                //            if (heroFight[lnJ] == 30 || pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
-                //                healUs = true;
-                //            if (heroFight[lnJ] == 31 || pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
-                //                healUsAll = true;
-                //        }
-                //        else
-                //        {
-                //            if (pilgrimFight[lnJ] == 28 || wizardFight[lnJ] == 28)
-                //                healAll = true;
-                //            if (pilgrimFight[lnJ] == 30 || wizardFight[lnJ] == 30)
-                //                healUs = true;
-                //            if (pilgrimFight[lnJ] == 31 || wizardFight[lnJ] == 31)
-                //                healUsAll = true;
-                //        }
-                //    }
-                //    if (healAll && healUs && healUsAll)
-                //        legal = true;
-                //}
 
                 for (int lnI = 0; lnI < 8; lnI++)
                 {
@@ -2517,14 +2437,6 @@ namespace DW3Randomizer
                     romData[0x22e7 + 32 + 24 + lnI] = (byte)pilgrimCommand2[lnI];
                     romData[0x22e7 + 64 + 24 + lnI] = (byte)wizardCommand2[lnI];
                 }
-                //romData[0x22e7 + 24] = 38; // Hero learns Return first.
-                //romData[0x29d6 + romData[0x22e7 + 24]] = (byte)heroCommandLevels[0];
-                //romData[0x22e7 + 24 + 1] = 59; // ... and Outside
-                //romData[0x29d6 + romData[0x22e7 + 24 + 1]] = (byte)heroCommandLevels[1];
-                //romData[0x22e7 + 32 + 24] = 26; // Wizard learns Heal first.
-                //romData[0x29d6 + romData[0x22e7 + 32 + 24]] = (byte)wizardCommandLevels[0];
-                //romData[0x22e7 + 64 + 24] = 52; // Pilgrim learns Antidote first.
-                //romData[0x29d6 + romData[0x22e7 + 64 + 24]] = (byte)pilgrimCommandLevels[0];
 
                 romData[0x29d6 + 63 + romData[0x22e7 + 32 + 24]] = 1;
                 romData[0x29d6 + 126 + romData[0x22e7 + 64 + 24]] = 1;
@@ -2626,7 +2538,7 @@ namespace DW3Randomizer
                 0x31b8c, // Soo
                 0x2922b, // Final Key Shrine
                 0x2926c, 0x2926d, 0x31b80, // New Town  0x378A9
-                0x37DF1, 0x375aa, 0x37786, 0x37cb9, 0x377D5, 0x37828, 0x377fe, 0x37907, 0x37929, 0x37d5a, 0x37a25, 0x37d9d }; // NPCs - Dead zone - 33
+                0x37DF1, 0x375aa, 0x37786, 0x37cb9, 0x377D5, 0x37828, 0x377fe, 0x37907, 0x37929, 0x37a25, 0x37d9d }; // NPCs - Dead zone - 32 , 0x37d5a
 
                 // NOTICE:  Using 0x3b785, supposedly the wake-up powder NPC, warps you to weird places after jumping off the rope in the tower of Garuna...
 
@@ -3503,14 +3415,15 @@ namespace DW3Randomizer
             return writer;
         }
 
-        private void determineChecks()
+        private void determineChecks(object sender, EventArgs e)
         {
             string flags = txtFlags.Text;
             int number = convertChartoInt(Convert.ToChar(flags.Substring(0, 1)));
-            optMonsterLight.Checked = (number == 0);
-            optMonsterSilly.Checked = (number == 1);
-            optMonsterMedium.Checked = (number == 2);
-            optMonsterHeavy.Checked = (number == 3);
+            optMonsterLight.Checked = (number % 4 == 0);
+            optMonsterSilly.Checked = (number % 4 == 1);
+            optMonsterMedium.Checked = (number % 4 == 2);
+            optMonsterHeavy.Checked = (number % 4 == 3);
+            chkFourJobFiesta.Checked = (number >= 4);
 
             number = convertChartoInt(Convert.ToChar(flags.Substring(1, 1)));
             cboExpGains.SelectedIndex = (number % 8);
@@ -3546,7 +3459,7 @@ namespace DW3Randomizer
             if (loading) return;
 
             string flags = "";
-            flags += convertIntToChar(optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3);
+            flags += convertIntToChar((optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3) + (chkFourJobFiesta.Checked ? 4 : 0));
             flags += convertIntToChar(cboExpGains.SelectedIndex + (8 * cboEncounterRate.SelectedIndex));
             flags += convertIntToChar((cboGoldReq.SelectedIndex) + (chkRandomizeXP.Checked ? 4 : 0) + (chkRandomizeGP.Checked ? 8 : 0) + (chkFasterBattles.Checked ? 16 : 0) + (chkSpeedText.Checked ? 32 : 0));
             flags += convertIntToChar((chkRandStores.Checked ? 1 : 0) + (chkRandEnemyPatterns.Checked ? 2 : 0) + (chkRandSpellLearning.Checked ? 4 : 0) + (chkRandStatGains.Checked ? 8 : 0) + (chkRandTreasures.Checked ? 16 : 0) + (chkRandMonsterZones.Checked ? 32 : 0));
