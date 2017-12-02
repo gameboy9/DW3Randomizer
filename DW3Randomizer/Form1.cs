@@ -222,12 +222,15 @@ namespace DW3Randomizer
                 romData[0x3fc2 + lnI] = codData2[lnI];
 
             // Fix the "parry/fight" bug(as determined via gamefaqs board), via Zombero's DW3 Hardtype IPS patch.
-            byte[] parryFightFix1 = { 0xbd, 0x9b, 0x6a, 0x29, 0xdf, 0x9d, 0x9b, 0x6a, 0x60 };
-            byte[] parryFightFix2 = { 0x20, 0x70, 0xbb };
-            for (int lnI = 0; lnI < parryFightFix1.Length; lnI++)
-                romData[0xbb80 + lnI] = parryFightFix1[lnI];
-            for (int lnI = 0; lnI < parryFightFix2.Length; lnI++)
-                romData[0xa402 + lnI] = parryFightFix2[lnI];
+            if (chkRemoveParryFight.Checked)
+            {
+                byte[] parryFightFix1 = { 0xbd, 0x9b, 0x6a, 0x29, 0xdf, 0x9d, 0x9b, 0x6a, 0x60 };
+                byte[] parryFightFix2 = { 0x20, 0x70, 0xbb };
+                for (int lnI = 0; lnI < parryFightFix1.Length; lnI++)
+                    romData[0xbb80 + lnI] = parryFightFix1[lnI];
+                for (int lnI = 0; lnI < parryFightFix2.Length; lnI++)
+                    romData[0xa402 + lnI] = parryFightFix2[lnI];
+            }
 
             // Rename the starting characters.
             for (int lnI = 0; lnI < 12; lnI++)
@@ -1660,12 +1663,12 @@ namespace DW3Randomizer
         private void boostGP()
         {
             // Replace monster data
-            for (int lnI = 0; lnI < 125; lnI++)
+            for (int lnI = 0; lnI < 139; lnI++)
             {
                 int byteValStart = 0x32e3 + (23 * lnI);
 
                 int gp = romData[byteValStart + 4] + ((romData[byteValStart + 18] % 2) * 256);
-                switch (cboExpGains.SelectedIndex)
+                switch (cboGoldReq.SelectedIndex)
                 {
                     case 0:
                         gp *= 2;
@@ -1689,7 +1692,7 @@ namespace DW3Randomizer
         private void boostXP()
         {
             // Replace monster data
-            for (int lnI = 0; lnI < 125; lnI++)
+            for (int lnI = 0; lnI < 139; lnI++)
             {
                 int byteValStart = 0x32e3 + (23 * lnI);
 
@@ -3423,7 +3426,8 @@ namespace DW3Randomizer
             optMonsterSilly.Checked = (number % 4 == 1);
             optMonsterMedium.Checked = (number % 4 == 2);
             optMonsterHeavy.Checked = (number % 4 == 3);
-            chkFourJobFiesta.Checked = (number >= 4);
+            chkFourJobFiesta.Checked = (number % 8 >= 4);
+            chkRemoveParryFight.Checked = (number % 16 >= 8);
 
             number = convertChartoInt(Convert.ToChar(flags.Substring(1, 1)));
             cboExpGains.SelectedIndex = (number % 8);
@@ -3459,7 +3463,7 @@ namespace DW3Randomizer
             if (loading) return;
 
             string flags = "";
-            flags += convertIntToChar((optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3) + (chkFourJobFiesta.Checked ? 4 : 0));
+            flags += convertIntToChar((optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3) + (chkFourJobFiesta.Checked ? 4 : 0) + (chkRemoveParryFight.Checked ? 8 : 0));
             flags += convertIntToChar(cboExpGains.SelectedIndex + (8 * cboEncounterRate.SelectedIndex));
             flags += convertIntToChar((cboGoldReq.SelectedIndex) + (chkRandomizeXP.Checked ? 4 : 0) + (chkRandomizeGP.Checked ? 8 : 0) + (chkFasterBattles.Checked ? 16 : 0) + (chkSpeedText.Checked ? 32 : 0));
             flags += convertIntToChar((chkRandStores.Checked ? 1 : 0) + (chkRandEnemyPatterns.Checked ? 2 : 0) + (chkRandSpellLearning.Checked ? 4 : 0) + (chkRandStatGains.Checked ? 8 : 0) + (chkRandTreasures.Checked ? 16 : 0) + (chkRandMonsterZones.Checked ? 32 : 0));

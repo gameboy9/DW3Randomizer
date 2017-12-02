@@ -53,6 +53,7 @@
             this.optMonsterLight = new System.Windows.Forms.RadioButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.chkFourJobFiesta = new System.Windows.Forms.CheckBox();
             this.chkRandomizeGP = new System.Windows.Forms.CheckBox();
             this.chkRandomizeXP = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -91,8 +92,8 @@
             this.txtDefault1 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.txtFlags = new System.Windows.Forms.TextBox();
-            this.chkFourJobFiesta = new System.Windows.Forms.CheckBox();
             this.adjustments = new System.Windows.Forms.ToolTip(this.components);
+            this.chkRemoveParryFight = new System.Windows.Forms.CheckBox();
             this.grpMonsterStat.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -324,6 +325,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.chkRemoveParryFight);
             this.tabPage1.Controls.Add(this.chkFourJobFiesta);
             this.tabPage1.Controls.Add(this.chkRandomizeGP);
             this.tabPage1.Controls.Add(this.chkRandomizeXP);
@@ -343,6 +345,19 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Adjustments";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // chkFourJobFiesta
+            // 
+            this.chkFourJobFiesta.AutoSize = true;
+            this.chkFourJobFiesta.Location = new System.Drawing.Point(370, 52);
+            this.chkFourJobFiesta.Name = "chkFourJobFiesta";
+            this.chkFourJobFiesta.Size = new System.Drawing.Size(157, 17);
+            this.chkFourJobFiesta.TabIndex = 19;
+            this.chkFourJobFiesta.Text = "Four Job Fiesta adjustments";
+            this.adjustments.SetToolTip(this.chkFourJobFiesta, "Allows the hero to be removed from the party, the hero to change classes, and any" +
+        " hero to become a sage.");
+            this.chkFourJobFiesta.UseVisualStyleBackColor = true;
+            this.chkFourJobFiesta.CheckedChanged += new System.EventHandler(this.determineFlags);
             // 
             // chkRandomizeGP
             // 
@@ -383,7 +398,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(4, 35);
+            this.label8.Location = new System.Drawing.Point(6, 35);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(59, 13);
@@ -797,18 +812,18 @@
             this.txtFlags.TabIndex = 42;
             this.txtFlags.Leave += new System.EventHandler(this.determineChecks);
             // 
-            // chkFourJobFiesta
+            // chkRemoveParryFight
             // 
-            this.chkFourJobFiesta.AutoSize = true;
-            this.chkFourJobFiesta.Location = new System.Drawing.Point(370, 52);
-            this.chkFourJobFiesta.Name = "chkFourJobFiesta";
-            this.chkFourJobFiesta.Size = new System.Drawing.Size(157, 17);
-            this.chkFourJobFiesta.TabIndex = 19;
-            this.chkFourJobFiesta.Text = "Four Job Fiesta adjustments";
-            this.adjustments.SetToolTip(this.chkFourJobFiesta, "Allows the hero to be removed from the party, the hero to change classes, and any" +
+            this.chkRemoveParryFight.AutoSize = true;
+            this.chkRemoveParryFight.Location = new System.Drawing.Point(370, 75);
+            this.chkRemoveParryFight.Name = "chkRemoveParryFight";
+            this.chkRemoveParryFight.Size = new System.Drawing.Size(143, 17);
+            this.chkRemoveParryFight.TabIndex = 20;
+            this.chkRemoveParryFight.Text = "Remove Parry/Fight Bug";
+            this.adjustments.SetToolTip(this.chkRemoveParryFight, "Allows the hero to be removed from the party, the hero to change classes, and any" +
         " hero to become a sage.");
-            this.chkFourJobFiesta.UseVisualStyleBackColor = true;
-            this.chkFourJobFiesta.CheckedChanged += new System.EventHandler(this.determineFlags);
+            this.chkRemoveParryFight.UseVisualStyleBackColor = true;
+            this.chkRemoveParryFight.CheckedChanged += new System.EventHandler(this.determineFlags);
             // 
             // Form1
             // 
@@ -920,6 +935,7 @@
         private System.Windows.Forms.CheckBox chkRandomizeMap;
         private System.Windows.Forms.CheckBox chkFourJobFiesta;
         private System.Windows.Forms.ToolTip adjustments;
+        private System.Windows.Forms.CheckBox chkRemoveParryFight;
     }
 }
 
