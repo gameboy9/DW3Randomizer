@@ -53,6 +53,7 @@
             this.optMonsterLight = new System.Windows.Forms.RadioButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.chkRemoveParryFight = new System.Windows.Forms.CheckBox();
             this.chkFourJobFiesta = new System.Windows.Forms.CheckBox();
             this.chkRandomizeGP = new System.Windows.Forms.CheckBox();
             this.chkRandomizeXP = new System.Windows.Forms.CheckBox();
@@ -93,7 +94,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.txtFlags = new System.Windows.Forms.TextBox();
             this.adjustments = new System.Windows.Forms.ToolTip(this.components);
-            this.chkRemoveParryFight = new System.Windows.Forms.CheckBox();
             this.grpMonsterStat.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -346,6 +346,19 @@
             this.tabPage1.Text = "Adjustments";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // chkRemoveParryFight
+            // 
+            this.chkRemoveParryFight.AutoSize = true;
+            this.chkRemoveParryFight.Location = new System.Drawing.Point(370, 75);
+            this.chkRemoveParryFight.Name = "chkRemoveParryFight";
+            this.chkRemoveParryFight.Size = new System.Drawing.Size(143, 17);
+            this.chkRemoveParryFight.TabIndex = 20;
+            this.chkRemoveParryFight.Text = "Remove Parry/Fight Bug";
+            this.adjustments.SetToolTip(this.chkRemoveParryFight, "Allows the hero to be removed from the party, the hero to change classes, and any" +
+        " hero to become a sage.");
+            this.chkRemoveParryFight.UseVisualStyleBackColor = true;
+            this.chkRemoveParryFight.CheckedChanged += new System.EventHandler(this.determineFlags);
+            // 
             // chkFourJobFiesta
             // 
             this.chkFourJobFiesta.AutoSize = true;
@@ -523,7 +536,6 @@
             // chkRandomizeMap
             // 
             this.chkRandomizeMap.AutoSize = true;
-            this.chkRandomizeMap.Enabled = false;
             this.chkRandomizeMap.Location = new System.Drawing.Point(178, 96);
             this.chkRandomizeMap.Name = "chkRandomizeMap";
             this.chkRandomizeMap.Size = new System.Drawing.Size(102, 17);
@@ -562,8 +574,6 @@
             // chkSmallMap
             // 
             this.chkSmallMap.AutoSize = true;
-            this.chkSmallMap.Checked = true;
-            this.chkSmallMap.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSmallMap.Enabled = false;
             this.chkSmallMap.Location = new System.Drawing.Point(179, 120);
             this.chkSmallMap.Name = "chkSmallMap";
@@ -811,19 +821,6 @@
             this.txtFlags.Size = new System.Drawing.Size(155, 20);
             this.txtFlags.TabIndex = 42;
             this.txtFlags.Leave += new System.EventHandler(this.determineChecks);
-            // 
-            // chkRemoveParryFight
-            // 
-            this.chkRemoveParryFight.AutoSize = true;
-            this.chkRemoveParryFight.Location = new System.Drawing.Point(370, 75);
-            this.chkRemoveParryFight.Name = "chkRemoveParryFight";
-            this.chkRemoveParryFight.Size = new System.Drawing.Size(143, 17);
-            this.chkRemoveParryFight.TabIndex = 20;
-            this.chkRemoveParryFight.Text = "Remove Parry/Fight Bug";
-            this.adjustments.SetToolTip(this.chkRemoveParryFight, "Allows the hero to be removed from the party, the hero to change classes, and any" +
-        " hero to become a sage.");
-            this.chkRemoveParryFight.UseVisualStyleBackColor = true;
-            this.chkRemoveParryFight.CheckedChanged += new System.EventHandler(this.determineFlags);
             // 
             // Form1
             // 
