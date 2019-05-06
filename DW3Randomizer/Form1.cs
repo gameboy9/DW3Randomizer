@@ -81,34 +81,28 @@ namespace DW3Randomizer
                     txtDefault1.Text = reader.ReadLine();
                     txtDefault2.Text = reader.ReadLine();
                     txtDefault3.Text = reader.ReadLine();
-                    txtDefault4.Text = reader.ReadLine();
-                    txtDefault5.Text = reader.ReadLine();
-                    txtDefault6.Text = reader.ReadLine();
-                    txtDefault7.Text = reader.ReadLine();
-                    txtDefault8.Text = reader.ReadLine();
-                    txtDefault9.Text = reader.ReadLine();
-                    txtDefault10.Text = reader.ReadLine();
-                    txtDefault11.Text = reader.ReadLine();
-                    txtDefault12.Text = reader.ReadLine();
-                    runChecksum();
+					cboClass1.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					cboClass2.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					cboClass3.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					cboGender1.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					cboGender2.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					cboGender3.SelectedIndex = Convert.ToInt32(reader.ReadLine());
+					runChecksum();
                 }
             }
             catch
             {
                 // ignore error
-                txtDefault1.Text = "Brindar";
-                txtDefault2.Text = "Ragnar";
-                txtDefault3.Text = "Adan";
-                txtDefault4.Text = "Glennard";
-                txtDefault5.Text = "Theson";
-                txtDefault6.Text = "Elucidus";
-                txtDefault7.Text = "Harley";
-                txtDefault8.Text = "Mathias";
-                txtDefault9.Text = "Sartris";
-                txtDefault10.Text = "Petrus";
-                txtDefault11.Text = "Hiram";
-                txtDefault12.Text = "Viron";
-                cboEncounterRate.SelectedIndex = 4;
+                txtDefault1.Text = "Ragnar";
+                txtDefault2.Text = "Cristo";
+                txtDefault3.Text = "Mara";
+				cboClass1.SelectedIndex = 0;
+				cboClass2.SelectedIndex = 1;
+				cboClass3.SelectedIndex = 2;
+				cboGender1.SelectedIndex = 0;
+				cboGender2.SelectedIndex = 0;
+				cboGender3.SelectedIndex = 1;
+				cboEncounterRate.SelectedIndex = 4;
                 cboExpGains.SelectedIndex = 5;
                 cboGoldReq.SelectedIndex = 0;
             }
@@ -156,8 +150,14 @@ namespace DW3Randomizer
                 if (chkFourJobFiesta.Checked) fourJobFiesta();
             }
 
-            // Implement DW4 RNG so any currently known manipulations won't work.
-            romData[0x3c351] = romData[0x7c351] = 0xAD;
+			if (chkNoLamiaOrbs.Checked)
+			{
+				romData[0x3794b] = 0xea;
+				romData[0x3794c] = 0xea;
+			}
+
+			// Implement DW4 RNG so any currently known manipulations won't work.
+			romData[0x3c351] = romData[0x7c351] = 0xAD;
             romData[0x3c352] = romData[0x7c352] = 0xd2;
             romData[0x3c353] = romData[0x7c353] = 0x06;
             romData[0x3c354] = romData[0x7c354] = 0x4c;
@@ -233,49 +233,58 @@ namespace DW3Randomizer
                     romData[0xa402 + lnI] = parryFightFix2[lnI];
             }
 
-            // Rename the starting characters.
-            for (int lnI = 0; lnI < 12; lnI++)
+			romData[0x3cc6a] = 0x4c; // Forces a jump out of the king scolding routine, saving at least 13 seconds / party wipe.  There are graphical errors, but I'll take it!
+
+			// Force the same three names to be selected in the opening Lucia's Eatery
+			romData[0x1e9f8] = 0x29;
+			romData[0x1e9f9] = 0x00;
+
+			saveRom(true);
+
+			bool heroSage = false;
+
+			// Rename the starting characters.
+			for (int lnI = 0; lnI < 3; lnI ++)
             {
-                string name = (lnI == 0 ? txtDefault1.Text :
-                    lnI == 1 ? txtDefault2.Text :
-                    lnI == 2 ? txtDefault3.Text :
-                    lnI == 3 ? txtDefault4.Text :
-                    lnI == 4 ? txtDefault5.Text :
-                    lnI == 5 ? txtDefault6.Text :
-                    lnI == 6 ? txtDefault7.Text :
-                    lnI == 7 ? txtDefault8.Text :
-                    lnI == 8 ? txtDefault9.Text :
-                    lnI == 9 ? txtDefault10.Text :
-                    lnI == 10 ? txtDefault11.Text :
-                    txtDefault12.Text);
-                for (int lnJ = 0; lnJ < 8; lnJ++)
-                {
-                    romData[0x1ed52 + (8 * lnI) + lnJ] = 0;
-                    try
-                    {
-                        char character = Convert.ToChar(name.Substring(lnJ, 1));
-                        if (character >= 0x30 && character <= 0x39)
-                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 47);
-                        if (character >= 0x41 && character <= 0x5a)
-                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 28);
-                        if (character >= 0x61 && character <= 0x7a)
-                            romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 86);
-                    }
-                    catch
-                    {
-                        romData[0x1ed52 + (8 * lnI) + lnJ] = 0; // no more characters to process - make the rest of the characters blank
-                    }
-                }
+				byte value = (byte)(lnI == 0 ? cboClass1.SelectedIndex : lnI == 1 ? cboClass2.SelectedIndex : cboClass3.SelectedIndex);
+				byte gender = (byte)(lnI == 0 ? cboGender1.SelectedIndex : lnI == 1 ? cboGender2.SelectedIndex : cboGender3.SelectedIndex);
+				byte intValue = (byte)(value == 0 ? 4 : value == 1 ? 2 : value == 2 ? 1 : value == 3 ? 6 : value == 4 ? 5 : value == 5 ? 7 : value == 6 ? 3 : 0);
+
+				if (value == 6 || value == 7)
+					heroSage = true;
+
+				romData[0x1ed4f + lnI] = (byte)(intValue + (gender == 0 ? 0 : 8));
             }
 
-            romData[0x3cc6a] = 0x4c; // Forces a jump out of the king scolding routine, saving at least 13 seconds / party wipe.  There are graphical errors, but I'll take it!
+			if (heroSage) saveRom(true);
 
-            // Remove the golden claw 100/256 encounter rate - Can't because the king won't check if you have the black pepper.
-            //romData[0x185c] = 0x4c;
-            //romData[0x185d] = 0x5b;
-            //romData[0x185e] = 0x98;
+			for (int lnI = 0; lnI < 3; lnI++) {
+				string name = (lnI == 0 ? txtDefault1.Text : lnI == 1 ? txtDefault2.Text : txtDefault3.Text);
+				for (int lnJ = 0; lnJ < 8; lnJ++)
+				{
+					romData[0x1ed52 + (8 * lnI * 4) + lnJ] = 0;
+					try
+					{
+						char character = Convert.ToChar(name.Substring(lnJ, 1));
+						if (character >= 0x30 && character <= 0x39)
+							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 47);
+						if (character >= 0x41 && character <= 0x5a)
+							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 28);
+						if (character >= 0x61 && character <= 0x7a)
+							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 86);
+					}
+					catch
+					{
+						romData[0x1ed52 + (8 * lnI) + lnJ] = 0; // no more characters to process - make the rest of the characters blank
+					}
+				}
+			}
 
-            saveRom();
+			// Remove the golden claw 100/256 encounter rate - Can't because the king won't check if you have the black pepper.
+			//romData[0x185c] = 0x4c;
+			//romData[0x185d] = 0x5b;
+			//romData[0x185e] = 0x98;
+			saveRom(false);
         }
 
         private void fourJobFiesta()
@@ -386,13 +395,31 @@ namespace DW3Randomizer
             return true;
         }
 
-        private void saveRom()
+        private void saveRom(bool calcChecksum)
         {
             string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + "_" + txtFlags.Text + ".nes");
             File.WriteAllBytes(finalFile, romData);
             lblIntensityDesc.Text = "ROM hacking complete!  (" + finalFile + ")";
             txtCompare.Text = finalFile;
-        }
+
+			if (calcChecksum)
+			{
+				try
+				{
+					using (var md5 = SHA1.Create())
+					{
+						using (var stream = File.OpenRead(finalFile))
+						{
+							lblNewChecksum.Text = BitConverter.ToString(md5.ComputeHash(stream)).ToLower().Replace("-", "");
+						}
+					}
+				}
+				catch
+				{
+					lblNewChecksum.Text = "????????????????????????????????????????";
+				}
+			}
+		}
 
         private bool randomizeMapv5(Random r1)
         {
@@ -423,9 +450,9 @@ namespace DW3Randomizer
                     map2[lnI, lnJ] = 0x00;
 
 
-            int smallIslandSize = (r1.Next() % 22000) + 30000; // (lnI == 0 ? 1500 : lnI == 1 ? 2500 : lnI == 2 ? 1500 : lnI == 3 ? 1500 : lnI == 4 ? 5000 : 5000);
-            int bigIslandSize = (r1.Next() % 10000) + 52000; // (lnI == 0 ? 1500 : lnI == 1 ? 2500 : lnI == 2 ? 1500 : lnI == 3 ? 1500 : lnI == 4 ? 5000 : 5000);
-            int islandSize2 = bigIslandSize * 3 / 10; // For Tantegel
+            int smallIslandSize = (r1.Next() % 24000) + 21000; // (lnI == 0 ? 1500 : lnI == 1 ? 2500 : lnI == 2 ? 1500 : lnI == 3 ? 1500 : lnI == 4 ? 5000 : 5000);
+            int bigIslandSize = (r1.Next() % 12000) + 33000; // (lnI == 0 ? 1500 : lnI == 1 ? 2500 : lnI == 2 ? 1500 : lnI == 3 ? 1500 : lnI == 4 ? 5000 : 5000);
+            int islandSize2 = (chkSmallMap.Checked ? (r1.Next() % 1000) + 2800 : (r1.Next() % 3000) + 11000); // For Tantegel
             smallIslandSize /= (chkSmallMap.Checked ? 4 : 1);
             bigIslandSize /= (chkSmallMap.Checked ? 4 : 1);
 
@@ -444,9 +471,9 @@ namespace DW3Randomizer
 			}
 
             markZoneSides();
-            generateZoneMap(1000, bigIslandSize * 20 / 256, r1); // Aliahan Castle is here.
+            generateZoneMap(1000, bigIslandSize * 25 / 256, r1); // Aliahan Castle is here.
             generateZoneMap(2000, bigIslandSize * 50 / 256, r1); // Romaly Castle is here.
-			generateZoneMap(0, smallIslandSize * 175 / 256, r1); // Norud Cave East is here.
+			generateZoneMap(0, smallIslandSize * 180 / 256, r1); // Norud Cave East is here.
             generateZoneMap(-1000, islandSize2, r1); // About 31% of the regular map
 
 			smoothMap();
@@ -527,8 +554,8 @@ namespace DW3Randomizer
                     midenOK = true;
             }
 
-            // Shrine South Of Romaly
-            midenOK = false;
+			// Shrine South Of Romaly
+			midenOK = false;
             while (!midenOK)
             {
                 midenX[2] = 6 + (r1.Next() % (chkSmallMap.Checked ? 116 : 244));
@@ -551,22 +578,39 @@ namespace DW3Randomizer
 			midenOK = false;
 			while (!midenOK)
 			{
-				midenX[6] = r1.Next() % 156;
+				midenX[6] = r1.Next() % 132;
 				midenY[6] = r1.Next() % 132;
-				if (validPlot(midenY[6], midenX[6], 2, 4, new int[] { 6 }))
+				if (validPlot(midenY[6], midenX[6], 2, 4, new int[] { 60000 }))
 					midenOK = true;
 			}
 
-			// Relocate opening scene to 1, 1
+			int charlockX = -255;
+			int charlockY = -255;
+
+			// Relocate opening Tantegel scene to 1, 1
 			romData[0x3ceb4] = 0x01;
 			romData[0x3cebf] = 0x01;
+			romData[0x1b3eb] = 0x01;
+			romData[0x1b3ec] = 0x01;
 
 			// Don't include Romaly, Aliahan, or Portuga islands in future location hunting.
 			islands.Remove(maxIsland[1]);
             islands.Remove(maxIsland[2]);
             islands.Remove(maxIsland[3]);
 
-            string[] locTypes = { "C", "C", "C", "?", "S", "X", "T", "C", "?", "T", "?", "T", "T", "X", "T", "?", // Aliahan, Romaly, Eginbear, Baramos, Drought Shrine, XXXXXX, Samanao Town, Brecconary, Charlock, Reeve, Portuga, Noaniels, Assaram, XXXXXX, Baharata, Lancel
+
+			using (StreamWriter writer = File.CreateText(Path.Combine(Path.GetDirectoryName(txtFileName.Text), "island.txt")))
+			{
+				for (int lnY = 0; lnY < 256; lnY++)
+				{
+					string output = "";
+					for (int lnX = 0; lnX < 256; lnX++)
+						output += island[lnY, lnX].ToString().PadLeft(5) + " ";
+					writer.WriteLine(output);
+				}
+			}
+
+			string[] locTypes = { "C", "C", "C", "?", "S", "X", "T", "T", "?", "T", "?", "T", "T", "X", "T", "?", // Aliahan, Romaly, Eginbear, Baramos, Drought Shrine, XXXXXX, Samanao Town, Brecconary, Charlock, Reeve, Portuga, Noaniels, Assaram, XXXXXX, Baharata, Lancel
                                   // (16) Cantlin, Rimuldar, Hauksness, Luzami, Kanave, Tedanki, Moor, Jipang, Pirate's Den, Soo, Kol, Shrine before Enticement, Shrine S. of Portuga, Sword Of Gaia Shrine, Desert Shrine, Shrine south of Isis
                                   "T", "T", "T", "V", "V", "V", "V", "V", "V", "V", "V", "S", "S", "?", "S", "S",
                                   // (32) Silver Orb Shrine, Olivia Promenade, Olivia Canal Shrine, Dragon Queen Castle, Jipang Shrine, Liamland, Samanao Shrine, Shrine North of Soo, Garinham, Staff of rain shrine, Rainbow Drop Shrine, Portuga Shrine East, West, Promontory Cave, Ruby Cave, Norud Cave West
@@ -605,8 +649,8 @@ namespace DW3Randomizer
 				else if (locIslands[lnI] == -1 || locIslands[lnI] == -2)
                 {
                     // Subtract 3 for room
-                    x = 4 + r1.Next() % (156 - 4 - 4);
-                    y = 4 + r1.Next() % (132 - 4 - 4);
+                    x = 4 + r1.Next() % (chkSmallMap.Checked ? 80 - 4 - 4 : 132 - 4 - 4);
+                    y = 4 + r1.Next() % (chkSmallMap.Checked ? 80 - 4 - 4 : 132 - 4 - 4);
                 } else if (locIslands[lnI] == -100)
                 {
                     continue;
@@ -617,12 +661,21 @@ namespace DW3Randomizer
                     y = 6 + r1.Next() % (chkSmallMap.Checked ? 128 - 6 - 6 : 256 - 6 - 6);
                 }
 
-                // TODO:  Ship return points, human return points, bird return points
-                // If branches on locTypes, possibly a case.
-                switch (locTypes[lnI])
+				if (locIslands[lnI] == 6)
+				{
+					if (Math.Abs(y - charlockY) < 5 || Math.Abs(x - charlockX) < 5)
+					{
+						lnI--;
+						continue;
+					}
+				}
+
+				// TODO:  Ship return points, human return points, bird return points
+				// If branches on locTypes, possibly a case.
+				switch (locTypes[lnI])
                 {
                     case "C":
-                        if (validPlot(y, x, 2, 4, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 2, 4, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
 							if (locIslands[lnI] == 6)
@@ -679,7 +732,7 @@ namespace DW3Randomizer
 
                         break;
                     case "T": // Town
-                        if (validPlot(y, x, 1, 4, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 1, 4, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
 							if (locIslands[lnI] == 6)
@@ -733,7 +786,7 @@ namespace DW3Randomizer
 
                         break;
                     case "S": // Shrine
-                        if (validPlot(y, x, 1, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 1, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
 							if (locIslands[lnI] == 6)
@@ -786,7 +839,7 @@ namespace DW3Randomizer
 
                         break;
                     case "V": // Village
-                        if (validPlot(y, x, 1, 3, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 1, 3, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
 							if (locIslands[lnI] == 6)
@@ -821,27 +874,33 @@ namespace DW3Randomizer
 								else
 									shipPlacement2(byteToUseReturn + 2, y, x + 1, maxLake2);
                             }
+
+							if (lnI == 23)
+							{
+								romData[0x311c4] = (byte)(x + 1);
+								romData[0x311c8] = (byte)y;
+							}
                         }
                         else
                             lnI--;
 
                         break;
                     case "P": // Pyramid
-                        if (validPlot(y, x, 1, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 3, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
-                            map[y + 0, x + 0] = 0xf3;
+                            map[y + 2, x] = 0xf3;
 
                             int byteToUse = 0x1b252 + (5 * lnI);
                             romData[byteToUse] = (byte)(x);
-                            romData[byteToUse + 1] = (byte)(y);
+                            romData[byteToUse + 1] = (byte)(y + 2);
                         }
                         else
                             lnI--;
 
                         break;
                     case "E": // Cave
-                        if (validPlot(y, x, 1, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+                        if (validPlot(y, x, 1, 1, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
                             locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
                         {
 							if (locIslands[lnI] == 6)
@@ -872,6 +931,10 @@ namespace DW3Randomizer
 							{
 								romData[0x1853d] = (byte)(x);
 								romData[0x1853e] = (byte)(y);
+							} else if (lnI == 56)
+							{
+								romData[0x30edb] = (byte)(x);
+								romData[0x30edf] = (byte)(y);
 							}
 						}
 						else
@@ -879,7 +942,7 @@ namespace DW3Randomizer
 
                         break;
                     case "W": // Tower
-						if (validPlot(y, x, 3, 3, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 6 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+						if (validPlot(y, x, 3, 3, (locIslands[lnI] <= 3 ? new int[] { maxIsland[locIslands[lnI]] } : locIslands[lnI] <= 6 ? new int[] { 60000 } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
 							locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], locIslands[lnI] == 6 ? maxLake2 : maxLake, locIslands[lnI] == 6))
 						{
 							if (locIslands[lnI] == 6)
@@ -912,7 +975,7 @@ namespace DW3Randomizer
 							else if (lnI == 61) // Garuna Tower
 							{
 								romData[0x1851d] = romData[0x18520] = romData[0x18526] = romData[0x18529] = (byte)x;
-								romData[0x1851e] = romData[0x18521] = romData[0x18527] = romData[0x1852a] = (byte)x;
+								romData[0x1851e] = romData[0x18521] = romData[0x18527] = romData[0x1852a] = (byte)(y + 1);
 							}
 						}
                         else
@@ -923,15 +986,25 @@ namespace DW3Randomizer
 						if (lnI == 3) // Baramos Castle
 						{
 							bool baramosLegal = true;
-							for (int lnJ = x - 3; lnJ < x + 3; lnJ++)
-								for (int lnK = y - 3; lnK < y + 3; lnK++)
+							for (int lnJ = x - 4; lnJ < x + 4; lnJ++)
+								for (int lnK = y - 4; lnK < y + 4; lnK++)
 								{
 									if (map[lnK, lnJ] > 0x07)
+										baramosLegal = false;
+									if (lnK == midenY[0] && lnJ == midenX[0])
+										baramosLegal = false;
+									if (lnK == midenY[1] && lnJ == midenX[1])
+										baramosLegal = false;
+									if (lnK == midenY[2] && lnJ == midenX[2])
 										baramosLegal = false;
 								}
 
 							if (baramosLegal)
 							{
+								for (int lnJ = -3; lnJ < 3; lnJ++)
+									for (int lnK = -3; lnK < 3; lnK++)
+										island[y + lnJ, x + lnK] = 4001;
+
 								for (int lnJ = -3; lnJ < 3; lnJ++)
 								{
 									map[y + lnJ, x - 3] = 0x06;
@@ -982,6 +1055,9 @@ namespace DW3Randomizer
 
 							if (baramosLegal)
 							{
+								charlockX = x;
+								charlockY = y;
+
 								for (int lnJ = -4; lnJ < 4; lnJ++)
 									for (int lnK = -4; lnK < 4; lnK++)
 										map2[y + lnJ, x + lnK] = 0x06;
@@ -1000,6 +1076,12 @@ namespace DW3Randomizer
 								map2[y, x - 1] = 0xec;
 								map2[y, x] = 0xed;
 								map2[y, x + 3] = 0x01;
+								int lnL = x + 4;
+								while (map2[y, lnL] == 0x00 && lnL < 132)
+								{
+									map2[y, lnL] = 0x01;
+									lnL++;
+								}
 
 								// Rainbow Drop
 								romData[0x1bfc6] = (byte)(x + 3);
@@ -1105,70 +1187,126 @@ namespace DW3Randomizer
 								bool baramosLegal = true;
 								int x2 = 4 + r1.Next() % (chkSmallMap.Checked ? 128 - 4 - 4 : 256 - 4 - 4);
 
-								for (int lnJ = x2 - 5; lnJ < x2 + 5; lnJ++)
-									for (int lnK = y - 3; lnK < y + 3; lnK++)
-									{
-										if (map[lnK, lnJ] != 0x00 || island[lnK, lnJ] != maxLake)
-											baramosLegal = false;
-									}
-
-								if (baramosLegal)
+								if (chkSmallMap.Checked)
 								{
-									map[y + 0, x + 0] = 0xf5;
+									for (int lnJ = x2 - 3; lnJ < x2 + 2; lnJ++)
+										for (int lnK = y; lnK < y + 2; lnK++)
+										{
+											if (map[lnK, lnJ] != 0x00 || island[lnK, lnJ] != maxLake)
+												baramosLegal = false;
+										}
 
-									// Map Portuga Shrine East to the ROM
-									int byteToUse = 0x1b252 + (5 * lnI);
-									romData[byteToUse] = (byte)x;
-									romData[byteToUse + 1] = (byte)y;
-
-									for (int lnJ = -4; lnJ < 4; lnJ++)
+									if (baramosLegal)
 									{
-										if (lnJ == -4 || lnJ == -3 || lnJ == -1 || lnJ == 1 || lnJ == 3)
-										{
-											map[y - 2, x2 + lnJ] = map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = map[y + 2, x2 + lnJ] = 0x05;
-										}
-										else if (lnJ == -2 || lnJ == 2)
-										{
-											map[y - 2, x2 + lnJ] = map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = 0x06;
-											map[y + 2, x2 + lnJ] = 0x05;
-										}
-										else if (lnJ == 0)
-										{
-											map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = map[y + 2, x2 + lnJ] = 0x06;
-											map[y - 2, x2 + lnJ] = 0x05;
-										}
-										island[y - 2, x2 + lnJ] = island[y - 1, x2 + lnJ] = island[y, x2 + lnJ] = island[y + 1, x2 + lnJ] = island[y + 2, x2 + lnJ] = 3000;
+										map[y + 0, x + 0] = 0xf5;
+
+										// Map Portuga Shrine East to the ROM
+										int byteToUse = 0x1b252 + (5 * lnI);
+										romData[byteToUse] = (byte)x;
+										romData[byteToUse + 1] = (byte)y;
+
+										map[y + 0, x2 - 1] = 0x05;
+										map[y + 0, x2 - 3] = 0xea;
+										map[y + 0, x2 - 2] = 0xeb;
+										map[y + 1, x2 - 1] = 0x05;
+										map[y + 1, x2 - 2] = 0x05;
+										map[y + 1, x2 - 3] = 0x05;
+
+										// Map Portuga Castle to the ROM
+										byteToUse = 0x1b252 + (5 * 10);
+										romData[byteToUse] = (byte)(x2 - 3);
+										romData[byteToUse + 1] = (byte)y;
+
+										map[y + 0, x2 + 0] = 0xf5;
+										// Map Portuga Shrine West to the ROM
+										byteToUse = 0x1b252 + (5 * 44);
+										romData[byteToUse] = (byte)x2;
+										romData[byteToUse + 1] = (byte)y;
+
+										int byteToUseReturn = 0x1b61c + (4 * returnPoints[10]);
+										romData[byteToUseReturn] = (byte)(x2 - 4);
+										romData[byteToUseReturn + 1] = (byte)y;
+										shipPlacement(byteToUseReturn + 2, y - 1, x2 - 4, maxLake);
+
+										romData[0x3d126] = romData[0x7d126] = romData[byteToUseReturn + 2];
+										romData[0x3d12a] = romData[0x7d12a] = romData[byteToUseReturn + 3];
+
+										romData[0x1850b] = romData[0x3d18b] = romData[0x7d18b] = (byte)x;
+										romData[0x1850c] = romData[0x3d181] = romData[0x7d181] = (byte)y;
+
+										romData[0x3d192] = romData[0x7d192] = (byte)x2;
 									}
-
-									map[y - 2, x2 - 4] = 0xea;
-									map[y - 2, x2 - 3] = 0xeb;
-
-									// Map Portuga Castle to the ROM
-									byteToUse = 0x1b252 + (5 * 10);
-									romData[byteToUse] = (byte)(x2 - 4);
-									romData[byteToUse + 1] = (byte)(y - 2);
-
-									map[y + 0, x2 + 3] = 0xf5;
-									// Map Portuga Shrine West to the ROM
-									byteToUse = 0x1b252 + (5 * 44);
-									romData[byteToUse] = (byte)(x2 + 3);
-									romData[byteToUse + 1] = (byte)y;
-
-									int byteToUseReturn = 0x1b61c + (4 * returnPoints[10]);
-									romData[byteToUseReturn] = (byte)(x2 - 4);
-									romData[byteToUseReturn + 1] = (byte)(y - 1);
-									shipPlacement(byteToUseReturn + 2, y - 1, x2 - 4, maxLake);
-
-									romData[0x3d126] = romData[0x7d126] = romData[byteToUseReturn + 2];
-									romData[0x3d12a] = romData[0x7d12a] = romData[byteToUseReturn + 3];
-
-									romData[0x1850b] = romData[0x3d18b] = romData[0x7d18b] = (byte)x;
-									romData[0x1850c] = romData[0x3d181] = romData[0x7d181] = (byte)y;
-
-									romData[0x3d192] = romData[0x7d192] = (byte)(x2 + 3);
+									else
+										lnI--;
 								}
 								else
-									lnI--;
+								{
+									for (int lnJ = x2 - 5; lnJ < x2 + 5; lnJ++)
+										for (int lnK = y - 3; lnK < y + 3; lnK++)
+										{
+											if (map[lnK, lnJ] != 0x00 || island[lnK, lnJ] != maxLake)
+												baramosLegal = false;
+										}
+
+									if (baramosLegal)
+									{
+										map[y + 0, x + 0] = 0xf5;
+
+										// Map Portuga Shrine East to the ROM
+										int byteToUse = 0x1b252 + (5 * lnI);
+										romData[byteToUse] = (byte)x;
+										romData[byteToUse + 1] = (byte)y;
+
+										for (int lnJ = -4; lnJ < 4; lnJ++)
+										{
+											if (lnJ == -4 || lnJ == -3 || lnJ == -1 || lnJ == 1 || lnJ == 3)
+											{
+												map[y - 2, x2 + lnJ] = map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = map[y + 2, x2 + lnJ] = 0x05;
+											}
+											else if (lnJ == -2 || lnJ == 2)
+											{
+												map[y - 2, x2 + lnJ] = map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = 0x06;
+												map[y + 2, x2 + lnJ] = 0x05;
+											}
+											else if (lnJ == 0)
+											{
+												map[y - 1, x2 + lnJ] = map[y, x2 + lnJ] = map[y + 1, x2 + lnJ] = map[y + 2, x2 + lnJ] = 0x06;
+												map[y - 2, x2 + lnJ] = 0x05;
+											}
+											island[y - 2, x2 + lnJ] = island[y - 1, x2 + lnJ] = island[y, x2 + lnJ] = island[y + 1, x2 + lnJ] = island[y + 2, x2 + lnJ] = 3000;
+										}
+
+										map[y - 2, x2 - 4] = 0xea;
+										map[y - 2, x2 - 3] = 0xeb;
+
+										// Map Portuga Castle to the ROM
+										byteToUse = 0x1b252 + (5 * 10);
+										romData[byteToUse] = (byte)(x2 - 4);
+										romData[byteToUse + 1] = (byte)(y - 2);
+
+										map[y + 0, x2 + 3] = 0xf5;
+										// Map Portuga Shrine West to the ROM
+										byteToUse = 0x1b252 + (5 * 44);
+										romData[byteToUse] = (byte)(x2 + 3);
+										romData[byteToUse + 1] = (byte)y;
+
+										int byteToUseReturn = 0x1b61c + (4 * returnPoints[10]);
+										romData[byteToUseReturn] = (byte)(x2 - 4);
+										romData[byteToUseReturn + 1] = (byte)(y - 1);
+										shipPlacement(byteToUseReturn + 2, y - 1, x2 - 4, maxLake);
+
+										romData[0x3d126] = romData[0x7d126] = romData[byteToUseReturn + 2];
+										romData[0x3d12a] = romData[0x7d12a] = romData[byteToUseReturn + 3];
+
+										romData[0x1850b] = romData[0x3d18b] = romData[0x7d18b] = (byte)x;
+										romData[0x1850c] = romData[0x3d181] = romData[0x7d181] = (byte)y;
+
+										romData[0x3d192] = romData[0x7d192] = (byte)(x2 + 3);
+									}
+									else
+										lnI--;
+								}
+
 							}
 							else
 								lnI--;
@@ -1187,6 +1325,12 @@ namespace DW3Randomizer
 
 							if (baramosLegal)
 							{
+								for (int lnJ = x - 5; lnJ <= x + 4; lnJ++)
+									for (int lnK = y - 3; lnK <= y + 2; lnK++)
+									{
+										island[lnK, lnJ] = 5001;
+									}
+
 								for (int lnJ = y - 3; lnJ <= y + 2; lnJ++)
 								{
 									map[lnJ, x - 5] = 0x06;
@@ -1317,28 +1461,52 @@ namespace DW3Randomizer
 						}
 						else if (lnI == 67) // Enticement Cave
 						{
-							if (validPlot(y - 2, x - 2, 5, 5, (locIslands[lnI] <= 6 ? new int[] { maxIsland[locIslands[lnI]] } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
-								locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], maxLake, locIslands[lnI] == 6))
+							if (chkSmallMap.Checked)
 							{
-								for (int lnX = -2; lnX < 3; lnX++)
-									for (int lnY = -2; lnY < 3; lnY++)
-										map[y + lnY, x + lnX] = 0x05;
+								if (validPlot(y - 1, x - 1, 3, 3, (locIslands[lnI] <= 6 ? new int[] { maxIsland[locIslands[lnI]] } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+									locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], maxLake, locIslands[lnI] == 6))
+								{
+									for (int lnX = -1; lnX < 2; lnX++)
+										for (int lnY = -1; lnY < 2; lnY++)
+											map[y + lnY, x + lnX] = 0x04;
 
-								for (int lnX = -1; lnX < 2; lnX++)
-									for (int lnY = -1; lnY < 2; lnY++)
-										map[y + lnY, x + lnX] = 0x04;
+									map[y, x] = 0x00;
 
-								map[y, x] = 0x00;
-								map[y + 2, x] = 0x04;
+									romData[0x1b3e5] = (byte)(x);
+									romData[0x1b3e6] = (byte)(y + 1);
 
-								romData[0x1b3e5] = (byte)(x);
-								romData[0x1b3e6] = (byte)(y + 1);
-
-								romData[0x18514] = romData[0x1853b] = (byte)(x);
-								romData[0x18515] = romData[0x1853c] = (byte)(y + 1);
+									romData[0x18514] = romData[0x1853b] = (byte)(x);
+									romData[0x18515] = romData[0x1853c] = (byte)(y + 1);
+								}
+								else
+									lnI--;
 							}
 							else
-								lnI--;
+							{
+								if (y == 199 && x == 157) y = y;
+								if (validPlot(y - 2, x - 2, 5, 5, (locIslands[lnI] <= 6 ? new int[] { maxIsland[locIslands[lnI]] } : islands.ToArray())) && reachable(y, x, !landLocs.Contains(lnI),
+									locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], maxLake, locIslands[lnI] == 6))
+								{
+									for (int lnX = -2; lnX < 3; lnX++)
+										for (int lnY = -2; lnY < 3; lnY++)
+											map[y + lnY, x + lnX] = 0x05;
+
+									for (int lnX = -1; lnX < 2; lnX++)
+										for (int lnY = -1; lnY < 2; lnY++)
+											map[y + lnY, x + lnX] = 0x04;
+
+									map[y, x] = 0x00;
+									map[y + 2, x] = 0x04;
+
+									romData[0x1b3e5] = (byte)(x);
+									romData[0x1b3e6] = (byte)(y + 1);
+
+									romData[0x18514] = romData[0x1853b] = (byte)(x);
+									romData[0x18515] = romData[0x1853c] = (byte)(y + 1);
+								}
+								else
+									lnI--;
+							}
 						}
 						else if (lnI == 68) // Shrine South of Romaly
 						{
@@ -1534,16 +1702,16 @@ namespace DW3Randomizer
 			}
 
 			// Ensure monster zones are 8x8
-			//if (chkSmallMap.Checked)
-			//{
-			//    romData[0x10083] = 0x85;
-			//    romData[0x10084] = 0xd5;
-			//    romData[0x10085] = 0xa5;
-			//    romData[0x10086] = 0x17;
-			//    romData[0x10087] = 0x29;
-			//    romData[0x10088] = 0x78;
-			//    romData[0x10089] = 0x0a;
-			//}
+			if (chkSmallMap.Checked)
+			{
+				romData[0x2d8] = 0x85;
+				romData[0x2d9] = 0x4a;
+				romData[0x2da] = 0xa5;
+				romData[0x2db] = 0x2b;
+				romData[0x2dc] = 0x29;
+				romData[0x2dd] = 0xf0;
+				romData[0x2de] = 0x0a;
+			}
 
 			// Enter monster zones
 			for (int lnI = 0; lnI < 16; lnI++)
@@ -1576,17 +1744,6 @@ namespace DW3Randomizer
 				}
 			}
 
-			using (StreamWriter writer = File.CreateText(Path.Combine(Path.GetDirectoryName(txtFileName.Text), "island.txt")))
-			{
-				for (int lnY = 0; lnY < 256; lnY++)
-				{
-					string output = "";
-					for (int lnX = 0; lnX < 256; lnX++)
-						output += island[lnY, lnX].ToString().PadLeft(5) + " ";
-					writer.WriteLine(output);
-				}
-			}
-
 			return true;
         }
 
@@ -1612,8 +1769,8 @@ namespace DW3Randomizer
 
         private void generateZoneMap(int zoneToUse, int islandSize, Random r1)
         {
-            int xMax = (zoneToUse != -1000 ? 256 : 156) - 7;
-            int yMax = (zoneToUse != -1000 ? 256 : 132) - 7;
+            int xMax = (zoneToUse != -1000 ? (chkSmallMap.Checked ? 128 : 256) : (chkSmallMap.Checked ? 80 : 136)) - 7;
+            int yMax = (zoneToUse != -1000 ? (chkSmallMap.Checked ? 128 : 256) : (chkSmallMap.Checked ? 80 : 132)) - 7;
 			int yMin = 6;
 			int xMin = 6;
 
@@ -1670,14 +1827,14 @@ namespace DW3Randomizer
                                 {
                                     if (zoneToUse == -1000)
                                     {
-                                        if (map2[lnY + 1, lnX] == 4)
+                                        if (map2[lnY + 1, lnX] == 0)
                                             totalLand++;
                                         map2[lnY + 1, lnX] = terrainTypes[lnMarker];
 										island2[lnY + 1, lnX] = (terrainTypes[lnMarker] == 6 ? -1 : 0);
 									}
 									else
                                     {
-                                        if (map[lnY + 1, lnX] == 4)
+                                        if (map[lnY + 1, lnX] == 0)
                                             totalLand++;
                                         map[lnY + 1, lnX] = terrainTypes[lnMarker];
                                         island[lnY + 1, lnX] = (terrainTypes[lnMarker] == 6 ? -1 - zoneToUse : zoneToUse);
@@ -1693,14 +1850,14 @@ namespace DW3Randomizer
                                 {
                                     if (zoneToUse == -1000)
                                     {
-                                        if (map2[lnY - 1, lnX] == 4)
+                                        if (map2[lnY - 1, lnX] == 0)
                                             totalLand++;
                                         map2[lnY - 1, lnX] = terrainTypes[lnMarker];
 										island2[lnY - 1, lnX] = (terrainTypes[lnMarker] == 6 ? -1 : 0);
 									}
 									else
                                     {
-                                        if (map[lnY - 1, lnX] == 4)
+                                        if (map[lnY - 1, lnX] == 0)
                                             totalLand++;
                                         map[lnY - 1, lnX] = terrainTypes[lnMarker];
                                         island[lnY - 1, lnX] = (terrainTypes[lnMarker] == 6 ? -1 - zoneToUse : zoneToUse);
@@ -1715,14 +1872,14 @@ namespace DW3Randomizer
                                 {
                                     if (zoneToUse == -1000)
                                     {
-                                        if (map2[lnY, lnX + 1] == 4)
+                                        if (map2[lnY, lnX + 1] == 0)
                                             totalLand++;
                                         map2[lnY, lnX + 1] = terrainTypes[lnMarker];
 										island2[lnY, lnX + 1] = (terrainTypes[lnMarker] == 6 ? -1 : 0);
 									}
 									else
                                     {
-                                        if (map[lnY, lnX + 1] == 4)
+                                        if (map[lnY, lnX + 1] == 0)
                                             totalLand++;
                                         map[lnY, lnX + 1] = terrainTypes[lnMarker];
                                         island[lnY, lnX + 1] = (terrainTypes[lnMarker] == 6 ? -1 - zoneToUse : zoneToUse);
@@ -1737,14 +1894,14 @@ namespace DW3Randomizer
                                 {
                                     if (zoneToUse == -1000)
                                     {
-                                        if (map2[lnY, lnX - 1] == 4)
+                                        if (map2[lnY, lnX - 1] == 0)
                                             totalLand++;
                                         map2[lnY, lnX - 1] = terrainTypes[lnMarker];
 										island2[lnY, lnX - 1] = (terrainTypes[lnMarker] == 6 ? -1 : 0);
 									}
 									else
                                     {
-                                        if (map[lnY, lnX - 1] == 4)
+                                        if (map[lnY, lnX - 1] == 0)
                                             totalLand++;
                                         map[lnY, lnX - 1] = terrainTypes[lnMarker];
 										island[lnY, lnX - 1] = (terrainTypes[lnMarker] == 6 ? -1 - zoneToUse : zoneToUse);
@@ -2363,19 +2520,7 @@ namespace DW3Randomizer
                     for (int j = y; j < y + width; j++)
                         zone[i, j] = zoneNumber;
 
-                // Snow definition
-                //romData[0x3e2b6] = (byte)(y * 8);
-                //romData[0x3e2ba] = (byte)((y + width) * 8);
-                //romData[0x3e2ac] = (byte)(x * 8);
-                //romData[0x3e2b0] = (byte)((x + length) * 8);
-
-                // Tantegel definition - TODO:  Find romData location, then change so it's on an 8x8 grid around Tantegel
-                //romData[0x3e2b6] = (byte)(y * 8);
-                //romData[0x3e2ba] = (byte)((y + width) * 8);
-                //romData[0x3e2ac] = (byte)(x * 8);
-                //romData[0x3e2b0] = (byte)((x + length) * 8);
-
-                return true;
+				return true;
             }
         }
 
@@ -2540,7 +2685,7 @@ namespace DW3Randomizer
 
         private bool validPlot(int y, int x, int height, int width, int[] legalIsland)
         {
-			if (legalIsland[0] == 6)
+			if (legalIsland[0] == 60000)
 			{
 				for (int lnI = 0; lnI < height; lnI++)
 					for (int lnJ = 0; lnJ < width; lnJ++)
@@ -2570,11 +2715,15 @@ namespace DW3Randomizer
 								ok = true;
 						if (!ok) return false;
 						if (legalY < 139 && legalX < 158)
+						{
 							if (map[legalY, legalX] == 0x00 || map[legalY, legalX] == 0x06 || map[legalY, legalX] >= 0xe8 || map2[legalY, legalX] >= 0xe8) // LAST CONDITION:  Castles, towns, villages, etc - Need to not match BOTH maps!
 								return false;
+						}
 						else
+						{
 							if (map[legalY, legalX] == 0x00 || map[legalY, legalX] == 0x06 || map[legalY, legalX] >= 0xe8) // LAST CONDITION:  Castles, towns, villages, etc
 								return false;
+						}
 					}
 			}
 			return true;
@@ -3784,7 +3933,7 @@ namespace DW3Randomizer
                                       0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                                       0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
                                       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
-                                      0x53, 0x55, 0x56, 0x5c, 0x5f,
+                                      0x53, 0x55, 0x56, 0x5f,
                                       0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
                                       0x70, 0x71, 0x73, 0x74,
                                       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8,
@@ -3808,7 +3957,7 @@ namespace DW3Randomizer
                         // We need to make sure key items doesn't exceed a certain point in the story.
 
                         // Verify that only one location exists for key items
-                        if (!(treasureList.Contains(treasure) && (treasure == 0x53 || treasure == 0x5c || treasure == 0x70 || treasure == 0x71)))
+                        if (!(treasureList.Contains(treasure) && (treasure == 0x53 || treasure == 0x70 || treasure == 0x71)))
                         {
                             legal = true;
                             treasureList.Add(treasure);
@@ -3818,9 +3967,15 @@ namespace DW3Randomizer
                 }
 
                 // Verify that key items are available in either a store or a treasure chest in the right zone.
-                byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x5a, 0x51, 0x54, 0x11, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x10, 0x75, 0x72, 0x50 };
-                byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 129, 129, 0 };
-                byte[] keyTreasure = { 6, 8, 36, 56, 73, 87, 118, 119, 125, 128, 128, 128, 128, 128, 128, 158, 158, 165, 165 };
+                byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x5a, 0x51, 0x54,
+									0x6b, 0x11, 0x5c, 0x77, 0x78, 0x79, 0x7a, 0x7b,
+									0x7c, 0x10, 0x75, 0x72, 0x50 };
+                byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0,
+										  0, 0, 0, 0, 0, 0, 0, 0,
+										  0, 129, 129, 129, 0 };
+                byte[] keyTreasure = { 6, 8, 36, 56, 73, 87, 118, 119,
+									   119, 125, 125, 128, 128, 128, 128, 128,
+									   128, 158, 158, 165, 165 };
 
                 int echoingFluteMarker = 0;
                 for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
@@ -3857,7 +4012,7 @@ namespace DW3Randomizer
                             echoLocations = new byte[] { 0x3b, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5 };
                         else if (new int[] { 0x2923c, 0x2923d }.Contains(treasureLocation))
                             echoLocations = new byte[] { 0x2f };
-                        else if (new int[] { 0x29251, 0x292c7, 0x292c8, 0x292c9, 0x292ca, 0x292b7 }.Contains(treasureLocation))
+                        else if (new int[] { 0x29251, 0x292c7, 0x292c8, 0x292c9, 0x292ca }.Contains(treasureLocation))
                             echoLocations = new byte[] { 0x3d, 0xdb, 0xdc, 0xdd, 0xde };
                         else if (new int[] { 0x29242, 0x29240, 0x2923f, 0x2923e, 0x29241, 0x29243, 0x2928b, 0x2928c, 0x2928e, 0x2928d }.Contains(treasureLocation))
                             echoLocations = new byte[] { 0x34, 0xb2 };
@@ -4558,17 +4713,14 @@ namespace DW3Randomizer
                     writer.WriteLine(txtDefault1.Text);
                     writer.WriteLine(txtDefault2.Text);
                     writer.WriteLine(txtDefault3.Text);
-                    writer.WriteLine(txtDefault4.Text);
-                    writer.WriteLine(txtDefault5.Text);
-                    writer.WriteLine(txtDefault6.Text);
-                    writer.WriteLine(txtDefault7.Text);
-                    writer.WriteLine(txtDefault8.Text);
-                    writer.WriteLine(txtDefault9.Text);
-                    writer.WriteLine(txtDefault10.Text);
-                    writer.WriteLine(txtDefault11.Text);
-                    writer.WriteLine(txtDefault12.Text);
-                }
-        }
+					writer.WriteLine(cboClass1.SelectedIndex);
+					writer.WriteLine(cboClass2.SelectedIndex);
+					writer.WriteLine(cboClass3.SelectedIndex);
+					writer.WriteLine(cboGender1.SelectedIndex);
+					writer.WriteLine(cboGender2.SelectedIndex);
+					writer.WriteLine(cboGender3.SelectedIndex);
+				}
+		}
 
         private void txtFileName_Leave(object sender, EventArgs e)
         {
@@ -4640,8 +4792,9 @@ namespace DW3Randomizer
             optMonsterHeavy.Checked = (number % 4 == 3);
             chkFourJobFiesta.Checked = (number % 8 >= 4);
             chkRemoveParryFight.Checked = (number % 16 >= 8);
+			chkNoLamiaOrbs.Checked = (number % 32 >= 16);
 
-            number = convertChartoInt(Convert.ToChar(flags.Substring(1, 1)));
+			number = convertChartoInt(Convert.ToChar(flags.Substring(1, 1)));
             cboExpGains.SelectedIndex = (number % 8);
             cboEncounterRate.SelectedIndex = (number / 8);
 
@@ -4675,7 +4828,7 @@ namespace DW3Randomizer
             if (loading) return;
 
             string flags = "";
-            flags += convertIntToChar((optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3) + (chkFourJobFiesta.Checked ? 4 : 0) + (chkRemoveParryFight.Checked ? 8 : 0));
+            flags += convertIntToChar((optMonsterLight.Checked ? 0 : optMonsterSilly.Checked ? 1 : optMonsterMedium.Checked ? 2 : 3) + (chkFourJobFiesta.Checked ? 4 : 0) + (chkRemoveParryFight.Checked ? 8 : 0) + (chkNoLamiaOrbs.Checked ? 16 : 0));
             flags += convertIntToChar(cboExpGains.SelectedIndex + (8 * cboEncounterRate.SelectedIndex));
             flags += convertIntToChar((cboGoldReq.SelectedIndex) + (chkRandomizeXP.Checked ? 4 : 0) + (chkRandomizeGP.Checked ? 8 : 0) + (chkFasterBattles.Checked ? 16 : 0) + (chkSpeedText.Checked ? 32 : 0));
             flags += convertIntToChar((chkRandStores.Checked ? 1 : 0) + (chkRandEnemyPatterns.Checked ? 2 : 0) + (chkRandSpellLearning.Checked ? 4 : 0) + (chkRandStatGains.Checked ? 8 : 0) + (chkRandTreasures.Checked ? 16 : 0) + (chkRandMonsterZones.Checked ? 32 : 0));
@@ -4708,5 +4861,10 @@ namespace DW3Randomizer
             if (character == Convert.ToChar("@")) return 63;
             return 0;
         }
-    }
+
+		private void btnCopyChecksum_Click(object sender, EventArgs e)
+		{
+			Clipboard.SetText(lblNewChecksum.Text);
+		}
+	}
 }
