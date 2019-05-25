@@ -4866,5 +4866,16 @@ namespace DW3Randomizer
 		{
 			Clipboard.SetText(lblNewChecksum.Text);
 		}
-	}
+
+        private void txtFileName_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        }
+
+        private void txtFileName_DragDrop(object sender, DragEventArgs e)
+        {
+            var filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+            txtFileName.Text = filePaths[0];
+        }
+    }
 }
