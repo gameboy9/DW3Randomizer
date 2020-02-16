@@ -80,6 +80,12 @@
 			this.chkRandEnemyPatterns = new System.Windows.Forms.CheckBox();
 			this.chkRandStores = new System.Windows.Forms.CheckBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.cboGender3 = new System.Windows.Forms.ComboBox();
+			this.cboGender2 = new System.Windows.Forms.ComboBox();
+			this.cboGender1 = new System.Windows.Forms.ComboBox();
+			this.cboClass3 = new System.Windows.Forms.ComboBox();
+			this.cboClass2 = new System.Windows.Forms.ComboBox();
+			this.cboClass1 = new System.Windows.Forms.ComboBox();
 			this.txtDefault2 = new System.Windows.Forms.TextBox();
 			this.txtDefault3 = new System.Windows.Forms.TextBox();
 			this.txtDefault1 = new System.Windows.Forms.TextBox();
@@ -89,12 +95,6 @@
 			this.btnCopyChecksum = new System.Windows.Forms.Button();
 			this.lblNewChecksum = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
-			this.cboClass1 = new System.Windows.Forms.ComboBox();
-			this.cboClass2 = new System.Windows.Forms.ComboBox();
-			this.cboClass3 = new System.Windows.Forms.ComboBox();
-			this.cboGender1 = new System.Windows.Forms.ComboBox();
-			this.cboGender2 = new System.Windows.Forms.ComboBox();
-			this.cboGender3 = new System.Windows.Forms.ComboBox();
 			this.grpMonsterStat.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -720,6 +720,96 @@
 			this.tabPage3.Text = "Characters";
 			this.tabPage3.UseVisualStyleBackColor = true;
 			// 
+			// cboGender3
+			// 
+			this.cboGender3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboGender3.FormattingEnabled = true;
+			this.cboGender3.Items.AddRange(new object[] {
+            "Male",
+            "Female"});
+			this.cboGender3.Location = new System.Drawing.Point(291, 65);
+			this.cboGender3.Name = "cboGender3";
+			this.cboGender3.Size = new System.Drawing.Size(102, 21);
+			this.cboGender3.TabIndex = 46;
+			// 
+			// cboGender2
+			// 
+			this.cboGender2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboGender2.FormattingEnabled = true;
+			this.cboGender2.Items.AddRange(new object[] {
+            "Male",
+            "Female"});
+			this.cboGender2.Location = new System.Drawing.Point(291, 38);
+			this.cboGender2.Name = "cboGender2";
+			this.cboGender2.Size = new System.Drawing.Size(102, 21);
+			this.cboGender2.TabIndex = 45;
+			// 
+			// cboGender1
+			// 
+			this.cboGender1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboGender1.FormattingEnabled = true;
+			this.cboGender1.Items.AddRange(new object[] {
+            "Male",
+            "Female"});
+			this.cboGender1.Location = new System.Drawing.Point(291, 11);
+			this.cboGender1.Name = "cboGender1";
+			this.cboGender1.Size = new System.Drawing.Size(102, 21);
+			this.cboGender1.TabIndex = 44;
+			// 
+			// cboClass3
+			// 
+			this.cboClass3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboClass3.FormattingEnabled = true;
+			this.cboClass3.Items.AddRange(new object[] {
+            "Soldier",
+            "Pilgrim",
+            "Wizard",
+            "Fighter",
+            "Merchant",
+            "Goof-off",
+            "Sage",
+            "Hero"});
+			this.cboClass3.Location = new System.Drawing.Point(119, 65);
+			this.cboClass3.Name = "cboClass3";
+			this.cboClass3.Size = new System.Drawing.Size(138, 21);
+			this.cboClass3.TabIndex = 43;
+			// 
+			// cboClass2
+			// 
+			this.cboClass2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboClass2.FormattingEnabled = true;
+			this.cboClass2.Items.AddRange(new object[] {
+            "Soldier",
+            "Pilgrim",
+            "Wizard",
+            "Fighter",
+            "Merchant",
+            "Goof-off",
+            "Sage",
+            "Hero"});
+			this.cboClass2.Location = new System.Drawing.Point(119, 38);
+			this.cboClass2.Name = "cboClass2";
+			this.cboClass2.Size = new System.Drawing.Size(138, 21);
+			this.cboClass2.TabIndex = 42;
+			// 
+			// cboClass1
+			// 
+			this.cboClass1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cboClass1.FormattingEnabled = true;
+			this.cboClass1.Items.AddRange(new object[] {
+            "Soldier",
+            "Pilgrim",
+            "Wizard",
+            "Fighter",
+            "Merchant",
+            "Goof-off",
+            "Sage",
+            "Hero"});
+			this.cboClass1.Location = new System.Drawing.Point(119, 11);
+			this.cboClass1.Name = "cboClass1";
+			this.cboClass1.Size = new System.Drawing.Size(138, 21);
+			this.cboClass1.TabIndex = 41;
+			// 
 			// txtDefault2
 			// 
 			this.txtDefault2.Location = new System.Drawing.Point(13, 38);
@@ -779,6 +869,7 @@
 			this.lblNewChecksum.Size = new System.Drawing.Size(247, 13);
 			this.lblNewChecksum.TabIndex = 45;
 			this.lblNewChecksum.Text = "????????????????????????????????????????";
+			this.lblNewChecksum.Click += new System.EventHandler(this.lblNewChecksum_Click);
 			// 
 			// label14
 			// 
@@ -788,96 +879,7 @@
 			this.label14.Size = new System.Drawing.Size(82, 13);
 			this.label14.TabIndex = 44;
 			this.label14.Text = "New Checksum";
-			// 
-			// cboClass1
-			// 
-			this.cboClass1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboClass1.FormattingEnabled = true;
-			this.cboClass1.Items.AddRange(new object[] {
-            "Soldier",
-            "Pilgrim",
-            "Wizard",
-            "Fighter",
-            "Merchant",
-            "Goof-off",
-            "Sage",
-            "Hero"});
-			this.cboClass1.Location = new System.Drawing.Point(119, 11);
-			this.cboClass1.Name = "cboClass1";
-			this.cboClass1.Size = new System.Drawing.Size(138, 21);
-			this.cboClass1.TabIndex = 41;
-			// 
-			// cboClass2
-			// 
-			this.cboClass2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboClass2.FormattingEnabled = true;
-			this.cboClass2.Items.AddRange(new object[] {
-            "Soldier",
-            "Pilgrim",
-            "Wizard",
-            "Fighter",
-            "Merchant",
-            "Goof-off",
-            "Sage",
-            "Hero"});
-			this.cboClass2.Location = new System.Drawing.Point(119, 38);
-			this.cboClass2.Name = "cboClass2";
-			this.cboClass2.Size = new System.Drawing.Size(138, 21);
-			this.cboClass2.TabIndex = 42;
-			// 
-			// cboClass3
-			// 
-			this.cboClass3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboClass3.FormattingEnabled = true;
-			this.cboClass3.Items.AddRange(new object[] {
-            "Soldier",
-            "Pilgrim",
-            "Wizard",
-            "Fighter",
-            "Merchant",
-            "Goof-off",
-            "Sage",
-            "Hero"});
-			this.cboClass3.Location = new System.Drawing.Point(119, 65);
-			this.cboClass3.Name = "cboClass3";
-			this.cboClass3.Size = new System.Drawing.Size(138, 21);
-			this.cboClass3.TabIndex = 43;
-			// 
-			// cboGender1
-			// 
-			this.cboGender1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboGender1.FormattingEnabled = true;
-			this.cboGender1.Items.AddRange(new object[] {
-            "Male",
-            "Female"});
-			this.cboGender1.Location = new System.Drawing.Point(291, 11);
-			this.cboGender1.Name = "cboGender1";
-			this.cboGender1.Size = new System.Drawing.Size(102, 21);
-			this.cboGender1.TabIndex = 44;
-			// 
-			// cboGender2
-			// 
-			this.cboGender2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboGender2.FormattingEnabled = true;
-			this.cboGender2.Items.AddRange(new object[] {
-            "Male",
-            "Female"});
-			this.cboGender2.Location = new System.Drawing.Point(291, 38);
-			this.cboGender2.Name = "cboGender2";
-			this.cboGender2.Size = new System.Drawing.Size(102, 21);
-			this.cboGender2.TabIndex = 45;
-			// 
-			// cboGender3
-			// 
-			this.cboGender3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cboGender3.FormattingEnabled = true;
-			this.cboGender3.Items.AddRange(new object[] {
-            "Male",
-            "Female"});
-			this.cboGender3.Location = new System.Drawing.Point(291, 65);
-			this.cboGender3.Name = "cboGender3";
-			this.cboGender3.Size = new System.Drawing.Size(102, 21);
-			this.cboGender3.TabIndex = 46;
+			this.label14.Click += new System.EventHandler(this.label14_Click);
 			// 
 			// Form1
 			// 
@@ -909,7 +911,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.txtFileName);
 			this.Name = "Form1";
-			this.Text = "Dragon Warrior 3 Randomizer 2.2.1";
+			this.Text = "Dragon Warrior 3 Randomizer 2.3.1";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.grpMonsterStat.ResumeLayout(false);

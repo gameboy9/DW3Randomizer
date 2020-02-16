@@ -241,8 +241,6 @@ namespace DW3Randomizer
 
 			saveRom(true);
 
-			bool heroSage = false;
-
 			// Rename the starting characters.
 			for (int lnI = 0; lnI < 3; lnI ++)
             {
@@ -250,32 +248,27 @@ namespace DW3Randomizer
 				byte gender = (byte)(lnI == 0 ? cboGender1.SelectedIndex : lnI == 1 ? cboGender2.SelectedIndex : cboGender3.SelectedIndex);
 				byte intValue = (byte)(value == 0 ? 4 : value == 1 ? 2 : value == 2 ? 1 : value == 3 ? 6 : value == 4 ? 5 : value == 5 ? 7 : value == 6 ? 3 : 0);
 
-				if (value == 6 || value == 7)
-					heroSage = true;
-
 				romData[0x1ed4f + lnI] = (byte)(intValue + (gender == 0 ? 0 : 8));
             }
-
-			if (heroSage) saveRom(true);
 
 			for (int lnI = 0; lnI < 3; lnI++) {
 				string name = (lnI == 0 ? txtDefault1.Text : lnI == 1 ? txtDefault2.Text : txtDefault3.Text);
 				for (int lnJ = 0; lnJ < 8; lnJ++)
 				{
-					romData[0x1ed52 + (8 * lnI * 4) + lnJ] = 0;
+					romData[0x1ed52 + (8 * lnI * 4) + lnJ] = romData[0x1ed52 + (8 * lnI * 4) + 8 + lnJ] = romData[0x1ed52 + (8 * lnI * 4) + 16 + lnJ] = romData[0x1ed52 + (8 * lnI * 4) + 24 + lnJ] = 0;
 					try
 					{
 						char character = Convert.ToChar(name.Substring(lnJ, 1));
 						if (character >= 0x30 && character <= 0x39)
-							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 47);
+							romData[0x1ed52 + (8 * lnI * 4) + lnJ] = (byte)(character - 47);
 						if (character >= 0x41 && character <= 0x5a)
-							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 28);
+							romData[0x1ed52 + (8 * lnI * 4) + lnJ] = (byte)(character - 28);
 						if (character >= 0x61 && character <= 0x7a)
-							romData[0x1ed52 + (8 * lnI) + lnJ] = (byte)(character - 86);
+							romData[0x1ed52 + (8 * lnI * 4) + lnJ] = (byte)(character - 86);
 					}
 					catch
 					{
-						romData[0x1ed52 + (8 * lnI) + lnJ] = 0; // no more characters to process - make the rest of the characters blank
+						romData[0x1ed52 + (8 * lnI * 4) + lnJ] = 0; // no more characters to process - make the rest of the characters blank
 					}
 				}
 			}
@@ -1161,14 +1154,21 @@ namespace DW3Randomizer
 
 							if (baramosLegal)
 							{
-								for (int lnJ = -4; lnJ < 1; lnJ++)
+                                // Create line of mountains
+								for (int lnJ = -3; lnJ < 1; lnJ++)
 								{
 									map[y + 1, x + lnJ] = 0x06;
 									map[y - 1, x + lnJ] = 0x06;
 								}
-								map[y, x - 4] = 0x06;
-								map[y, x - 3] = 0xf5;
-								map[y, x + 3] = 0xf7;
+                                // Make the rest water
+                                for (int lnJ = 1; lnJ < 4; lnJ++)
+                                {
+                                    map[y + 1, x + lnJ] = 0x00;
+                                    map[y - 1, x + lnJ] = 0x00;
+                                }
+                                map[y, x - 4] = 0x06;
+								map[y, x - 3] = 0xf5; // Shrine Placement
+								map[y, x + 3] = 0xf7; // Shoal Placement
 
 								romData[0x1b2e3] = (byte)(x - 3);
 								romData[0x1b2e4] = (byte)y;
@@ -1185,7 +1185,7 @@ namespace DW3Randomizer
 								locIslands[lnI] <= 6 ? midenX[locIslands[lnI]] : midenX[1], locIslands[lnI] <= 6 ? midenY[locIslands[lnI]] : midenY[1], maxLake, locIslands[lnI] == 6))
 							{
 								bool baramosLegal = true;
-								int x2 = 4 + r1.Next() % (chkSmallMap.Checked ? 128 - 4 - 4 : 256 - 4 - 4);
+								int x2 = 8 + r1.Next() % (chkSmallMap.Checked ? 128 - 8 - 4 : 256 - 8 - 8);
 
 								if (chkSmallMap.Checked)
 								{
@@ -3935,7 +3935,7 @@ namespace DW3Randomizer
                                       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x48, 0x49, 0x4b, 0x4c, 0x4e,
                                       0x53, 0x55, 0x56, 0x5f,
                                       0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6d,
-                                      0x70, 0x71, 0x73, 0x74,
+                                      0x71, 0x73, 0x74,
                                       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8,
                                       0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff, 0xfd, 0xfe, 0xff};
                 for (int lnI = 0; lnI < allTreasureList.Count; lnI++)
@@ -3943,7 +3943,7 @@ namespace DW3Randomizer
                     legal = false;
                     while (!legal)
                     {
-                        byte treasure = (byte)((r1.Next() % legalTreasures.Length)); // the last two items we can't get...
+                        byte treasure = (byte)(r1.Next() % legalTreasures.Length); // the last two items we can't get...
                         treasure = legalTreasures[treasure];
                         // Disallow earning gold for searchable items... this is because 0x80 = 0x00 in this scenario, so anything over 0x80 is useless.  
                         // (in fact, 0xfd = 0x7d, the Stick Slime, a null item.)
@@ -3957,7 +3957,7 @@ namespace DW3Randomizer
                         // We need to make sure key items doesn't exceed a certain point in the story.
 
                         // Verify that only one location exists for key items
-                        if (!(treasureList.Contains(treasure) && (treasure == 0x53 || treasure == 0x70 || treasure == 0x71)))
+                        if (!(treasureList.Contains(treasure) && (treasure == 0x53 || treasure == 0x71)))
                         {
                             legal = true;
                             treasureList.Add(treasure);
@@ -3969,13 +3969,13 @@ namespace DW3Randomizer
                 // Verify that key items are available in either a store or a treasure chest in the right zone.
                 byte[] keyItems = { 0x58, 0x57, 0x59, 0x5d, 0x4f, 0x5a, 0x51, 0x54,
 									0x6b, 0x11, 0x5c, 0x77, 0x78, 0x79, 0x7a, 0x7b,
-									0x7c, 0x10, 0x75, 0x72, 0x50 };
+									0x7c, 0x10, 0x75, 0x72, 0x50, 0x70 };
                 byte[] minKeyTreasure = { 0, 0, 0, 0, 0, 0, 0, 0,
 										  0, 0, 0, 0, 0, 0, 0, 0,
-										  0, 129, 129, 129, 0 };
+										  0, 129, 129, 129, 0, 129 };
                 byte[] keyTreasure = { 6, 8, 36, 56, 73, 87, 118, 119,
 									   119, 125, 125, 128, 128, 128, 128, 128,
-									   128, 158, 158, 165, 165 };
+									   128, 158, 158, 165, 165, 158 };
 
                 int echoingFluteMarker = 0;
                 for (int lnJ = 0; lnJ < keyItems.Length; lnJ++)
@@ -4077,7 +4077,7 @@ namespace DW3Randomizer
                 byte[] legalStoreItems = { 0x48, 0x49, 0x4b, 0x4c, 0x4e,
                                       0x53, 0x55, 0x56, 0x5f,
                                       0x60, 0x62, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6c, 0x6f,
-                                      0x70, 0x71, 0x73, 0x74,
+                                      0x71, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74,
                                       0x56, 0x65, 0x66, 0x67, 0x68, 0x6c, 0x73, 0x74
@@ -4865,6 +4865,16 @@ namespace DW3Randomizer
 		private void btnCopyChecksum_Click(object sender, EventArgs e)
 		{
 			Clipboard.SetText(lblNewChecksum.Text);
+		}
+
+		private void lblNewChecksum_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void label14_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
