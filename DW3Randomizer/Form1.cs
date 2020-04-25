@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace DW3Randomizer
@@ -157,6 +158,8 @@ namespace DW3Randomizer
 				romData[0x3794c] = 0xea;
 			}
 
+			WeaponAndArmorTweaks();
+
 			// Implement DW4 RNG so any currently known manipulations won't work.
 			romData[0x3c351] = romData[0x7c351] = 0xAD;
 			romData[0x3c352] = romData[0x7c352] = 0xd2;
@@ -282,6 +285,14 @@ namespace DW3Randomizer
 			saveRom(false);
 		}
 
+		private void WeaponAndArmorTweaks()
+		{
+			romData[0x117C] = 0x19; // Allow sages to wear Dragon Mail, helps their endgame defense and gives more incentive to class change
+			romData[0x279BD] = 0x46; // Make Orochi sword +70. Makes it Sage's best weapon in terms of raw power, but unclear if the best compared to zombie slasher (+65) but with an undead bonus
+			romData[0x0279B2] = 0x32; // Bump staff of reflection. For such a rare item, it's pretty weak. Yet it is 3 more than the best wizard weapon. This puts it 5 under staff of force, giving it still a reason to use for wizards
+			romData[0x01181] = 0x31; // Allow merchants to equip Shield of Strength, so they aren't useless in the endgame
+		}
+
 		private void fourJobFiesta()
 		{
 			// Allow hero to leave the party
@@ -390,13 +401,16 @@ namespace DW3Randomizer
 			return true;
 		}
 
+		private string _romName = "";
+
 		private void saveRom(bool calcChecksum)
 		{
 			string finalFile = Path.Combine(Path.GetDirectoryName(txtFileName.Text), "DW3Random_" + txtSeed.Text + "_" + txtFlags.Text + ".nes");
 			File.WriteAllBytes(finalFile, romData);
 			lblIntensityDesc.Text = "ROM hacking complete!  (" + finalFile + ")";
 			txtCompare.Text = finalFile;
-
+			_romName = finalFile;
+			RunBtn.Enabled = true;
 			if (calcChecksum)
 			{
 				try
@@ -4887,6 +4901,16 @@ namespace DW3Randomizer
 		{
 			var filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
 			txtFileName.Text = filePaths[0];
+		}
+
+		private void RunBtn_Click(object sender, EventArgs e)
+		{
+			Process.Start(new ProcessStartInfo
+			{
+				FileName = _romName,
+				Verb = "OPEN",
+				UseShellExecute = true
+			});
 		}
 	}
 }
