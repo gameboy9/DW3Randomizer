@@ -869,7 +869,6 @@
 			this.lblNewChecksum.Size = new System.Drawing.Size(247, 13);
 			this.lblNewChecksum.TabIndex = 45;
 			this.lblNewChecksum.Text = "????????????????????????????????????????";
-			this.lblNewChecksum.Click += new System.EventHandler(this.lblNewChecksum_Click);
 			// 
 			// label14
 			// 
@@ -879,7 +878,6 @@
 			this.label14.Size = new System.Drawing.Size(82, 13);
 			this.label14.TabIndex = 44;
 			this.label14.Text = "New Checksum";
-			this.label14.Click += new System.EventHandler(this.label14_Click);
 			// 
 			// Form1
 			// 
