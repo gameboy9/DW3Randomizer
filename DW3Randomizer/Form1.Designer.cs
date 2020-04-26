@@ -95,6 +95,7 @@
 			this.btnCopyChecksum = new System.Windows.Forms.Button();
 			this.lblNewChecksum = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
+			this.RunBtn = new System.Windows.Forms.Button();
 			this.grpMonsterStat.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -104,10 +105,13 @@
 			// 
 			// txtFileName
 			// 
+			this.txtFileName.AllowDrop = true;
 			this.txtFileName.Location = new System.Drawing.Point(119, 23);
 			this.txtFileName.Name = "txtFileName";
 			this.txtFileName.Size = new System.Drawing.Size(320, 20);
 			this.txtFileName.TabIndex = 0;
+			this.txtFileName.DragDrop += new System.Windows.Forms.DragEventHandler(this.txtFileName_DragDrop);
+			this.txtFileName.DragEnter += new System.Windows.Forms.DragEventHandler(this.txtFileName_DragEnter);
 			this.txtFileName.Leave += new System.EventHandler(this.txtFileName_Leave);
 			// 
 			// label1
@@ -869,7 +873,6 @@
 			this.lblNewChecksum.Size = new System.Drawing.Size(247, 13);
 			this.lblNewChecksum.TabIndex = 45;
 			this.lblNewChecksum.Text = "????????????????????????????????????????";
-			this.lblNewChecksum.Click += new System.EventHandler(this.lblNewChecksum_Click);
 			// 
 			// label14
 			// 
@@ -879,13 +882,24 @@
 			this.label14.Size = new System.Drawing.Size(82, 13);
 			this.label14.TabIndex = 44;
 			this.label14.Text = "New Checksum";
-			this.label14.Click += new System.EventHandler(this.label14_Click);
+			// 
+			// RunBtn
+			// 
+			this.RunBtn.Enabled = false;
+			this.RunBtn.Location = new System.Drawing.Point(449, 422);
+			this.RunBtn.Name = "RunBtn";
+			this.RunBtn.Size = new System.Drawing.Size(75, 23);
+			this.RunBtn.TabIndex = 47;
+			this.RunBtn.Text = "Run";
+			this.RunBtn.UseVisualStyleBackColor = true;
+			this.RunBtn.Click += new System.EventHandler(this.RunBtn_Click);
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(583, 457);
+			this.Controls.Add(this.RunBtn);
 			this.Controls.Add(this.btnCopyChecksum);
 			this.Controls.Add(this.lblNewChecksum);
 			this.Controls.Add(this.label14);
@@ -996,6 +1010,7 @@
 		private System.Windows.Forms.ComboBox cboGender3;
 		private System.Windows.Forms.ComboBox cboGender2;
 		private System.Windows.Forms.ComboBox cboGender1;
+		private System.Windows.Forms.Button RunBtn;
 	}
 }
 
