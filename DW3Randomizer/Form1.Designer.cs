@@ -105,10 +105,13 @@
 			// 
 			// txtFileName
 			// 
+			this.txtFileName.AllowDrop = true;
 			this.txtFileName.Location = new System.Drawing.Point(119, 23);
 			this.txtFileName.Name = "txtFileName";
 			this.txtFileName.Size = new System.Drawing.Size(320, 20);
 			this.txtFileName.TabIndex = 0;
+			this.txtFileName.DragDrop += new System.Windows.Forms.DragEventHandler(this.txtFileName_DragDrop);
+			this.txtFileName.DragEnter += new System.Windows.Forms.DragEventHandler(this.txtFileName_DragEnter);
 			this.txtFileName.Leave += new System.EventHandler(this.txtFileName_Leave);
 			// 
 			// label1
